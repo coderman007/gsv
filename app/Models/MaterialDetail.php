@@ -8,4 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class MaterialDetail extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'material_id',
+        'material_name',
+        'material_description',
+        'quantity',
+        'daily_unit_cost',
+        'subtotal',
+    ];
+
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'material_id');
+    }
 }
