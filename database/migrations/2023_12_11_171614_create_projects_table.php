@@ -14,14 +14,17 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('client_id');
+
             $table->string('project_name');
             $table->string('project_type');
             $table->text('description')->nullable();
             $table->decimal('required_kilowatts', 10, 2);
             $table->date('start_date');
             $table->date('expected_end_date');
-            $table->foreign('client_id')->references('id')->on('clients')->cascadeOnDelete();
+            $table->enum('status', ['Activo', 'Inactivo'])->default('Activo');
             $table->timestamps();
+
+            $table->foreign('client_id')->references('id')->on('clients')->cascadeOnDelete();
         });
     }
 

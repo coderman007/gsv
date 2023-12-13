@@ -83,7 +83,6 @@
                     </th>
 
                     <th scope="col" class="px-6 py-3">
-
                         Estado
                     </th>
 
@@ -110,7 +109,7 @@
                     <td class="px-6 py-4 dark:text-lg {{ $client->status === 'Activo' ? 'text-green-600' : 'text-red-500' }}">
                         {{ $client->status }}
                     </td>
-                    {{-- <td class="px-6 py-4 dark:text-lg {{ $colorStatus }}">{{ $client->status }}</td> --}}
+
                     <td class="flex justify-around py-4 pl-2 pr-8">
                         <div class="flex">
                             <livewire:clients.client-show :client="$client" :key="time() . $client->id" />

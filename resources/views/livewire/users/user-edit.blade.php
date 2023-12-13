@@ -47,7 +47,7 @@
                     <x-secondary-button wire:click="$set('openEdit', false)" class="mr-4 text-gray-500 border border-gray-500 shadow-lg hover:bg-gray-400 hover:shadow-gray-400">
                         Cancelar
                     </x-secondary-button>
-                    <x-secondary-button class="text-blue-500 border border-blue-500 shadow-lg hover:bg-blue-400 hover:shadow-blue-400 disabled:opacity-50 disabled:bg-blue-600 disabled:text-white" wire:click="editUser" wire:loading.attr="disabled" wire:target="editUser">
+                    <x-secondary-button class="text-blue-500 border border-blue-500 shadow-lg hover:bg-blue-400 hover:shadow-blue-400 disabled:opacity-50 disabled:bg-blue-600 disabled:text-white" wire:click="updateUser" wire:loading.attr="disabled" wire:target="updateUser">
                         Actualizar
                     </x-secondary-button>
                 </div>

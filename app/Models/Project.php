@@ -17,6 +17,7 @@ class Project extends Model
         'required_kilowatts',
         'start_date',
         'expected_end_date',
+        'status'
     ];
 
     public function client()
