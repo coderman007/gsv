@@ -19,6 +19,7 @@ class Client extends Model
         'solar_radiation_level',
         'roof_dimensions_length',
         'roof_dimensions_width',
+        'status',
     ];
 
     public function projects()

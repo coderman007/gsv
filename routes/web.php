@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Livewire\Users\UserList;
+use App\Livewire\Clients\ClientList;
+use App\Livewire\Notification;
+// use App\Livewire\Projects\ProjectList;
+// use App\Livewire\Quotations\QuotationList;
+
 // use App\Http\Controllers\QuotationController;
 
 
@@ -23,4 +29,10 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    Route::get('users', UserList::class)->name('users');
+    Route::get('clients', ClientList::class)->name('clients');
+    Route::get('notifications', Notification::class)->name('notifications');
+    // Route::get('projects', ProjectList::class)->name('projects');
+    // Route::get('quotations', QuotationList::class)->name('quotations');
 });
