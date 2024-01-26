@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transports', function (Blueprint $table) {
+        Schema::create('additional_costs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('project_id');
-            $table->decimal('daily_total_cost', 10, 2); // Suma de los subtotales de TransportDetails
+            $table->unsignedBigInteger('quotation_id');
+            $table->text('description');
+            $table->decimal('amount', 10, 2);
             $table->timestamps();
 
-            $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();
+            $table->foreign('quotation_id')->references('id')->on('projects')->cascadeOnDelete();
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transports');
+        Schema::dropIfExists('additional_costs');
     }
 };

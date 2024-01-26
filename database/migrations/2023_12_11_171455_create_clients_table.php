@@ -13,15 +13,18 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('location_id');
+
             $table->string('name');
-            $table->string('address');
+            $table->string('email')->unique();
             $table->string('phone');
-            $table->string('email');
+            $table->string('transformer');
             $table->decimal('average_energy_consumption', 10, 2);
-            $table->decimal('solar_radiation_level', 4, 2);
-            $table->decimal('roof_dimensions_length', 8, 2);
-            $table->decimal('roof_dimensions_width', 8, 2);
+            $table->decimal('roof_dimension', 8, 2);
             $table->enum('status', ['Activo', 'Inactivo'])->default('Activo');
+            $table->string('image')->nullable();
+
+            $table->foreign('location_id')->references('id')->on('locations')->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -19,11 +19,16 @@ class Quotation extends Model
 
     public function project()
     {
-        return $this->belongsTo(Project::class, 'project_id');
+        return $this->belongsTo(Project::class);
     }
 
     public function client()
     {
-        return $this->belongsTo(Client::class, 'client_id');
+        return $this->belongsTo(Client::class);
+    }
+
+    public function additionalCosts()
+    {
+        return $this->hasMany(AdditionalCost::class);
     }
 }

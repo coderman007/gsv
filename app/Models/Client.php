@@ -11,24 +11,24 @@ class Client extends Model
 
 
     protected $fillable = [
+        'location_id',
         'name',
-        'address',
-        'phone',
         'email',
+        'phone',
+        'tranformer',
         'average_energy_consumption',
-        'solar_radiation_level',
-        'roof_dimensions_length',
-        'roof_dimensions_width',
+        'roof_dimension',
         'status',
+        'image'
     ];
-
-    public function projects()
-    {
-        return $this->hasMany(Project::class);
-    }
 
     public function quotations()
     {
         return $this->hasMany(Quotation::class);
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
     }
 }

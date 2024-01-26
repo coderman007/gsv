@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('job_position_categories', function (Blueprint $table) {
+        Schema::create('cities', function (Blueprint $table) {
             $table->id();
-            $table->string('category_name');
-            $table->text('category_description');
-            $table->decimal('category_increment', 5, 2); // Porcentaje de incremento
+            $table->unsignedBigInteger('department_id');
+
+            $table->string('name');
+
+            $table->foreign('department_id')->references('id')->on('departments')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('job_position_categories');
+        Schema::dropIfExists('cities');
     }
 };

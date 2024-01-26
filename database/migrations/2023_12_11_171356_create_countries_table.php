@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tools', function (Blueprint $table) {
+        Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('project_id');
-            $table->decimal('daily_total_cost', 10, 2); // Suma de los subtotales de ToolDetails
+            $table->string('name');
             $table->timestamps();
-
-            $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();
         });
     }
 
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tools');
+        Schema::dropIfExists('countries');
     }
 };

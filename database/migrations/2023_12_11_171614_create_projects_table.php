@@ -13,18 +13,16 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('project_category_id');
+            $table->unsignedBigInteger('project_type_id');
 
-            $table->string('project_name');
-            $table->string('project_type');
+            $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('required_kilowatts', 10, 2);
-            $table->date('start_date');
-            $table->date('expected_end_date');
             $table->enum('status', ['Activo', 'Inactivo'])->default('Activo');
             $table->timestamps();
 
-            $table->foreign('client_id')->references('id')->on('clients')->cascadeOnDelete();
+            $table->foreign('project_category_id')->references('id')->on('project_categories')->cascadeOnDelete();
+            $table->foreign('project_type_id')->references('id')->on('project_types')->cascadeOnDelete();
         });
     }
 

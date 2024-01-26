@@ -38,8 +38,7 @@
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link>
-                        {{-- <x-nav-link href="{{ route('quotations') }}" :active="request()->routeIs('quotations', 'quotation.create')"> --}}
+                    <x-nav-link href="{{ route('quotations') }}" :active="request()->routeIs('quotations', 'quotation.create')">
                         {{ __('Cotizaciones') }}
                     </x-nav-link>
                 </div>

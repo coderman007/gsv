@@ -10,23 +10,25 @@ class Project extends Model
     use HasFactory;
 
     protected $fillable = [
-        'client_id',
-        'project_name',
-        'project_type',
+        'project_category_id',
+        'project_type_id',
+        'name',
         'description',
-        'required_kilowatts',
-        'start_date',
-        'expected_end_date',
         'status'
     ];
 
-    public function client()
+    public function projectCategory()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(ProjectCategory::class);
     }
 
-    public function quotations()
+    public function projectType()
     {
-        return $this->hasMany(Quotation::class);
+        return $this->belongsTo(ProjectType::class);
+    }
+
+    public function quotation()
+    {
+        return $this->hasOne(Quotation::class);
     }
 }

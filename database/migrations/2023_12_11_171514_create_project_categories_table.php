@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('labors', function (Blueprint $table) {
+        Schema::create('project_categories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('project_id');
-            $table->integer('work_days_quantity');
-            $table->decimal('daily_total_cost', 10, 2); // Suma de los subtotales de LaborDetails
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->enum('status', ['Activo', 'Inactivo'])->default('Activo');
             $table->timestamps();
-
-            $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('labors');
+        Schema::dropIfExists('project_categories');
     }
 };
