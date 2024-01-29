@@ -21,6 +21,7 @@ class UserDelete extends Component
         if ($this->user) {
             $user = $this->user->delete();
             $this->dispatch('deletedUser', $user);
+            $this->dispatch('deletedUserNotification');
             $this->openDelete = false;
         }
     }

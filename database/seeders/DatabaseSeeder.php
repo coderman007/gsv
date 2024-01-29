@@ -26,6 +26,9 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             DepartmentSeeder::class,
             CitySeeder::class,
+            ProjectCategorySeeder::class,
+            ProjectTypeSeeder::class,
+            ProjectSeeder::class,
         ]);
     }
 }

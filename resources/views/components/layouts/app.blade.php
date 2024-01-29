@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,6 +19,7 @@
     @livewireStyles
 
 </head>
+
 <body class="font-sans antialiased">
     <x-banner />
 
@@ -38,8 +40,12 @@
             {{ $slot }}
         </main>
     </div>
+    <script src="https://kit.fontawesome.com/8e38c8557e.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('modals')
     @livewireScripts
+    @stack('js')
+
     {{-- <script>
         Livewire.on('alert', function(message) {
             Swal.fire(
@@ -65,7 +71,7 @@
         })
 
     </script> --}}
-    <script src="https://kit.fontawesome.com/8e38c8557e.js" crossorigin="anonymous"></script>
 
 </body>
+
 </html>

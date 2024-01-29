@@ -31,6 +31,7 @@ class UserCreate extends Component
         // session()->flash('message', 'Usuario Creado Satisfactoriamente!');
         // $message = session('message');
         $this->dispatch('createdUser', $user);
+        $this->dispatch('createdUserNotification');
         $this->reset('name', 'email', 'password', 'status');
     }
     public function render()

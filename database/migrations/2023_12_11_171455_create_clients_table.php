@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone');
-            $table->string('transformer');
+            $table->enum('transformer', ['Trifásico', 'Monofásico']);
             $table->decimal('average_energy_consumption', 10, 2);
             $table->decimal('roof_dimension', 8, 2);
             $table->enum('status', ['Activo', 'Inactivo'])->default('Activo');

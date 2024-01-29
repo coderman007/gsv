@@ -14,7 +14,7 @@ class ProjectEdit extends Component
     public $project;
     public $clients = [];
     public $client_id;
-    public $project_name;
+    public $name;
     public $project_type;
     public $description;
     public $required_kilowatts;
@@ -23,7 +23,7 @@ class ProjectEdit extends Component
     public $status = "";
     protected $rules = [
         'client_id' => 'required|exists:clients,id',
-        'project_name' => 'required',
+        'name' => 'required',
         'project_type' => 'required',
         'description' => 'required',
         'required_kilowatts' => 'required|numeric',
@@ -35,7 +35,7 @@ class ProjectEdit extends Component
     {
         $this->project = $project;
         $this->client_id = $project->client_id;
-        $this->project_name = $project->project_name;
+        $this->name = $project->name;
         $this->project_type = $project->project_type;
         $this->description = $project->description;
         $this->required_kilowatts = $project->required_kilowatts;

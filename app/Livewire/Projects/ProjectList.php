@@ -2,18 +2,19 @@
 
 namespace App\Livewire\Projects;
 
-use App\Models\Client;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use App\Models\Project;
+use App\Models\ProjectCategory;
+use App\Models\ProjectType;
 use Livewire\WithPagination;
 
 class ProjectList extends Component
 {
     use WithPagination;
 
-    public $client;
+    public $project;
     public $search = '';
     public $sortBy = 'id';
     public $sortDirection = 'asc';
@@ -37,7 +38,7 @@ class ProjectList extends Component
     {
         return
             Project::where('id', 'like', '%' . $this->search . '%')
-            ->orWhere('project_name', 'like', '%' . $this->search . '%')
+            ->orWhere('name', 'like', '%' . $this->search . '%')
             ->orWhere('project_type', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
@@ -60,6 +61,12 @@ class ProjectList extends Component
 
     public function render()
     {
+        $projects = Project::with(['project_category', 'project_type'])
+            ->where('quotation_date', 'LIKE', '%' . $this->search . '%')
+            ->orWhere('validity_period', 'LIKE', '%' . $this->search . '%')
+            ->orWhere('total_quotation_amount', 'LIKE', '%' . $this->search . '%')
+            ->orderBy($this->sortBy, $this->sortDirection)
+            ->paginate($this->perPage);
         return view('livewire.projects.project-list');
     }
 }

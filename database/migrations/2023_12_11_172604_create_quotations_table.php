@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('client_id');
             $table->date('quotation_date');
-            $table->integer('validity_period'); // En días
+            $table->integer('validity_period');
             $table->decimal('total_quotation_amount', 10, 2);
             $table->timestamps();
 

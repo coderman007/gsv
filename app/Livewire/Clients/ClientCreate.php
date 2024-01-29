@@ -8,7 +8,7 @@ use Livewire\Component;
 class ClientCreate extends Component
 {
     public $openCreate = false;
-    public $name, $address, $phone, $email, $average_energy_consumption, $solar_radiation_level, $roof_dimensions_length, $roof_dimensions_width;
+    public $location_id, $name, $email, $phone, $average_energy_consumption, $roof_dimension, $image;
     public $status = "";
 
     protected $rules = [
@@ -18,8 +18,7 @@ class ClientCreate extends Component
         'email' => 'required|email',
         'average_energy_consumption' => 'required|numeric',
         'solar_radiation_level' => 'required|numeric',
-        'roof_dimensions_length' => 'required|numeric',
-        'roof_dimensions_width' => 'required|numeric',
+        'roof_dimension' => 'required|numeric',
         'status' => 'required',
 
     ];
@@ -27,15 +26,15 @@ class ClientCreate extends Component
     {
         $this->validate();
         $client = Client::create([
+            'location_id' => $this->location_id,
             'name' => $this->name,
-            'address' => $this->address,
-            'phone' => $this->phone,
             'email' => $this->email,
+            'phone' => $this->phone,
+            'transformer' => $this->transformer,
             'average_energy_consumption' => $this->average_energy_consumption,
-            'solar_radiation_level' => $this->solar_radiation_level,
-            'roof_dimensions_length' => $this->roof_dimensions_length,
-            'roof_dimensions_width' => $this->roof_dimensions_width,
+            'roof_dimension' => $this->roof_dimension,
             'status' => $this->status,
+            'image' => $this->image,
 
         ]);
 

@@ -3,7 +3,9 @@
     <div class="grid items-center w-full md:grid-cols-12 mt-2">
         {{-- Barra de búsqueda --}}
         <div class="col-span-4">
-            <x-input type="text" name="search" wire:model="search" class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400" placeholder="Buscar..." />
+            <x-input type="text" name="search" wire:model="search"
+                class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
+                placeholder="Buscar..." />
         </div>
         <div class="inline mt-4 pl-4 pr-24 md:pl-0 md:pr-0 md:mt-0 md:block md:col-span-4">
             <div class="text-xl font-bold text-center text-blue-400 uppercase">
@@ -40,9 +42,9 @@
                         @endif
                     </th>
 
-                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('project_name')">
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('name')">
                         Nombre Proyecto
-                        @if ($sortBy == 'project_name')
+                        @if ($sortBy == 'name')
                         @if ($sortDirection == 'asc')
                         <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
                         @else
@@ -97,19 +99,21 @@
             </thead>
             <tbody>
                 @forelse ($this->projects as $project)
-                <tr class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <tr
+                    class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ $project->id }}
                     </th>
 
-                    <td class="px-6 py-4 dark:text-lg">{{ $project->project_name }}</td>
+                    <td class="px-6 py-4 dark:text-lg">{{ $project->name }}</td>
                     <td class="px-6 py-4 dark:text-lg">{{ $project->project_type }}</td>
                     <td class="px-6 py-4 dark:text-lg">{{ $project->client->name }}</td>
                     <td class="px-6 py-4 dark:text-lg">{{ $project->description }}</td>
                     <td class="px-6 py-4 dark:text-lg">{{ $project->required_kilowatts }}</td>
                     <td class="px-6 py-4 dark:text-lg">{{ $project->start_date }}</td>
                     <td class="px-6 py-4 dark:text-lg">{{ $project->expected_end_date }}</td>
-                    <td class="px-6 py-4 dark:text-lg {{ $project->status === 'Activo' ? 'text-green-600' : 'text-red-500' }}">
+                    <td
+                        class="px-6 py-4 dark:text-lg {{ $project->status === 'Activo' ? 'text-green-600' : 'text-red-500' }}">
                         {{ $project->status }}
                     </td>
                     <td class="flex justify-around py-4 pl-2 pr-8">
@@ -140,7 +144,8 @@
     </h1>
     <div class="flex justify-center w-full h-auto">
         <livewire:projects.project-create />
-        <button class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
+        <button
+            class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
             <a href="{{ route('projects') }}">Volver</a>
         </button>
     </div>

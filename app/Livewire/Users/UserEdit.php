@@ -3,37 +3,47 @@
 namespace App\Livewire\Users;
 
 use App\Models\User;
-use Illuminate\Auth\Events\Validated;
 use Livewire\Component;
 
 class UserEdit extends Component
 {
     public $openEdit = false;
-    public $user;
-    public $name, $email, $password, $status;
+    public $userId;
+    public $name, $email, $password, $status = "";
 
     protected $rules = [
         'name' => 'required|min:5|max:255',
         'email' => 'required|email',
-        'password' => 'required|min:8',
+        'password' => 'nullable|min:8',
         'status' => 'required'
     ];
-    public function mount(User $user)
+
+    public function mount($userId)
     {
-        $this->user = $user;
+        $this->userId = $userId;
+        $user = User::findOrFail($userId);
         $this->name = $user->name;
         $this->email = $user->email;
-        $this->password = $user->password;
         $this->status = $user->status;
     }
 
     public function updateUser()
     {
-        $validated = $this->validate();
-        $user = $this->user->update($validated);
-        $this->dispatch('updatedUser', $user);
+        
+        $this->validate();
+
+        $user = User::findOrFail($this->userId);
+
+        $user->update([
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => $this->password ? bcrypt($this->password) : $user->password,
+            'status' => $this->status,
+        ]);
+
         $this->openEdit = false;
-        $this->reset('name', 'email', 'password', 'status');
+        $this->dispatch('updatedUser', $user);
+        $this->dispatch('updatedUserNotification');
     }
 
     public function render()
@@ -41,3 +51,4 @@ class UserEdit extends Component
         return view('livewire.users.user-edit');
     }
 }
+

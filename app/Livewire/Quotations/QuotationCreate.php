@@ -9,7 +9,7 @@ use App\Models\Project;
 
 class QuotationCreate extends Component
 {
-    public $open_create = false;
+    public $openCreate = false;
     public $project_id;
     public $client_id;
     public $quotation_date;
@@ -20,8 +20,9 @@ class QuotationCreate extends Component
     {
         $clients = Client::all();
         $projects = Project::all();
+        $quotations = Quotation::all();
 
-        return view('livewire.quotations.quotation-create', compact('clients', 'projects'));
+        return view('livewire.quotations.quotation-create', compact('clients', 'projects', 'quotations'));
     }
 
     public function updated($field)

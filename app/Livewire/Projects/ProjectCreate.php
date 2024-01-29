@@ -9,24 +9,18 @@ use Livewire\Component;
 class ProjectCreate extends Component
 {
     public $openCreate = false;
-    public $clients = [];
-    public $client_id;
-    public $project_name;
-    public $project_type;
+    public $projects = [];
+    public $project_category_id;
+    public $project_type_id;
+    public $name;
     public $description;
-    public $required_kilowatts;
-    public $start_date;
-    public $expected_end_date;
     public $status = "";
 
     protected $rules = [
-        'client_id' => 'required|exists:clients,id',
-        'project_name' => 'required',
-        'project_type' => 'required',
+        'project_category_id' => 'required|exists:project_categories,id',
+        'project_type_id' => 'required|exists:project_types,id',
+        'name' => 'required',
         'description' => 'required',
-        'required_kilowatts' => 'required|numeric',
-        'start_date' => 'required|date',
-        'expected_end_date' => 'required|date',
         'status' => 'required',
 
     ];
@@ -34,32 +28,27 @@ class ProjectCreate extends Component
     {
         $this->validate();
         $project = Project::create([
-            'client_id' => $this->client_id,
-            'project_name' => $this->project_name,
-            'project_type' => $this->project_type,
+            'project_category_id' => $this->project_category_id,
+            'project_type_id' => $this->project_type_id,
+            'name' => $this->name,
             'description' => $this->description,
-            'required_kilowatts' => $this->required_kilowatts,
-            'start_date' => $this->start_date,
-            'expected_end_date' => $this->expected_end_date,
             'status' => $this->status,
 
         ]);
 
         $this->openCreate = false;
-        // session()->flash('message', 'Usuario Creado Satisfactoriamente!');
-        // $message = session('message');
         $this->dispatch('createdProject', $project);
-        $this->dispatch('newProjectNotification', [
-            'title' => 'Success',
-            'text' => 'Proyecto Creado Exitosamente!',
-            'icon' => 'success'
-        ]);
+        // $this->dispatch('newProjectNotification', [
+        //     'title' => 'Success',
+        //     'text' => 'Proyecto Creado Exitosamente!',
+        //     'icon' => 'success'
+        // ]);
         $this->reset();
     }
 
-    public function mount(Client $clientModel)
+    public function mount(Project $projectModel)
     {
-        $this->clients = $clientModel->all();
+        $this->projects = $projectModel->all();
     }
     public function render()
     {

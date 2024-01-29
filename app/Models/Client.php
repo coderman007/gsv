@@ -15,7 +15,7 @@ class Client extends Model
         'name',
         'email',
         'phone',
-        'tranformer',
+        'transformer',
         'average_energy_consumption',
         'roof_dimension',
         'status',

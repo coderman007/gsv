@@ -27,32 +27,39 @@
                         @csrf
                         <div>
                             <x-label for="email" value="{{ __('Email') }}" class="text-gray-200 dark:text-gray-200" />
-                            <x-input id="email" class="block w-full mt-1" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                            <x-input id="email" class="block w-full mt-1" type="email" name="email"
+                                :value="old('email')" required autofocus autocomplete="username" />
                         </div>
                         <div class="mt-4">
-                            <x-label for="password" value="{{ __('Password') }}" class="text-gray-200 dark:text-gray-200" />
-                            <x-input id="password" class="block w-full mt-1" type="password" name="password" required autocomplete="current-password" />
+                            <x-label for="password" value="{{ __('Password') }}"
+                                class="text-gray-200 dark:text-gray-200" />
+                            <x-input id="password" class="block w-full mt-1" type="password" name="password" required
+                                autocomplete="current-password" />
                         </div>
                         <div class="block mt-4">
                             <label for="remember_me" class="flex items-center">
                                 <x-checkbox id="remember_me" name="remember" />
-                                <span class="ml-2 text-sm text-gray-200 dark:text-gray-400 dark:hover:text-gray-100">{{ __('Recuérdame') }}</span>
+                                <span class="ml-2 text-sm text-gray-200 dark:text-gray-400 dark:hover:text-gray-100">{{
+                                    __('Recuérdame') }}</span>
                             </label>
                         </div>
                         <div class="flex items-center justify-around mt-4">
                             @if (Route::has('password.request'))
                             <div class="flex flex-col text-center">
-                                <a class="text-sm text-gray-200 underline rounded-md dark:text-gray-400 hover:text-white dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
+                                <a class="text-sm text-gray-200 underline rounded-md dark:text-gray-400 hover:text-white dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                                    href="{{ route('password.request') }}">
                                     {{ __('¿Olvidaste tu contraseña?') }}
                                 </a>
 
-                                <a class="text-sm text-gray-200 underline rounded-md dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('register') }}">
+                                <a class="text-sm text-gray-200 underline rounded-md dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                                    href="{{ route('register') }}">
                                     {{ __('¿Aún no tienes una cuenta?') }}
                                 </a>
                             </div>
                             @endif
                             <div>
-                                <x-button class="ml-4 bg-blue-500 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-300 dark:text-gray-700 dark:font-bold dark:hover:text-gray-900">
+                                <x-button
+                                    class="ml-4 bg-blue-500 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-300 dark:text-gray-700 dark:font-bold dark:hover:text-gray-900">
                                     {{ __('Acceder') }}
                                 </x-button>
 
@@ -61,13 +68,15 @@
                         </div>
                     </form>
                     <hr class="mt-2">
-                    {{-- <x-sn-icons /> --}}
+                    {{--
+                    <x-sn-icons /> --}}
                 </div>
             </div>
         </div>
 
         <div class="space-y-4 text-center text-gray-700 dark:text-gray-200 mt-14 sm:-mb-8">
-            <p class="text-md">Al acceder, aceptas los <a href="#" class="underline">términos y condiciones</a> de nuestro sitio.</p>
+            <p class="text-md">Al acceder, aceptas los <a href="#" class="underline">términos y condiciones</a> de
+                nuestro sitio.</p>
 
             <p>Aplican los <a href="https://google.com/" class="underline"> términos de servicio de Google</a>.</p>
         </div>
