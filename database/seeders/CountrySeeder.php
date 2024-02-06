@@ -10,14 +10,26 @@ class CountrySeeder extends Seeder
 {
     public function run()
     {
-        // Verificar si ya existe Colombia en la base de datos
-        $colombia = Country::where('name', 'Colombia')->first();
+        $countries = [
+            'Colombia',
+            'Argentina',
+            'Mexico',
+            'Spain',
+            'Brazil',
+            'Chile'
+            // Agrega los otros países que desees aquí
+        ];
 
-        if (!$colombia) {
-            Country::create(['name' => 'Colombia']);
-            $this->command->info('"Colombia" agregado.');
-        } else {
-            $this->command->info('"Colombia" ya existe en la base de datos.');
+        foreach ($countries as $countryName) {
+            // Verificar si ya existe el país en la base de datos
+            $country = Country::where('name', $countryName)->first();
+
+            if (!$country) {
+                Country::create(['name' => $countryName]);
+                $this->command->info('"' . $countryName . '" agregado.');
+            } else {
+                $this->command->info('"' . $countryName . '" ya existe en la base de datos.');
+            }
         }
     }
 }

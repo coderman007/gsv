@@ -1,4 +1,37 @@
 <div class="container mx-auto mt-8">
+
+    {{-- <style>
+        [data-title] {
+            cursor: help;
+            /* Cambia el cursor al puntero de ayuda */
+        }
+
+        th {
+            position: relative;
+            text-align: center;
+        }
+
+        th[data-title]::after {
+            position: absolute;
+            content: attr(data-title);
+            bottom: -1.5em;
+            left: 0;
+            padding: 0.5em;
+            background-color: #4e8ff8b1;
+            color: #fff;
+            font-size: 0.8em;
+            border-radius: 0.25em;
+            white-space: nowrap;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        th:hover[data-title]::after {
+            opacity: 1;
+        }
+    </style> --}}
+
     @if ($users->count() > 0)
 
     <div class="grid items-center w-full md:grid-cols-12 mt-4">
@@ -35,8 +68,8 @@
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-300">
                             <tr>
-                                <th wire:click="order('id')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase cursor-pointer">
+                                <th data-title="Ordenar por ID" wire:click="order('id')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     ID
                                     @if ($sortBy == 'id')
                                     @if ($sortDirection == 'asc')
@@ -46,8 +79,9 @@
                                     @endif
                                     @endif
                                 </th>
-                                <th wire:click="order('name')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase cursor-pointer">
+
+                                <th data-title="Ordenar por nombre" wire:click="order('name')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     Nombre
                                     @if ($sortBy == 'name')
                                     @if ($sortDirection == 'asc')
@@ -57,8 +91,9 @@
                                     @endif
                                     @endif
                                 </th>
-                                <th wire:click="order('email')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase cursor-pointer">
+
+                                <th data-title="Ordenar por correo electrónico" wire:click="order('email')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     Correo Electrónico
                                     @if ($sortBy == 'email')
                                     @if ($sortDirection == 'asc')
@@ -68,6 +103,19 @@
                                     @endif
                                     @endif
                                 </th>
+
+                                <th data-title="Ordenar por Rol" wire:click="order('roles.name')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    Rol
+                                    @if ($sortBy == 'roles.name')
+                                    @if ($sortDirection == 'asc')
+                                    <span>&uarr;</span>
+                                    @else
+                                    <span>&darr;</span>
+                                    @endif
+                                    @endif
+                                </th>
+
                                 <th
                                     class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     Estado
@@ -82,8 +130,8 @@
                             @foreach($users as $user)
                             <tr wire:key="user-list-{{ $user->id }}"
                                 class="hover:bg-gray-100 text-gray-500 dark:hover:bg-blue-800">
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $user->id }}</td>
-                                <td class="flex items-center px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $user->id }}</td>
+                                <td class="flex justify-start px-6 py-4 whitespace-nowrap">
                                     <button
                                         class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
                                         <img class="h-8 w-8 rounded-full object-cover"
@@ -91,16 +139,22 @@
                                     </button>
                                     <span class="ml-2">{{ $user->name }}</span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
 
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap text-left">{{ $user->email }}</td>
+
+                                <td class="px-6 py-4 whitespace-nowrap text-left">{{ $user->roles->first()->name ??
+                                    'Sin Rol' }}</td>
+
+                                <td class="px-6 py-4 whitespace-nowrap text-left">
                                     @if ($user->status == 'Activo')
-                                    <span class="text-green-500">{{ $user->status }}</span>
+                                    <span class="bg-green-100 px-2 py-1 rounded-md text-green-500">{{ $user->status
+                                        }}</span>
                                     @else
-                                    <span class="text-red-500">{{ $user->status }}</span>
+                                    <span class="bg-red-200 px-2 py-1 rounded-md text-red-500">{{ $user->status
+                                        }}</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap text-left">
                                     <!-- Agrega aquí tus botones de acciones -->
                                     <livewire:users.user-show :user='$user' wire:key='user-show{{ $user->id}}' />
                                     <livewire:users.user-edit :userId='$user->id' wire:key='user-edit-{{ $user->id}}' />
@@ -157,10 +211,7 @@
                 , text: 'El usuario se ha eliminado correctamente!'
           })
         });
-
     </script>
-
-
     @endpush
 
 </div>

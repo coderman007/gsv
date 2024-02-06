@@ -4,12 +4,15 @@ namespace App\Livewire\Users;
 
 use App\Models\User;
 use Livewire\Component;
+use Spatie\Permission\Models\Role;
 
 class UserEdit extends Component
 {
     public $openEdit = false;
     public $userId;
-    public $name, $email, $password, $status = "";
+    public $name, $email, $password, $roles, $status = "";
+    public $selectedRole; // Agrega esta línea
+    public $user; // Agrega esta línea
 
     protected $rules = [
         'name' => 'required|min:5|max:255',
@@ -21,15 +24,25 @@ class UserEdit extends Component
     public function mount($userId)
     {
         $this->userId = $userId;
-        $user = User::findOrFail($userId);
-        $this->name = $user->name;
-        $this->email = $user->email;
-        $this->status = $user->status;
+        $this->user = User::findOrFail($userId); // Asigna el usuario a la propiedad $user
+        $this->name = $this->user->name;
+        $this->email = $this->user->email;
+        $this->status = $this->user->status;
+        $this->roles = Role::all();
     }
 
     public function updateUser()
     {
-        
+        // Verificar si el usuario autenticado existe
+        if (!auth()->check()) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+        }
+
+        // Verificar si el usuario autenticado tiene el rol 'Administrador' y está activo
+        if (!auth()->user()->hasRole('Administrador') || auth()->user()->status !== 'Activo') {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+        }
+
         $this->validate();
 
         $user = User::findOrFail($this->userId);
@@ -41,6 +54,11 @@ class UserEdit extends Component
             'status' => $this->status,
         ]);
 
+        // Actualizar el rol del usuario si se ha seleccionado uno
+        if ($this->selectedRole) {
+            $user->syncRoles([$this->selectedRole]);
+        }
+
         $this->openEdit = false;
         $this->dispatch('updatedUser', $user);
         $this->dispatch('updatedUserNotification');
@@ -51,4 +69,3 @@ class UserEdit extends Component
         return view('livewire.users.user-edit');
     }
 }
-

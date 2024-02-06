@@ -1,80 +1,79 @@
 <div>
-    <div>
-        <button wire:click="$set('openCreate', true)"
-            class="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Crear Cotización</button>
-    </div>
+    <button wire:click="$set('openCreate', true)"
+        class="rounded-md px-3.5 py-2 m-1 overflow-hidden relative group cursor-pointer border-2 font-medium border-gray-500 hover:border-blue-500 text-white">
+        <span
+            class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
+        <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease"><i
+                class="fa fa-solid fa-plus text-xl"></i> Agregar</span>
+    </button>
 
     <x-dialog-modal wire:model="openCreate">
-        <x-slot name="title">
-            <div class="pr-10">
-                <h2 class="mt-3 text-2xl text-right">Cotización N° </h2>
-            </div>
-        </x-slot>
 
-        <div>
-            <x-slot name="content">
-                <form wire:submit.prevent="guardarCotizacion" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="project_id" class="block text-sm font-medium text-gray-700">Proyecto</label>
-                        <select wire:model="project_id" id="project_id" class="mt-1 p-2 w-full rounded-md">
-                            <option value="" disabled selected>Selecciona un proyecto</option>
-                            <!-- Opciones de proyectos -->
-                        </select>
-                        @error('project_id') <span class="text-red-500">{{ $message }}</span> @enderror
+        <div class="container mx-auto p-4">
+            <!-- Formulario de cotización -->
+            <form class="bg-white p-8 rounded shadow-md">
+                <x-slot name="title">
+                    <div class="pr-10">
+                        <h2 class="mt-3 text-2xl text-right">Cotización N° </h2>
+                    </div>
+                </x-slot>
+                <x-slot name="content">
+                    <!-- Encabezado con botones -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex space-x-4">
+                            <div>
+                                <livewire:clients.client-create />
+                            </div>
+                            <div>
+                                <livewire:projects.project-create />
+                            </div>
+
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="client_id" class="block text-sm font-medium text-gray-700">Cliente</label>
-                        <select wire:model="client_id" id="client_id" class="mt-1 p-2 w-full rounded-md">
-                            <option value="" disabled selected>Selecciona un cliente</option>
-                            <!-- Opciones de clientes -->
-                        </select>
-                        @error('client_id') <span class="text-red-500">{{ $message }}</span> @enderror
+
+                    <!-- Datos de la cotización -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-600 text-sm font-semibold mb-2">Cliente:</label>
+                            <input type="text"
+                                class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-600 text-sm font-semibold mb-2">Proyecto:</label>
+                            <input type="text"
+                                class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500">
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="quotation_date" class="block text-sm font-medium text-gray-700">Fecha de
-                            Cotización</label>
-                        <input wire:model="quotation_date" type="date" id="quotation_date"
-                            class="mt-1 p-2 w-full rounded-md">
-                        @error('quotation_date') <span class="text-red-500">{{ $message }}</span> @enderror
+                    <!-- Otros datos de la cotización -->
+                    <div class="mt-4">
+                        <label class="block text-gray-600 text-sm font-semibold mb-2">Valor Mano de Obra:</label>
+                        <input class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500" />
                     </div>
 
-                    <div>
-                        <label for="validity_period" class="block text-sm font-medium text-gray-700">Período de Validez
-                            (días)</label>
-                        <input wire:model="validity_period" type="number" id="validity_period"
-                            class="mt-1 p-2 w-full rounded-md">
-                        @error('validity_period') <span class="text-red-500">{{ $message }}</span> @enderror
+                    <div class="mt-4">
+                        <label class="block text-gray-600 text-sm font-semibold mb-2">Descripción:</label>
+                        <textarea
+                            class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500"></textarea>
                     </div>
 
-                    <div>
-                        <label for="total_quotation_amount" class="block text-sm font-medium text-gray-700">Monto Total
-                            de la Cotización</label>
-                        <input wire:model="total_quotation_amount" type="number" step="0.01" id="total_quotation_amount"
-                            class="mt-1 p-2 w-full rounded-md">
-                        @error('total_quotation_amount') <span class="text-red-500">{{ $message }}</span> @enderror
+                    <!-- Más campos y detalles del formulario -->
+
+                </x-slot>
+
+                <x-slot name="footer">
+                    {{-- <div class="flex items-center justify-between mb-4">
+                        <button class="px-4 py-2 bg-gray-800 text-white rounded"
+                            wire:click="guardarCotizacion">Guardar</button>
+                    </div> --}}
+                    <div class="flex justify-end">
+                        <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue">Enviar
+                            Cotización</button>
                     </div>
-
-                    <!-- Otros campos del formulario según tus necesidades -->
-
-                </form>
-
-                <!-- Muestra un mensaje de éxito si existe -->
-                @if(session()->has('message'))
-                <div class="mt-4 bg-green-500 text-white p-2 rounded">
-                    {{ session('message') }}
-                </div>
-                @endif
-
-            </x-slot>
-
-            <x-slot name="footer">
-                <div class="flex items-center justify-between mb-4">
-                    <button class="px-4 py-2 bg-gray-800 text-white rounded"
-                        wire:click="guardarCotizacion">Guardar</button>
-                </div>
-            </x-slot>
+                </x-slot>
+            </form>
         </div>
     </x-dialog-modal>
 </div>

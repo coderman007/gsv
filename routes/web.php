@@ -4,7 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Livewire\Users\UserList;
 use App\Livewire\Clients\ClientList;
-use App\Livewire\Notification;
+use App\Livewire\Resources\ResourceList;
+use App\Livewire\Layouts\LayoutList;
+use App\Livewire\ProjectCategories\ProjectCategoryList;
+use App\Livewire\ProjectTypes\ProjectTypeList;
 use App\Livewire\Projects\ProjectList;
 use App\Livewire\Quotations\QuotationList;
 
@@ -32,7 +35,10 @@ Route::middleware([
 
     Route::get('users', UserList::class)->name('users');
     Route::get('clients', ClientList::class)->name('clients');
-    Route::get('notifications', Notification::class)->name('notifications');
     Route::get('projects', ProjectList::class)->name('projects');
+    Route::get('project-categories', ProjectCategoryList::class)->name('project-categories');
+    Route::get('project-types', ProjectTypeList::class)->name('project-types');
     Route::get('quotations', QuotationList::class)->name('quotations');
+    Route::get('resources', ResourceList::class)->name('resources');
+    Route::get('layouts', LayoutList::class)->name('layouts');
 });

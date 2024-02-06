@@ -18,48 +18,64 @@
                     </x-slot>
                     <x-slot name="content">
                         <div>
-                            <button type="button"
-                                class="relative w-full flex justify-center items-center px-5 py-2.5 font-medium tracking-wide text-white capitalize   bg-gray-500 rounded-md hover:bg-blue-500  focus:outline-none   transition duration-300 transform active:scale-95 ease-in-out">
-
+                            <div
+                                class="relative w-full flex justify-center items-center p-5 font-medium tracking-wide text-white capitalize bg-gray-500 rounded-md hover:bg-gray-600 focus:outline-none transition duration-500 transform active:scale-95 ease-in-out">
                                 <span class="pl-2 mx-1">
                                     <h2 class="mt-3 text-2xl text-center">Actualizar Usuario</h2>
                                 </span>
-                            </button>
+                            </div>
                             <div class="mt-5 bg-white rounded-lg shadow">
 
                                 <!-- Nombre -->
                                 <div class="px-5 pb-5">
-
-                                    <input wire:model.defer="name"
-                                        class=" text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400">
+                                    <x-label class="text-left text-xl text-gray-700" value="Nombre" />
+                                    <input wire:model="name"
+                                        class=" text-black w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-300  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400">
                                     <x-input-error for="name" />
+                                </div>
+
+                                <!-- Dropdown para Rol -->
+                                <div class="px-5 pb-5">
+                                    <x-label class="text-left text-xl text-gray-700" value="Tipo de Usuario" />
+                                    <select wire:model="selectedRole"
+                                        class="text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-300 focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400">
+                                        <option value="" disabled>Selecciona un Tipo</option>
+                                        @foreach($roles as $role)
+                                        <option value="{{ $role->name }}" {{ $role->name ==
+                                            $user->getRoleNames()->first() ? 'selected' : '' }}>
+                                            {{ $role->name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                    <x-input-error for="selectedRole" />
                                 </div>
 
                                 <!-- Correo Electrónico -->
                                 <div class="px-5 pb-5">
-                                    <input wire:model.defer="email" type="email"
-                                        class=" text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400">
+                                    <x-label class="text-left text-xl text-gray-700" value="Correo electrónico" />
+                                    <input wire:model="email" type="email"
+                                        class=" text-black w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-300  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400">
                                     <x-input-error for="email" />
 
                                 </div>
 
                                 <!-- Contraseña -->
                                 <div class="px-5 pb-5">
-                                    <x-label value="Contraseña (Deja en blanco si no deseas modificar)"
-                                        class="text-gray-700" />
+                                    <x-label class="text-left text-xl text-gray-700" value="Contraseña" />
                                     <x-input
-                                        class=" text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400"
-                                        wire:model.defer="password" type="password" />
+                                        class=" text-black w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-300  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400"
+                                        wire:model="password" placeholder="(Deja en blanco si no deseas modificar)"
+                                        type="password" />
                                     <x-input-error for="password" />
 
                                 </div>
 
                                 <!-- Dropdown para Estado -->
                                 <div class="px-5 pb-5">
-                                    <x-label value="Estado" class="text-gray-700" />
+                                    <x-label class="text-left text-xl text-gray-700" value="Estado" />
                                     <select
-                                        class=" text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400"
-                                        wire:model.defer="status">
+                                        class=" text-black w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-300  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400"
+                                        wire:model="status">
                                         <option value="" disabled>Selecciona un estado</option>
                                         <option value="Activo">Activo</option>
                                         <option value="Inactivo">Inactivo</option>

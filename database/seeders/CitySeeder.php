@@ -15,11 +15,11 @@ class CitySeeder extends Seeder
      */
     public function run()
     {
-        // Verificar si el departamento existe
+        // Verificar si el departamento de Antioquia existe
         $antioquia = Department::firstOrCreate(['name' => 'Antioquia']);
 
         // Ciudades y/o municipios de Antioquia en orden alfabético
-        $citiesData = [
+        $citiesDataAntioquia = [
             ['name' => 'Abejorral'],
             ['name' => 'Abriaquí'],
             ['name' => 'Alejandría'],
@@ -146,13 +146,13 @@ class CitySeeder extends Seeder
             ['name' => 'Zaragoza'],
         ];
 
-        // Asociar las ciudades al departamento
-        foreach ($citiesData as &$city) {
+        // Asociar las ciudades al departamento de Antioquia
+        foreach ($citiesDataAntioquia as &$city) {
             $city['department_id'] = $antioquia->id;
         }
 
-        // Usar Eloquent para insertar las ciudades
-        City::insert($citiesData);
+        // Usar Eloquent para insertar las ciudades de Antioquia
+        City::insert($citiesDataAntioquia);
 
         // Verificar si el departamento de Cundinamarca existe
         $cundinamarca = Department::firstOrCreate(['name' => 'Cundinamarca']);
@@ -245,7 +245,6 @@ class CitySeeder extends Seeder
             ['name' => 'Zipaquirá']
         ];
 
-
         // Asociar las ciudades de Cundinamarca al departamento
         foreach ($citiesDataCundinamarca as &$city) {
             $city['department_id'] = $cundinamarca->id;
@@ -253,5 +252,43 @@ class CitySeeder extends Seeder
 
         // Usar Eloquent para insertar las ciudades de Cundinamarca
         City::insert($citiesDataCundinamarca);
+
+        // Agregar ciudades ficticias para otros departamentos o provincias de diferentes países
+        // ... [nombre_del_departamento] = [ciudad1, ciudad2, ciudad3]
+        $citiesDataOtherDepartments = [
+            // Argentina
+            'Buenos Aires' => ['La Plata', 'Mar del Plata', 'Quilmes'],
+            'Córdoba' => ['Córdoba Capital', 'Villa María', 'Río Cuarto'],
+            'Mendoza' => ['Mendoza Capital', 'San Rafael', 'Godoy Cruz'],
+
+            // México
+            'Mexico City' => ['Mexico City Centro', 'Coyoacán', 'Polanco'],
+            'Jalisco' => ['Guadalajara', 'Zapopan', 'Tlaquepaque'],
+            'Nuevo León' => ['Monterrey', 'San Pedro Garza García', 'Guadalupe'],
+
+            // España
+            'Madrid' => ['Madrid Capital', 'Alcalá de Henares', 'Majadahonda'],
+            'Barcelona' => ['Barcelona Capital', 'Badalona', 'Hospitalet de Llobregat'],
+            'Valencia' => ['Valencia Capital', 'Gandía', 'Sagunto'],
+
+            // Brasil
+            'São Paulo' => ['São Paulo Capital', 'Guarulhos', 'Campinas'],
+            'Rio de Janeiro' => ['Rio de Janeiro Capital', 'Niterói', 'São Gonçalo'],
+            'Bahia' => ['Salvador', 'Feira de Santana', 'Vitória da Conquista'],
+
+            // Chile
+            'Santiago' => ['Santiago Centro', 'Providencia', 'Las Condes'],
+            'Valparaíso' => ['Valparaíso Capital', 'Viña del Mar', 'Quilpué'],
+            'Biobío' => ['Concepción', 'Talcahuano', 'Chillán'],
+        ];
+
+        foreach ($citiesDataOtherDepartments as $departmentName => $cities) {
+            $department = Department::firstOrCreate(['name' => $departmentName]);
+
+            foreach ($cities as &$city) {
+                $cityData = ['name' => $city, 'department_id' => $department->id];
+                City::create($cityData);
+            }
+        }
     }
 }

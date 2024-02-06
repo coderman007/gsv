@@ -1,7 +1,7 @@
 <div>
     <button wire:click="$set('openCreate', true)"
-        class="absolute right-10 top-10 mt-8 px-4 py-2 rounded-md text-blue-500 bg-blue-100 border border-blue-500 shadow-md hover:shadow-blue-400 hover:bg-blue-400 hover:text-white">
-        <i class="fa fa-solid fa-user-plus text-xl"></i> Agregar
+        class=" mt-8 px-4 py-2 rounded-md text-blue-500 bg-blue-100 border border-blue-500 shadow-md hover:shadow-blue-400 hover:bg-blue-400 hover:text-white">
+        <i class="fa fa-solid fa-plus text-xl"></i> Información Cliente
     </button>
 
     <x-dialog-modal wire:model="openCreate">
@@ -21,12 +21,14 @@
                     </div>
 
                     <!-- Dirección -->
-                    <div class="mb-4">
+                    {{-- <div class="mb-4">
                         <label for="address" class="block text-sm font-medium text-gray-700">Dirección</label>
                         <input type="text" wire:model="address" id="address" name="address"
                             class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
                         @error('address') <span class="text-red-500">{{ $message }}</span> @enderror
-                    </div>
+                    </div> --}}
+
+                    <livewire:locations.location-dropdown />
 
                     <!-- Teléfono -->
                     <div class="mb-4">

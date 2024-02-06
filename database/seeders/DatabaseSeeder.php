@@ -13,16 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        \App\Models\User::factory()->create([
-            'name' => 'Jaime',
-            'email' => 'coderman1980@gmail.com',
-            'password' => bcrypt('coderman'),
-            'status' => 'Activo',
-        ]);
-
         $this->call([
+            RoleSeeder::class,
             CountrySeeder::class,
             DepartmentSeeder::class,
             CitySeeder::class,
@@ -30,5 +22,16 @@ class DatabaseSeeder extends Seeder
             ProjectTypeSeeder::class,
             ProjectSeeder::class,
         ]);
+
+         // \App\Models\User::factory(10)->create();
+
+         $user = \App\Models\User::factory()->create([
+            'name' => 'Jaime',
+            'email' => 'coderman1980@gmail.com',
+            'password' => bcrypt('coderman'),
+            'status' => 'Activo',
+        ]);
+
+        $user->assignRole('Administrador');
     }
 }

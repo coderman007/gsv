@@ -6,6 +6,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
 class UserList extends Component
@@ -34,32 +35,32 @@ class UserList extends Component
         $this->resetPage();
     }
 
-    #[Computed()]
+    #[Computed]
     public function users()
     {
-        return User::where('id', 'like', '%' . $this->search . '%')
-            ->orWhere('name', 'like', '%' . $this->search . '%')
-            ->orWhere('email', 'like', '%' . $this->search . '%')
-            ->orderBy($this->sortBy, $this->sortDirection)
+        return User::where('users.id', 'like', '%' . $this->search . '%')
+            ->orWhere('users.name', 'like', '%' . $this->search . '%')
+            ->orWhere('users.email', 'like', '%' . $this->search . '%')
+            ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->select('users.*', DB::raw('IFNULL(roles.name, "Sin Rol") as role_name'))
+            ->orderBy('role_name', $this->sortDirection)
             ->paginate($this->perSearch);
     }
 
     #[On('createdUser')]
     public function createdUser($user = null)
     {
-
     }
 
     #[On('updatedUser')]
     public function updatedUser($user = null)
     {
-
     }
 
     #[On('deletedUser')]
     public function deletedUser($user = null)
     {
-
     }
 
     public function render()
