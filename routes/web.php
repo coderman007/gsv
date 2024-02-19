@@ -4,12 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Livewire\Users\UserList;
 use App\Livewire\Clients\ClientList;
-use App\Livewire\Resources\ResourceList;
 use App\Livewire\Layouts\LayoutList;
 use App\Livewire\ProjectCategories\ProjectCategoryList;
 use App\Livewire\ProjectTypes\ProjectTypeList;
 use App\Livewire\Projects\ProjectList;
 use App\Livewire\Quotations\QuotationList;
+use App\Livewire\Resources\Labors\LaborList;
 
 // use App\Http\Controllers\QuotationController;
 
@@ -39,6 +39,6 @@ Route::middleware([
     Route::get('project-categories', ProjectCategoryList::class)->name('project-categories');
     Route::get('project-types', ProjectTypeList::class)->name('project-types');
     Route::get('quotations', QuotationList::class)->name('quotations');
-    Route::get('resources', ResourceList::class)->name('resources');
+    Route::get('labors', LaborList::class)->name('labors');
     Route::get('layouts', LayoutList::class)->name('layouts');
 });

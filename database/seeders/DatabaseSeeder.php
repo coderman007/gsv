@@ -21,11 +21,14 @@ class DatabaseSeeder extends Seeder
             ProjectCategorySeeder::class,
             ProjectTypeSeeder::class,
             ProjectSeeder::class,
+            LaborSeeder::class,
+            MaterialSeeder::class,
+            ToolSeeder::class,
         ]);
 
-         // \App\Models\User::factory(10)->create();
+        // \App\Models\User::factory(10)->create();
 
-         $user = \App\Models\User::factory()->create([
+        $user = \App\Models\User::factory()->create([
             'name' => 'Jaime',
             'email' => 'coderman1980@gmail.com',
             'password' => bcrypt('coderman'),

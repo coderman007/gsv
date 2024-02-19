@@ -31,8 +31,8 @@
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('resources') }}" :active="request()->routeIs('resources')">
-                        {{ __('Recursos') }}
+                    <x-nav-link href="{{ route('labors') }}" :active="request()->routeIs('resources')">
+                        {{ __('Mano de Obra') }}
                     </x-nav-link>
                 </div>
 

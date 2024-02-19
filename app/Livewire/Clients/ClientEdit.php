@@ -12,15 +12,15 @@ class ClientEdit extends Component
     public $name, $address, $phone, $email, $average_energy_consumption, $solar_radiation_level, $roof_dimensions_length, $roof_dimensions_width, $status;
 
     protected $rules = [
-        'name' => 'required|min:5|max:255',
-        'address' => 'required|max:255',
-        'phone' => 'required|max:255',
-        'email' => 'required|email|max:255',
-        'average_energy_consumption' => 'required|numeric',
-        'solar_radiation_level' => 'required|numeric',
-        'roof_dimensions_length' => 'required|numeric',
-        'roof_dimensions_width' => 'required|numeric',
-        'status' => 'required'
+        'name' => 'min:5|max:255',
+        'address' => 'string|max:255',
+        'phone' => 'string|max:255',
+        'email' => 'string|email|max:255',
+        'average_energy_consumption' => 'numeric',
+        'solar_radiation_level' => 'numeric',
+        'roof_dimensions_length' => 'numeric',
+        'roof_dimensions_width' => 'numeric',
+        'status' => 'in:Active'
     ];
     public function mount(Client $client)
     {
@@ -42,7 +42,6 @@ class ClientEdit extends Component
         $client = $this->client->update($validated);
         $this->dispatch('updatedClient', $client);
         $this->openEdit = false;
-        $this->reset();
     }
 
     public function render()

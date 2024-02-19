@@ -3,7 +3,9 @@
     <div class="grid items-center w-full md:grid-cols-12 mt-2">
         {{-- Barra de búsqueda --}}
         <div class="col-span-4">
-            <x-input type="text" name="search" wire:model="search" class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400" placeholder="Buscar..." />
+            <x-input type="text" name="search" wire:model="search"
+                class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
+                placeholder="Buscar..." />
         </div>
         <div class="inline mt-4 pl-4 pr-24 md:pl-0 md:pr-0 md:mt-0 md:block md:col-span-4">
             <div class="text-xl font-bold text-center text-blue-400 uppercase">
@@ -93,7 +95,8 @@
             </thead>
             <tbody>
                 @forelse ($this->clients as $client)
-                <tr class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <tr
+                    class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ $client->id }}
                     </th>
@@ -104,9 +107,11 @@
                     <td class="px-6 py-4 dark:text-lg">{{ $client->average_energy_consumption }}</td>
 
                     <td class="px-6 py-4 dark:text-lg">
-                        {{ number_format($client->roof_dimensions_length * $client->roof_dimensions_width, 2, '.', '') }}
+                        {{ number_format($client->roof_dimensions_length * $client->roof_dimensions_width, 2, '.', '')
+                        }}
                     </td>
-                    <td class="px-6 py-4 dark:text-lg {{ $client->status === 'Activo' ? 'text-green-600' : 'text-red-500' }}">
+                    <td
+                        class="px-6 py-4 dark:text-lg {{ $client->status === 'Activo' ? 'text-green-600' : 'text-red-500' }}">
                         {{ $client->status }}
                     </td>
 
@@ -138,10 +143,11 @@
     </h1>
     <div class="flex justify-center w-full h-auto">
         <livewire:clients.client-create />
-        <button class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
+        <button
+            class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
             <a href="{{ route('clients') }}">Volver</a>
         </button>
     </div>
     @endif
-
+    <livewire:step-form />
 </div>

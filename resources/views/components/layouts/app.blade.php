@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
@@ -41,36 +41,13 @@
         </main>
     </div>
     <script src="https://kit.fontawesome.com/8e38c8557e.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @stack('modals')
     @livewireScripts
+    <script>
+        import Swal from 'sweetalert2';
+    </script>
     @stack('js')
-
-    {{-- <script>
-        Livewire.on('alert', function(message) {
-            Swal.fire(
-                'Excelente!'
-                , message
-                , 'success'
-            );
-        });
-
-    </script> --}}
-
-    {{-- <script>
-        document.addEventListener('livewire:inizialized', => () {
-            @this.on('newClientNotification', (event) => {
-                const data = event
-                swal.fire({
-                    icon: data[0][icon]
-                    , title: data[0][title]
-                    , text: data[0][text]
-                , })
-
-            })
-        })
-
-    </script> --}}
 
 </body>
 

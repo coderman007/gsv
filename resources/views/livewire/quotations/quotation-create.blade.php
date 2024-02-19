@@ -7,7 +7,7 @@
                 class="fa fa-solid fa-plus text-xl"></i> Agregar</span>
     </button>
 
-    <x-dialog-modal wire:model="openCreate">
+    <x-dialog-modal maxWidth="5xl" wire:model="openCreate">
 
         <div class="container mx-auto p-4">
             <!-- Formulario de cotización -->
@@ -32,7 +32,7 @@
                     </div>
 
 
-                    <!-- Datos de la cotización -->
+                    <!-- Datos del cliente y el proyecto -->
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-gray-600 text-sm font-semibold mb-2">Cliente:</label>
@@ -46,20 +46,47 @@
                         </div>
                     </div>
 
-                    <!-- Otros datos de la cotización -->
-                    <div class="mt-4">
-                        <label class="block text-gray-600 text-sm font-semibold mb-2">Valor Mano de Obra:</label>
-                        <input class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500" />
+                    <!-- Datos de materiales y herramientas-->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-600 text-sm font-semibold mb-2">Cliente:</label>
+                            <input type="text"
+                                class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-600 text-sm font-semibold mb-2">Proyecto:</label>
+                            <input type="text"
+                                class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500">
+                        </div>
                     </div>
 
-                    <div class="mt-4">
-                        <label class="block text-gray-600 text-sm font-semibold mb-2">Descripción:</label>
-                        <textarea
-                            class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500"></textarea>
+                    <!-- Datos de mano de obra y transporte -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-600 text-sm font-semibold mb-2">Total Mano de Obra:</label>
+                            <input wire:model="labor" type="text"
+                                class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-600 text-sm font-semibold mb-2">Total Transporte:</label>
+                            <input type="text"
+                                class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500">
+                        </div>
                     </div>
 
-                    <!-- Más campos y detalles del formulario -->
-
+                    <!-- Datos de costos adicionales y descripción -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-600 text-sm font-semibold mb-2">Cliente:</label>
+                            <input wire:model="additional_costs" type="text"
+                                class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-600 text-sm font-semibold mb-2">Proyecto:</label>
+                            <input type="text"
+                                class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
                 </x-slot>
 
                 <x-slot name="footer">

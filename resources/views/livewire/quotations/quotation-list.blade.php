@@ -1,5 +1,3 @@
-<!-- livewire/quotations/quotation-list.blade.php -->
-
 <div class="container mx-auto mt-8">
     <div class="grid items-center w-full md:grid-cols-12 mt-4">
         <div class="col-span-4 ml-4 shadow-md shadow-gray-500 border dark:border-blue-500 rounded-lg">
@@ -18,9 +16,10 @@
             </div>
         </div>
     </div>
+
     <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
         Resultados
-        <select name="perSearch" id="perSearch" wire:model.live="perSearch" class="rounded-lg cursor-pointer">
+        <select name="perSearch" id="perSearch" wire:model="perSearch" class="rounded-lg cursor-pointer">
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="20">20</option>
@@ -128,4 +127,17 @@
                 {{ $quotations->links() }}
             </div>
     </section>
+
+    @push('locaion_js')
+    <script>
+        // Notificación de creación de ubicaciones
+        Livewire.on('createdLocationNotification', function(){
+            swal.fire({
+                icon:'success'
+                , title: 'Ubicación Creada!'
+                , text: 'La ubicación ha sido almacenada correctamente!'
+            })
+        });
+    </script>
+    @endpush
 </div>

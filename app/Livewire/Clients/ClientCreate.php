@@ -13,20 +13,26 @@ class ClientCreate extends Component
 {
     public $openCreate = false;
 
-    public $name, $email, $phone, $average_energy_consumption, $roof_dimension, $image;
+    public $name;
+    public $email;
+    public $phone;
+    public $transformer = "";
+    public $average_energy_consumption;
+    public $roof_dimension;
+    public $image;
     public $status = "";
 
     protected $rules = [
-        'country_id' => 'required',
-        'department_id' => 'required',
-        'city_id' => 'required',
         'location_id' => 'required',
         'name' => 'required',
-        'phone' => 'required',
         'email' => 'required|email',
+        'phone' => 'required',
+        'transformer' => 'required',
         'average_energy_consumption' => 'required|numeric',
         'roof_dimension' => 'required|numeric',
         'status' => 'required',
+        'image' => 'nullable|file|mimes:jpeg,png,jpg|max:2048', // Maximum file size: 2 MB
+
     ];
 
 
@@ -39,6 +45,7 @@ class ClientCreate extends Component
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
+            'transformer' => $this->transformer,
             'average_energy_consumption' => $this->average_energy_consumption,
             'roof_dimension' => $this->roof_dimension,
             'status' => $this->status,

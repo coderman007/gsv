@@ -155,7 +155,6 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-left">
-                                    <!-- Agrega aquí tus botones de acciones -->
                                     <livewire:users.user-show :user='$user' wire:key='user-show{{ $user->id}}' />
                                     <livewire:users.user-edit :userId='$user->id' wire:key='user-edit-{{ $user->id}}' />
                                     <livewire:users.user-delete :user='$user' wire:key='user-delete-{{ $user->id}}' />
