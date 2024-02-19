@@ -23,12 +23,16 @@ class UserEdit extends Component
 
     public function mount($userId)
     {
-        $this->userId = $userId;
-        $this->user = User::findOrFail($userId); // Asigna el usuario a la propiedad $user
-        $this->name = $this->user->name;
-        $this->email = $this->user->email;
-        $this->status = $this->user->status;
-        $this->roles = Role::all();
+        try {
+            $this->userId = $userId;
+            $this->user = User::findOrFail($userId);
+            $this->name = $this->user->name;
+            $this->email = $this->user->email;
+            $this->status = $this->user->status;
+            $this->roles = Role::all();
+        } catch (\Exception $exception) {
+            abort(404, ['Usuario no encontrado', $exception->getMessage(),]);
+        }
     }
 
     public function updateUser()

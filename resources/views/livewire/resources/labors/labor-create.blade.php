@@ -4,7 +4,7 @@
         <span
             class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
         <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease"><i
-                class="fa fa-solid fa-user-plus text-xl"></i> Agregar</span>
+                class="fa fa-solid fa-users-between-lines text-xl"></i> Agregar Empleado</span>
     </button>
 
     <x-dialog-modal wire:model="openCreate">

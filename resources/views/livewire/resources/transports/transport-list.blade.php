@@ -9,7 +9,7 @@
         </div>
         <div class="inline mt-4 pl-4 pr-24 md:pl-0 md:pr-0 md:mt-0 md:block md:col-span-4">
             <div class="text-3xl font-bold text-center text-blue-500 uppercase">
-                <h1>Transportes</h1>
+                <h1>Transporte</h1>
             </div>
         </div>
     </div>
@@ -65,6 +65,94 @@
                                     @endif
                                 </th>
 
+                                <th data-title="Ordenar por Valor Comercial" wire:click="order('commercial_value')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    Valor Comercial
+                                    @if ($sortBy == 'commercial_value')
+                                    @if ($sortDirection == 'asc')
+                                    <span>&uarr;</span>
+                                    @else
+                                    <span>&darr;</span>
+                                    @endif
+                                    @endif
+                                </th>
+
+                                <th data-title="Ordenar por Tasa de Depreciación"
+                                    wire:click="order('depreciation_rate')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    Tasa de Depreciación
+                                    @if ($sortBy == 'depreciation_rate')
+                                    @if ($sortDirection == 'asc')
+                                    <span>&uarr;</span>
+                                    @else
+                                    <span>&darr;</span>
+                                    @endif
+                                    @endif
+                                </th>
+
+                                <th data-title="Ordenar por Costo de Mantenimiento Anual"
+                                    wire:click="order('annual_maintenance_cost')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    Costo Mantenimiento Anual
+                                    @if ($sortBy == 'annual_maintenance_cost')
+                                    @if ($sortDirection == 'asc')
+                                    <span>&uarr;</span>
+                                    @else
+                                    <span>&darr;</span>
+                                    @endif
+                                    @endif
+                                </th>
+
+                                <th data-title="Ordenar por Costo por Km (Convencional)"
+                                    wire:click="order('cost_per_km_conventional')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    Costo por Km (Convencional)
+                                    @if ($sortBy == 'cost_per_km_conventional')
+                                    @if ($sortDirection == 'asc')
+                                    <span>&uarr;</span>
+                                    @else
+                                    <span>&darr;</span>
+                                    @endif
+                                    @endif
+                                </th>
+
+                                <th data-title="Ordenar por Costo por Km (Combustible)"
+                                    wire:click="order('cost_per_km_fuel')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    Costo por Km (Combustible)
+                                    @if ($sortBy == 'cost_per_km_fuel')
+                                    @if ($sortDirection == 'asc')
+                                    <span>&uarr;</span>
+                                    @else
+                                    <span>&darr;</span>
+                                    @endif
+                                    @endif
+                                </th>
+
+                                <th data-title="Ordenar por Salario por Mes" wire:click="order('salary_per_month')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    Salario por Mes
+                                    @if ($sortBy == 'salary_per_month')
+                                    @if ($sortDirection == 'asc')
+                                    <span>&uarr;</span>
+                                    @else
+                                    <span>&darr;</span>
+                                    @endif
+                                    @endif
+                                </th>
+
+                                <th data-title="Ordenar por Salario por Hora" wire:click="order('salary_per_hour')"
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    Salario por Hora
+                                    @if ($sortBy == 'salary_per_hour')
+                                    @if ($sortDirection == 'asc')
+                                    <span>&uarr;</span>
+                                    @else
+                                    <span>&darr;</span>
+                                    @endif
+                                    @endif
+                                </th>
+
                                 <th
                                     class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     Acciones
@@ -72,22 +160,39 @@
                             </tr>
                         </thead>
 
+
                         <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700">
                             @foreach ($transports as $transport)
                             <tr wire:key="transport-list-{{ $transport->id }}"
                                 class="hover:bg-gray-100 text-gray-500 dark:hover:bg-blue-800">
                                 <td class="px-6 text-left py-4 whitespace-nowrap">{{ $transport->vehicle_type }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $transport->annual_mileage }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $transport->average_speed }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $transport->commercial_value }}
+                                </td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $transport->depreciation_rate }}
+                                </td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $transport->annual_maintenance_cost
+                                    }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{
+                                    $transport->cost_per_km_conventional }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $transport->cost_per_km_fuel }}
+                                </td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $transport->salary_per_month }}
+                                </td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $transport->salary_per_hour }}</td>
 
-                                <!-- Agrega aquí las columnas adicionales para mostrar información de los transportes -->
 
                                 <td class="px-6 py-4 whitespace-nowrap text-left">
-                                    <!-- Agrega aquí tus botones de acciones para mostrar, editar y eliminar transportes -->
-                                    <livewire:resources.transports.transport-show :transport='$transport'
-                                        wire:key='transport-show{{ $transport->id }}' />
-                                    <livewire:resources.transports.transport-edit :transportId='$transport->id'
-                                        wire:key='transport-edit-{{ $transport->id }}' />
-                                    <livewire:resources.transports.transport-delete :transport='$transport'
-                                        wire:key='transport-delete-{{ $transport->id }}' />
+                                    <div class="flex items-center">
+                                        <!-- Agrega aquí tus botones de acciones para mostrar, editar y eliminar transportes -->
+                                        <livewire:resources.transports.transport-show :transport='$transport'
+                                            wire:key='transport-show{{ $transport->id }}' />
+                                        <livewire:resources.transports.transport-edit :transportId='$transport->id'
+                                            wire:key='transport-edit-{{ $transport->id }}' />
+                                        <livewire:resources.transports.transport-delete :transport='$transport'
+                                            wire:key='transport-delete-{{ $transport->id }}' />
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach
@@ -113,23 +218,22 @@
     </div>
     @endif
 
-    <!-- Agrega aquí tus scripts JavaScript necesarios -->
+    <!-- JavaScript -->
     @push('js')
     <script>
-        // Agrega aquí tus scripts JavaScript necesarios
         Livewire.on('createdTransportNotification', function(){
             swal.fire({
                 icon:'success'
                 , title: 'Transporte Creado!'
-                , text: 'La Transport se ha creado correctamente!'
+                , text: 'El recurso se ha creado correctamente!'
             })
         });
 
         Livewire.on('updatedTransportNotification', function(){
             swal.fire({
                 icon:'success'
-                , title: 'Transporte Actualizado!'
-                , text: 'La Transport se ha actualizado correctamente!'
+                , title: 'Recurso Actualizado!'
+                , text: 'El recurso se ha actualizado correctamente!'
             })
         });
 
@@ -137,7 +241,7 @@
             swal.fire({
                 icon: 'success'
                 , title: 'Transporte Eliminado!'
-                , text: 'La Transport se ha eliminado correctamente!'
+                , text: 'El recurso se ha eliminado correctamente!'
             })
         });
     </script>

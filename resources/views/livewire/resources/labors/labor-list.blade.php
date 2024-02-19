@@ -8,7 +8,7 @@
         </div>
         <div class="inline mt-4 pl-4 pr-24 md:pl-0 md:pr-0 md:mt-0 md:block md:col-span-4">
             <div class="text-3xl font-bold text-center text-blue-500 uppercase">
-                <h1>Mano de Obra</h1>
+                <h1>Personal</h1>
             </div>
         </div>
         <div class="col-span-4 mt-4 md:mt-0 md:block md:col-span-4">
@@ -123,12 +123,14 @@
                                 <td class="px-6 text-left py-4 whitespace-nowrap">{{ $labor->real_daily_cost }}</td>
 
                                 <td class="px-6 py-4 whitespace-nowrap text-left">
-                                    <livewire:resources.labors.labor-show :labor='$labor'
-                                        wire:key='labor-show{{ $labor->id }}' />
-                                    <livewire:resources.labors.labor-edit :laborId='$labor->id'
-                                        wire:key='labor-edit-{{ $labor->id }}' />
-                                    <livewire:resources.labors.labor-delete :labor='$labor'
-                                        wire:key='labor-delete-{{ $labor->id }}' />
+                                    <div class="flex items-center">
+                                        <livewire:resources.labors.labor-show :labor='$labor'
+                                            wire:key='labor-show{{ $labor->id}}' />
+                                        <livewire:resources.labors.labor-edit :laborId='$labor->id'
+                                            wire:key='labor-edit-{{ $labor->id}}' />
+                                        <livewire:resources.labors.labor-delete :labor='$labor'
+                                            wire:key='labor-delete-{{ $labor->id}}' />
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach

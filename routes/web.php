@@ -10,6 +10,9 @@ use App\Livewire\ProjectTypes\ProjectTypeList;
 use App\Livewire\Projects\ProjectList;
 use App\Livewire\Quotations\QuotationList;
 use App\Livewire\Resources\Labors\LaborList;
+use App\Livewire\Resources\Transports\TransportList;
+use App\Livewire\Resources\Materials\MaterialList;
+use App\Livewire\Resources\Tools\ToolList;
 
 // use App\Http\Controllers\QuotationController;
 
@@ -39,6 +42,10 @@ Route::middleware([
     Route::get('project-categories', ProjectCategoryList::class)->name('project-categories');
     Route::get('project-types', ProjectTypeList::class)->name('project-types');
     Route::get('quotations', QuotationList::class)->name('quotations');
+    // Route::get('resources', ResourceList::class)->name('resources');
     Route::get('labors', LaborList::class)->name('labors');
+    Route::get('transports', TransportList::class)->name('transports');
+    Route::get('materials', MaterialList::class)->name('materials');
+    Route::get('tools', ToolList::class)->name('tools');
     Route::get('layouts', LayoutList::class)->name('layouts');
 });
