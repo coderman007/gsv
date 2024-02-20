@@ -1,4 +1,12 @@
 <div>
+
+    <style>
+        /* Estilo para reducir el tamaño del título */
+        .swal2-title.swal2-title-small {
+            font-size: 20px;/
+        }
+    </style>
+
     <div class="max-w-md mx-auto bg-white shadow-md p-6 rounded-md">
         <h2 class="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Seleccione una ubicación</h2>
 
@@ -46,13 +54,34 @@
             <input wire:model="address" type="text"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Dirección">
+            <x-input-error for="location" />
         </div>
-        <x-input-error for="location" />
         @endif
 
-        <div class="mt-6">
+        <!-- Botón para enviar el formulario -->
+        <div class="mt-4">
             <button wire:click="saveLocation"
-                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">Guardar</button>
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 active:bg-blue-800">
+                Guardar Ubicación
+            </button>
         </div>
     </div>
+
+    @push('js')
+    <script>
+        // Notificación de Ubicación Almacenada
+        Livewire.on('locationStored', function(){
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: 'Ubicación Almacenada con éxito!',
+                showConfirmButton: false,
+                timer: 3000,
+                customClass: {
+                    title: 'swal2-title-small', 
+                }
+            });
+        });
+    </script>
+    @endpush
 </div>

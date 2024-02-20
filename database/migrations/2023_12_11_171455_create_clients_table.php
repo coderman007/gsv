@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('phone');
             $table->enum('transformer', ['Trifásico', 'Monofásico']);
             $table->decimal('average_energy_consumption', 10, 2);
+            $table->decimal('solar_radiation_level', 8, 2);
             $table->decimal('roof_dimension', 8, 2);
             $table->enum('status', ['Activo', 'Inactivo'])->default('Activo');
             $table->string('image')->nullable();

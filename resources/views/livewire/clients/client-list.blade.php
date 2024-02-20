@@ -149,5 +149,4 @@
         </button>
     </div>
     @endif
-    <livewire:step-form />
 </div>

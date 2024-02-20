@@ -18,8 +18,7 @@
             <div class="md:px-5 pb-5">
                 <div class="md:mx-6">
                     <div class="bg-gray-500 p-4 rounded-lg text-white text-center">
-                        <img class="h-24 w-24 mx-auto mb-2 rounded-full object-cover border-4 border-gray-200"
-                            src="{{ $tool->image }}" alt="{{ $tool->name }}">
+
                         <h3 class="text-xl font-semibold">{{ $tool->name }}</h3>
                         <p class="p-2 rounded-md text-lg text-center">
                             Categoría: {{ $tool->category }}

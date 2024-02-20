@@ -17,6 +17,7 @@ class Client extends Model
         'phone',
         'transformer',
         'average_energy_consumption',
+        'solar_radiation_level',
         'roof_dimension',
         'status',
         'image'

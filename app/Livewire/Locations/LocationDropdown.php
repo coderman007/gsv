@@ -62,6 +62,14 @@ class LocationDropdown extends Component
             // Crear la ubicación
             try {
                 Location::create($this->location);
+
+                // Emitir el evento Livewire
+                $this->dispatch('locationStored', [
+                    'title' => 'Success',
+                    'text' => 'Ubicación almacenada con Éxito!',
+                    'icon' => 'success'
+                ]);
+
                 $this->reset();
             } catch (\Exception $e) {
                 $this->addError('saveLocation', 'Error al guardar la ubicación.');
@@ -70,7 +78,6 @@ class LocationDropdown extends Component
             $this->addError('saveLocation', 'La ubicación ya existe.');
         }
     }
-
 
     // Método para cargar departamentos
     private function loadDepartments($countryId)

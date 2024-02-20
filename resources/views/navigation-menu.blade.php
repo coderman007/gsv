@@ -43,7 +43,7 @@
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button type="button"
-                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-800 hover:text-blue-500 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-800 hover:text-blue-500 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-blue-500 active:text-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
                                 {{ __('Recursos') }}
                                 <svg class="ms-2 -me-0.5 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -55,6 +55,14 @@
 
                         <x-slot name="content">
                             <!-- Subopciones de Recursos -->
+                            <x-dropdown-link class="hover:text-blue-500" href="{{ route('project-categories') }}"
+                                :active="request()->routeIs('project-categories')">
+                                {{ __('Categorías') }}
+                            </x-dropdown-link>
+                            <x-dropdown-link class="hover:text-blue-500" href="{{ route('project-types') }}"
+                                :active="request()->routeIs('project-types')">
+                                {{ __('Tipos') }}
+                            </x-dropdown-link>
                             <x-dropdown-link class="hover:text-blue-500" href="{{ route('labors') }}"
                                 :active="request()->routeIs('labors')">
                                 {{ __('Personal') }}
@@ -73,6 +81,13 @@
                             </x-dropdown-link>
                         </x-slot>
                     </x-dropdown>
+                </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link class="hover:text-blue-500" href="{{ route('projects') }}"
+                        :active="request()->routeIs('projects')">
+                        {{ __('Projectos') }}
+                    </x-nav-link>
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
