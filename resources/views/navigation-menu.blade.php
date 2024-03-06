@@ -63,8 +63,8 @@
                                 :active="request()->routeIs('project-types')">
                                 {{ __('Tipos') }}
                             </x-dropdown-link>
-                            <x-dropdown-link class="hover:text-blue-500" href="{{ route('labors') }}"
-                                :active="request()->routeIs('labors')">
+                            <x-dropdown-link class="hover:text-blue-500" href="{{ route('positions') }}"
+                                :active="request()->routeIs('positions')">
                                 {{ __('Personal') }}
                             </x-dropdown-link>
                             <x-dropdown-link class="hover:text-blue-500" href="{{ route('materials') }}"

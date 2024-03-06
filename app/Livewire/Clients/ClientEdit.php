@@ -13,14 +13,9 @@ class ClientEdit extends Component
 
     protected $rules = [
         'name' => 'min:5|max:255',
-        'address' => 'string|max:255',
         'phone' => 'string|max:255',
         'email' => 'string|email|max:255',
-        'average_energy_consumption' => 'numeric',
-        'solar_radiation_level' => 'numeric',
-        'roof_dimensions_length' => 'numeric',
-        'roof_dimensions_width' => 'numeric',
-        'status' => 'in:Active'
+        'status' => 'in:Active',
     ];
     public function mount(Client $client)
     {

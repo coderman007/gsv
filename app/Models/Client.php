@@ -9,18 +9,14 @@ class Client extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
         'location_id',
+        'type',
         'name',
         'email',
         'phone',
-        'transformer',
-        'average_energy_consumption',
-        'solar_radiation_level',
-        'roof_dimension',
         'status',
-        'image'
+        'image',
     ];
 
     public function quotations()

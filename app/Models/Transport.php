@@ -9,16 +9,10 @@ class Transport extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'vehicle_type',
-        'annual_mileage',
-        'average_speed',
-        'commercial_value',
-        'depreciation_rate',
-        'annual_maintenance_cost',
-        'cost_per_km_conventional',
-        'cost_per_km_fuel',
-        'salary_per_month',
-        'salary_per_hour',
-    ];
+    protected $fillable = ['name', 'unit', 'quantity', 'unit_price', 'total_price'];
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
 }

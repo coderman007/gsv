@@ -78,7 +78,7 @@
                                 </button>
                                 <button type="button"
                                     class="relative w-full flex justify-center items-center px-5 py-2.5 font-medium tracking-wide text-white capitalize bg-gray-500 rounded-md hover:bg-blue-500 focus:outline-none transition duration-300 transform active:scale-95 ease-in-out disabled:opacity-50 disabled:bg-blue-600 disabled:text-white"
-                                    wire:click="createLabor" wire:loading.attr="disabled" wire:target="createLabor">
+                                    wire:click="createPosition" wire:loading.attr="disabled" wire:target="createPosition">
                                     <span class="mx-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 640 512"
                                             width="24px" fill="#FFFFFF">

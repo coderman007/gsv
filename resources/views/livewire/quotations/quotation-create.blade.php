@@ -64,7 +64,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-gray-600 text-sm font-semibold mb-2">Total Mano de Obra:</label>
-                            <input wire:model="labor" type="text"
+                            <input type="text"
                                 class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500">
                         </div>
                         <div>

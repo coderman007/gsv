@@ -9,20 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('transports', function (Blueprint $table) {
             $table->id();
-            $table->string('vehicle_type');
-            $table->integer('annual_mileage');
-            $table->decimal('average_speed', 5, 2);
-            $table->decimal('commercial_value', 15, 2);
-            $table->decimal('depreciation_rate', 5, 2);
-            $table->decimal('annual_maintenance_cost', 15, 2);
-            $table->decimal('cost_per_km_conventional', 10, 2);
-            $table->decimal('cost_per_km_fuel', 10, 2);
-            $table->decimal('salary_per_month', 15, 2);
-            $table->decimal('salary_per_hour', 10, 2);
+            $table->string('name');
+            $table->string('unit');
+            $table->integer('quantity');
+            $table->double('unit_price');
+            $table->double('total_price');
             $table->timestamps();
         });
     }
@@ -30,7 +25,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('transports');
     }

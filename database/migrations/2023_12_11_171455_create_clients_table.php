@@ -15,15 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('location_id');
 
+            $table->enum('type', ['Persona', 'Empresa']);
             $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone');
-            $table->enum('transformer', ['Trifásico', 'Monofásico']);
-            $table->decimal('average_energy_consumption', 10, 2);
-            $table->decimal('solar_radiation_level', 8, 2);
-            $table->decimal('roof_dimension', 8, 2);
-            $table->enum('status', ['Activo', 'Inactivo'])->default('Activo');
+            $table->string('email')->nullable()->unique();
+            $table->string('phone')->nullable();
             $table->string('image')->nullable();
+            $table->enum('status', ['Activo', 'Inactivo'])->nullable()->default('Activo');
 
             $table->foreign('location_id')->references('id')->on('locations')->cascadeOnDelete();
             $table->timestamps();

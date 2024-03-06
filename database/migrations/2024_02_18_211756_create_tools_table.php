@@ -9,13 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('tools', function (Blueprint $table) {
             $table->id();
-            $table->string('category');
             $table->string('name');
-            $table->decimal('unit_price', 10, 2);
+            $table->string('unit');
+            $table->integer('percentage');
+            $table->integer('quantity');
+            $table->double('unit_price');
+            $table->double('surcharge');
             $table->timestamps();
         });
     }
@@ -23,7 +26,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('tools');
     }

@@ -9,14 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
-            $table->string('category');
-            $table->string('reference');
-            $table->string('description');
-            $table->decimal('unit_price', 10, 2);
+            $table->string('name');
+            $table->string('unit');
+            $table->integer('quantity');
+            $table->double('unit_price');
+            $table->double('total_price');
+            $table->double('surcharge');
             $table->timestamps();
         });
     }
@@ -24,7 +26,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('materials');
     }

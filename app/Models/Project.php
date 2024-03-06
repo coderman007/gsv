@@ -11,10 +11,11 @@ class Project extends Model
 
     protected $fillable = [
         'project_category_id',
-        'project_type_id',
         'name',
         'description',
-        'status'
+        'kilowatts_to_provide',
+        'zone',
+        'status',
     ];
 
     public function projectCategory()
@@ -22,13 +23,10 @@ class Project extends Model
         return $this->belongsTo(ProjectCategory::class);
     }
 
-    public function projectType()
+    public function positions()
     {
-        return $this->belongsTo(ProjectType::class);
+        return $this->belongsToMany(Position::class)->withPivot('required_days')->withTimestamps();
+
     }
 
-    public function quotation()
-    {
-        return $this->hasOne(Quotation::class);
-    }
 }

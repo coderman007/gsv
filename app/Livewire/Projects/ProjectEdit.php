@@ -3,9 +3,8 @@
 namespace App\Livewire\Projects;
 
 use App\Models\Client;
-use Livewire\Component;
-
 use App\Models\Project;
+use Livewire\Component;
 
 class ProjectEdit extends Component
 {
@@ -15,28 +14,28 @@ class ProjectEdit extends Component
     public $clients = [];
     public $client_id;
     public $name;
-    public $project_type;
+    public $kilowatts_to_provide;
     public $description;
-    public $required_kilowatts;
+    public $zone;
     public $start_date;
     public $expected_end_date;
     public $status = "";
     protected $rules = [
-        'client_id' => 'required|exists:clients,id',
-        'name' => 'required',
-        'project_type' => 'required',
-        'description' => 'required',
-        'required_kilowatts' => 'required|numeric',
-        'start_date' => 'required|date',
-        'expected_end_date' => 'required|date',
-        'status' => 'required'
+        'client_id' => 'exists:clients,id',
+        'name' => 'string',
+        'kilowatts_to_provide' => 'numeric',
+        'description' => 'string',
+        'zone' => 'string',
+        'start_date' => 'string|date',
+        'expected_end_date' => 'string|date',
+        'status' => 'string',
     ];
     public function mount(Project $project, Client $client)
     {
         $this->project = $project;
         $this->client_id = $project->client_id;
         $this->name = $project->name;
-        $this->project_type = $project->project_type;
+        $this->kilowatts_to_provide = $project->kilowatts_to_provide;
         $this->description = $project->description;
         $this->required_kilowatts = $project->required_kilowatts;
         $this->start_date = $project->start_date;
@@ -53,7 +52,6 @@ class ProjectEdit extends Component
         $this->openEdit = false;
         $this->reset();
     }
-
 
     public function render()
     {

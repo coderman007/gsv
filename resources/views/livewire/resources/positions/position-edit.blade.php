@@ -25,12 +25,12 @@
                             </div>
                             <div class="mt-5 bg-white rounded-lg shadow">
 
-                                <!-- Posición -->
+                                <!-- Nombre -->
                                 <div class="px-5 pb-5">
-                                    <x-label class="text-left text-xl text-gray-700" value="Posición" />
-                                    <input wire:model="position"
+                                    <x-label class="text-left text-xl text-gray-700" value="Nombre" />
+                                    <input wire:model="name"
                                         class="text-black w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-300 focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400">
-                                    <x-input-error for="position" />
+                                    <x-input-error for="name" />
                                 </div>
 
                                 <!-- Básico -->
@@ -88,7 +88,7 @@
 
                                 <button type="button"
                                     class="relative w-full flex justify-center items-center px-5 py-2.5 font-medium tracking-wide text-white capitalize bg-gray-500 rounded-md hover:bg-blue-500 focus:outline-none transition duration-300 transform active:scale-95 ease-in-out disabled:opacity-50 disabled:bg-blue-600 disabled:text-white"
-                                    wire:click="updateLabor" wire:loading.attr="disabled" wire:target="updateLabor">
+                                    wire:click="updatePosition" wire:loading.attr="disabled" wire:target="updatePosition">
                                     <span class="mx-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 512 512"
                                             width="24px" fill="#FFFFFF">

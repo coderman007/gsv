@@ -14,16 +14,21 @@ class Quotation extends Model
         'client_id',
         'quotation_date',
         'validity_period',
-        'materials_price',
-        'tools_price',
-        'labor_price',
-        'transport_price',
-        'commission',
+        'transformer',
+        'average_energy_consumption',
+        'solar_radiation_level',
+        'roof_dimension',
+        'internal_commissions',
+        'external_commissions',
+        'margin',
+        'discount',
+        'subtotal',
+        'iva',
         'total_quotation_amount',
     ];
 
     protected $dates = [
-        'quotation_date',  // Indica que 'quotation_date' debe ser tratado como una instancia de Carbon.
+        'quotation_date', // Indica que 'quotation_date' debe ser tratado como una instancia de Carbon.
     ];
 
     public function project()

@@ -1,5 +1,5 @@
 <div class="container mx-auto mt-8">
-    @if ($labors->count() > 0)
+    @if ($positions->count() > 0)
     <div class="grid items-center w-full md:grid-cols-12 mt-4">
         <div class="col-span-4 ml-4 shadow-md shadow-gray-500 border dark:border-blue-500 rounded-lg">
             <input type="text" name="search" wire:model.live="search"
@@ -13,7 +13,7 @@
         </div>
         <div class="col-span-4 mt-4 md:mt-0 md:block md:col-span-4">
             <div class="md:text-right">
-                <livewire:resources.labors.labor-create />
+                <livewire:resources.positions.position-create />
             </div>
         </div>
     </div>
@@ -45,10 +45,10 @@
                                     @endif
                                 </th>
 
-                                <th data-title="Ordenar por Posición" wire:click="order('position')"
+                                <th data-title="Ordenar por Nombre" wire:click="order('name')"
                                     class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
-                                    Posición
-                                    @if ($sortBy == 'position')
+                                    Cargo
+                                    @if ($sortBy == 'name')
                                     @if ($sortDirection == 'asc')
                                     <span>&uarr;</span>
                                     @else
@@ -112,24 +112,24 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700">
-                            @foreach ($labors as $labor)
-                            <tr wire:key="labor-list-{{ $labor->id }}"
+                            @foreach ($positions as $position)
+                            <tr wire:key="position-list-{{ $position->id }}"
                                 class="hover:bg-gray-100 text-gray-500 dark:hover:bg-blue-800">
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $labor->id }}</td>
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $labor->position }}</td>
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $labor->basic }}</td>
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $labor->benefit_factor }}</td>
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $labor->real_monthly_cost }}</td>
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $labor->real_daily_cost }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $position->id }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $position->name }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $position->basic }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $position->benefit_factor }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $position->real_monthly_cost }}</td>
+                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $position->real_daily_cost }}</td>
 
                                 <td class="px-6 py-4 whitespace-nowrap text-left">
                                     <div class="flex items-center">
-                                        <livewire:resources.labors.labor-show :labor='$labor'
-                                            wire:key='labor-show{{ $labor->id}}' />
-                                        <livewire:resources.labors.labor-edit :laborId='$labor->id'
-                                            wire:key='labor-edit-{{ $labor->id}}' />
-                                        <livewire:resources.labors.labor-delete :labor='$labor'
-                                            wire:key='labor-delete-{{ $labor->id}}' />
+                                        <livewire:resources.positions.position-show :position='$position'
+                                            wire:key='position-show{{ $position->id}}' />
+                                        <livewire:resources.positions.position-edit :positionId='$position->id'
+                                            wire:key='position-edit-{{ $position->id}}' />
+                                        <livewire:resources.positions.position-delete :position='$position'
+                                            wire:key='position-delete-{{ $position->id}}' />
                                     </div>
                                 </td>
                             </tr>
@@ -137,28 +137,28 @@
                         </tbody>
                     </table>
                     <div class="mt-4">
-                        {{ $labors->links() }}
+                        {{ $positions->links() }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
     @else
-    <!-- Mensaje de no hay labores -->
+    <!-- Mensaje de no hay positiones -->
     <h1 class="my-64 text-5xl text-center dark:text-gray-200">
         <div>¡Ups!</div><br> <span class="mt-4"> No se encontraron coincidencias en la búsqueda. </span>
     </h1>
     <div class="flex justify-center w-full h-auto">
         <button
             class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
-            <a href="{{ route('labors') }}">Volver</a>
+            <a href="{{ route('positions') }}">Volver</a>
         </button>
     </div>
     @endif
     @push('js')
     <script>
         // Agrega aquí tus scripts JavaScript necesarios
-        Livewire.on('createdLaborNotification', function(){
+        Livewire.on('createdPositionNotification', function(){
             swal.fire({
                 icon:'success'
                 , title: 'Elemento Creado!'
@@ -166,7 +166,7 @@
             })
         });
 
-        Livewire.on('updatedLaborNotification', function(){
+        Livewire.on('updatedPositionNotification', function(){
             swal.fire({
                 icon:'success'
                 , title: 'Elemento Actualizado!'
@@ -174,7 +174,7 @@
             })
         });
 
-        Livewire.on('deletedLaborNotification', function(){
+        Livewire.on('deletedPositionNotification', function(){
             swal.fire({
                 icon: 'success'
                 , title: 'Elemento Eliminado!'

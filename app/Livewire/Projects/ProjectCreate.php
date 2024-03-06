@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Projects;
 
-use App\Models\Client;
 use App\Models\Project;
 use Livewire\Component;
 
@@ -11,16 +10,17 @@ class ProjectCreate extends Component
     public $openCreate = false;
     public $projects = [];
     public $project_category_id;
-    public $project_type_id;
+    public $zone;
     public $name;
     public $description;
     public $status = "";
 
     protected $rules = [
         'project_category_id' => 'required|exists:project_categories,id',
-        'project_type_id' => 'required|exists:project_types,id',
         'name' => 'required',
         'description' => 'required',
+        'kilowatts_to_provide' => 'required',
+        'zone' => 'nullable',
         'status' => 'required',
 
     ];
@@ -29,9 +29,10 @@ class ProjectCreate extends Component
         $this->validate();
         $project = Project::create([
             'project_category_id' => $this->project_category_id,
-            'project_type_id' => $this->project_type_id,
             'name' => $this->name,
             'description' => $this->description,
+            'kilowatts_to_provide' => $this->kilowatts_to_provide,
+            'zone' => $this->zone,
             'status' => $this->status,
 
         ]);

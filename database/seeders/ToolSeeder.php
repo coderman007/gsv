@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Tool;
+use Illuminate\Database\Seeder;
 
 class ToolSeeder extends Seeder
 {
@@ -165,7 +164,7 @@ class ToolSeeder extends Seeder
         ];
 
         foreach ($toolsData as $toolData) {
-            Tool::create($toolData);
+            Tool::insert($toolsData);
         }
     }
 }

@@ -21,18 +21,18 @@
                     <div class="md:mx-6">
                         <div class="bg-gray-500 p-4 rounded-lg text-white text-center">
                             <!-- Mostrar detalles del recurso de mano de obra -->
-                            <h3 class="text-xl font-semibold">{{ $labor->position }}</h3>
+                            <h3 class="text-xl font-semibold">{{ $position->name }}</h3>
                             <p class="p-2 rounded-md text-lg text-center">
-                                Salario Básico: {{ $labor->basic }}
+                                Salario Básico: {{ $position->basic }}
                             </p>
                             <p class="p-2 rounded-md text-lg text-center">
-                                Factor de Beneficio: {{ $labor->benefit_factor }}%
+                                Factor de Beneficio: {{ $position->benefit_factor }}%
                             </p>
                             <p class="p-2 rounded-md text-lg text-center">
-                                Costo Mensual Real: {{ $labor->real_monthly_cost }}
+                                Costo Mensual Real: {{ $position->real_monthly_cost }}
                             </p>
                             <p class="p-2 rounded-md text-lg text-center">
-                                Costo Diario Real: {{ $labor->real_daily_cost }}
+                                Costo Diario Real: {{ $position->real_daily_cost }}
                             </p>
                         </div>
                     </div>

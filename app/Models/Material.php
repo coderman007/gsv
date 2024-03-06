@@ -9,10 +9,10 @@ class Material extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'category',
-        'reference',
-        'description',
-        'unit_price'
-    ];
+    protected $fillable = ['name', 'unit', 'quantity', 'unit_price', 'total_price', 'surcharge'];
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
 }

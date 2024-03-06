@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Livewire\Resources\Labors;
+namespace App\Livewire\Resources\Positions;
 
-use Livewire\Component;
-use App\Models\Labor;
-use Livewire\Attributes\On;
+use App\Models\Position;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
+use Livewire\Component;
 use Livewire\WithPagination;
 
-class LaborList extends Component
+class PositionList extends Component
 {
     use WithPagination;
 
@@ -35,31 +35,31 @@ class LaborList extends Component
     }
 
     #[Computed]
-    public function labors()
+    public function positions()
     {
-        return Labor::where('position', 'like', '%' . $this->search . '%')
+        return Position::where('name', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
     }
 
-    #[On('createdLabor')]
-    public function createdLabor($labor = null)
+    #[On('createdPosition')]
+    public function createdPosition($position = null)
     {
     }
 
-    #[On('updatedLabor')]
-    public function updatedLabor($labor = null)
+    #[On('updatedPosition')]
+    public function updatedPosition($position = null)
     {
     }
 
-    #[On('deletedLabor')]
-    public function deletedLabor($labor = null)
+    #[On('deletedPosition')]
+    public function deletedPosition($position = null)
     {
     }
 
     public function render()
     {
-        $labors = $this->labors();
-        return view('livewire.resources.labors.labor-list', compact('labors'));
+        $positions = $this->positions();
+        return view('livewire.resources.positions.position-list', compact('positions'));
     }
 }

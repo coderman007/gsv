@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Livewire\Resources\Labors;
+namespace App\Livewire\Resources\Positions;
 
-use App\Models\Labor;
+use App\Models\Position;
 use Livewire\Component;
 
-class LaborDelete extends Component
+class PositionDelete extends Component
 {
     public $openDelete = false;
-    public $labor;
+    public $position;
 
-    public function mount(Labor $labor)
+    public function mount(Position $position)
     {
-        $this->labor = $labor;
+        $this->position = $position;
     }
 
-    public function deleteLabor()
+    public function deletePosition()
     {
         // Verificar si el usuario autenticado existe
         if (!auth()->check()) {
@@ -28,16 +28,16 @@ class LaborDelete extends Component
         }
 
         // Si la mano de obra a eliminar existe, proceder con la eliminación
-        if ($this->labor) {
-            $labor = $this->labor->delete();
-            $this->dispatch('deletedLabor', $labor);
-            $this->dispatch('deletedLaborNotification');
+        if ($this->Position) {
+            $position = $this->Position->delete();
+            $this->dispatch('deletedPosition', $position);
+            $this->dispatch('deletedPositionNotification');
             $this->openDelete = false;
         }
     }
 
     public function render()
     {
-        return view('livewire.resources.labors.labor-delete');
+        return view('livewire.resources.positions.position-delete');
     }
 }

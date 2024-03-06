@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Transport;
+use Illuminate\Database\Seeder;
 
 class TransportSeeder extends Seeder
 {
@@ -38,7 +37,7 @@ class TransportSeeder extends Seeder
         ];
 
         foreach ($transportsData as $transportData) {
-            Transport::create($transportData);
+            Transport::insert($transportData);
         }
     }
 }

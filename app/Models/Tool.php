@@ -9,9 +9,10 @@ class Tool extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'category',
-        'name',
-        'unit_price'
-    ];
+    protected $fillable = ['name', 'unit', 'percentage', 'quantity', 'unit_price', 'surcharge'];
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
 }

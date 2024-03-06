@@ -19,12 +19,11 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             CitySeeder::class,
             ProjectCategorySeeder::class,
-            ProjectTypeSeeder::class,
+            PositionSeeder::class,
+            // MaterialSeeder::class,
+            // ToolSeeder::class,
+            // TransportSeeder::class,
             ProjectSeeder::class,
-            LaborSeeder::class,
-            MaterialSeeder::class,
-            ToolSeeder::class,
-            TransportSeeder::class,
         ]);
 
         // \App\Models\User::factory(10)->create();

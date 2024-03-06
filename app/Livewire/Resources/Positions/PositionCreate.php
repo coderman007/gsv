@@ -1,30 +1,30 @@
 <?php
 
-namespace App\Livewire\Resources\Labors;
+namespace App\Livewire\Resources\Positions;
 
-use App\Models\Labor;
+use App\Models\Position;
 use Livewire\Component;
 
-class LaborCreate extends Component
+class PositionCreate extends Component
 {
     public $openCreate = false;
-    public $position, $basic, $benefitFactor;
+    public $name, $basic, $benefitFactor;
     public $realMonthlyCost, $realDailyCost;
 
     protected $rules = [
-        'position' => 'required|min:5|max:255',
+        'name' => 'required|min:5|max:255',
         'basic' => 'required|numeric|min:0',
         'benefitFactor' => 'required|numeric|min:0',
         'realMonthlyCost' => 'required|numeric|min:0',
         'realDailyCost' => 'required|numeric|min:0',
     ];
 
-    public function createLabor()
+    public function createPosition()
     {
         $this->validate();
 
-        $labor = Labor::create([
-            'position' => $this->position,
+        $position = Position::create([
+            'name' => $this->name,
             'basic' => $this->basic,
             'benefit_factor' => $this->benefitFactor,
             'real_monthly_cost' => $this->realMonthlyCost,
@@ -33,14 +33,14 @@ class LaborCreate extends Component
 
         $this->openCreate = false;
 
-        $this->dispatch('createdLabor', $labor);
-        $this->dispatch('createdLaborNotification');
+        $this->dispatch('createdPosition', $position);
+        $this->dispatch('createdPositionNotification');
 
-        $this->reset('position', 'basic', 'benefitFactor', 'realMonthlyCost', 'realDailyCost');
+        $this->reset('name', 'basic', 'benefitFactor', 'realMonthlyCost', 'realDailyCost');
     }
 
     public function render()
     {
-        return view('livewire.resources.labors.labor-create');
+        return view('livewire.resources.positions.position-create');
     }
 }

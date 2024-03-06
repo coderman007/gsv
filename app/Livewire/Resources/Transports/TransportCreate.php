@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Resources\Transports;
+namespace App\Livewire\Resources\Transports;
 
 use Livewire\Component;
 use App\Models\Transport;

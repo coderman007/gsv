@@ -16,8 +16,18 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('client_id');
             $table->date('quotation_date');
-            $table->integer('validity_period');
-            $table->decimal('total_quotation_amount', 10, 2);
+            $table->unsignedSmallInteger('validity_period');
+            $table->enum('transformer', ['Trifásico', 'Monofásico']);
+            $table->decimal('average_energy_consumption', 5, 2);
+            $table->decimal('solar_radiation_level', 5, 2);
+            $table->decimal('roof_dimension', 10, 2);
+            $table->decimal('internal_commissions', 10, 2)->nullable();
+            $table->decimal('external_commissions', 10, 2)->nullable();
+            $table->decimal('margin', 10, 2)->nullable();
+            $table->decimal('discount', 10, 2)->nullable();
+            $table->decimal('iva', 5, 2);
+            $table->decimal('subtotal', 12, 2);
+            $table->decimal('total_quotation_amount', 12, 2);
             $table->timestamps();
 
             $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();

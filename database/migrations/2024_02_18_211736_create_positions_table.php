@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('labors', function (Blueprint $table) {
+        Schema::create('positions', function (Blueprint $table) {
             $table->id();
-            $table->string('position');
+            $table->string('name');
             $table->decimal('basic', 10, 2);
             $table->decimal('benefit_factor', 5, 2);
-            $table->decimal('real_monthly_cost', 10, 2);
-            $table->decimal('real_daily_cost', 10, 2);
             $table->timestamps();
+
         });
     }
 
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('labors');
+        Schema::dropIfExists('positions');
     }
 };
