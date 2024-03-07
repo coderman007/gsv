@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('project_material', function (Blueprint $table) {
+        Schema::create('material_project', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('material_id');
-            $table->integer('quantity'); // Cantidad específica asociada al proyecto
-            $table->integer('duration_days');
+            $table->integer('quantity')->default(0);
+            $table->decimal('total_cost', 10, 2)->default(0);
             $table->timestamps();
 
             $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_material');
+        Schema::dropIfExists('material_project');
     }
 };

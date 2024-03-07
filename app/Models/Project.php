@@ -25,8 +25,32 @@ class Project extends Model
 
     public function positions()
     {
-        return $this->belongsToMany(Position::class)->withPivot('required_days')->withTimestamps();
+        return $this->belongsToMany(Position::class)->withPivot('required_days', 'total_cost')->withTimestamps();
 
+    }
+
+    public function materials()
+    {
+        return $this->belongsToMany(Material::class)->withPivot('quantity', 'total_cost')->withTimestamps();
+
+    }
+
+    public function tools()
+    {
+        return $this->belongsToMany(Tool::class)->withPivot('required_days', 'quantity', 'total_cost')->withTimestamps();
+
+    }
+
+    public function transports()
+    {
+        return $this->belongsToMany(Transport::class)->withPivot('required_days', 'quantity', 'total_cost')->withTimestamps();
+
+    }
+
+    public function totalLaborCost()
+    {
+        // Implementa la lógica para sumar los costos totales de las posiciones asociadas
+        return $this->positions->sum('total_cost');
     }
 
 }

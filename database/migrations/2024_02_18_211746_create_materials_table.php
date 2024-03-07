@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('unit');
-            $table->integer('quantity');
+            $table->unsignedBigInteger('material_category_id');
+            $table->string('reference');
+            $table->text('description');
             $table->double('unit_price');
-            $table->double('total_price');
-            $table->double('surcharge');
             $table->timestamps();
+
+            $table->foreign('material_category_id')->references('id')->on('material_categories')->cascadeOnDelete();
         });
     }
 

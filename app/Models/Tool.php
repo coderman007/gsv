@@ -9,10 +9,14 @@ class Tool extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'unit', 'percentage', 'quantity', 'unit_price', 'surcharge'];
-
+    protected $fillable = [
+        'name',
+        'unit_price_per_day',
+    ];
     public function projects()
     {
-        return $this->belongsToMany(Project::class);
+        return $this->belongsToMany(Project::class)->
+            withPivot('quantity', 'required_days', 'total_cost')->
+            withTimestamps();
     }
 }

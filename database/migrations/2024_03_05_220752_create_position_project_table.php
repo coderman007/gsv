@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('position_id');
             $table->unsignedBigInteger('project_id');
+            $table->unsignedSmallInteger('quantity')->default(0);
             $table->decimal('required_days', 5, 2)->default(0);
+            $table->decimal('total_cost', 10, 2)->default(0);
             $table->timestamps();
 
             $table->foreign('position_id')->references('id')->on('positions')->cascadeOnDelete();

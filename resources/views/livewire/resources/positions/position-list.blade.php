@@ -71,7 +71,7 @@
 
                                 <th data-title="Ordenar por Factor de Beneficio" wire:click="order('benefit_factor')"
                                     class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
-                                    Factor de Beneficio
+                                    Factor Prestacional
                                     @if ($sortBy == 'benefit_factor')
                                     @if ($sortDirection == 'asc')
                                     <span>&uarr;</span>

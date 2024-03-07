@@ -19,9 +19,10 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             CitySeeder::class,
             ProjectCategorySeeder::class,
+            MaterialCategorySeeder::class,
             PositionSeeder::class,
-            // MaterialSeeder::class,
-            // ToolSeeder::class,
+            MaterialSeeder::class,
+            ToolSeeder::class,
             // TransportSeeder::class,
             ProjectSeeder::class,
         ]);
