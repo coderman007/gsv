@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             PositionSeeder::class,
             MaterialSeeder::class,
             ToolSeeder::class,
-            // TransportSeeder::class,
+            TransportSeeder::class,
             ProjectSeeder::class,
         ]);
 
