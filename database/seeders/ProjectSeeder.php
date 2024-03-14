@@ -151,7 +151,17 @@ class ProjectSeeder extends Seeder
 
             // Asociar las herramientas generales al proyecto
             foreach ($generalTools as $tool) {
-                // ... (código anterior)
+                // Calcular el costo total de la herramienta general
+                $totalCostPercentage = 0.05;
+                $totalLaborCost = $project->positions->sum('pivot.total_cost');
+                $totalCost = $totalLaborCost * $totalCostPercentage;
+
+                // Asociar la herramienta al proyecto con la cantidad, días requeridos y costo total
+                $project->tools()->attach($tool->id, [
+                    'quantity' => 1, // Puedes ajustar la cantidad según tus necesidades
+                    'required_days' => 1, // Puedes ajustar los días requeridos según tus necesidades
+                    'total_cost' => $totalCost,
+                ]);
             }
 
             // Asociar herramientas específicas al proyecto
@@ -191,6 +201,5 @@ class ProjectSeeder extends Seeder
                 ]);
             }
         }
-
     }
 }

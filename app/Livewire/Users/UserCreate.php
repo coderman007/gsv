@@ -22,21 +22,21 @@ class UserCreate extends Component
         'status' => 'required'
     ];
     public function mount()
-{
-    $this->roles = Role::all();
-}
-public function createUser()
+    {
+        $this->roles = Role::all();
+    }
+    public function createUser()
     {
         // Verificar si el usuario autenticado existe
-    if (!auth()->check()) {
-        abort(403, 'No está autorizado para llevar a cabo esta acción.');
-    }
+        if (!auth()->check()) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+        }
 
-    // Verificar si el usuario autenticado tiene el rol 'Administrador' y está activo
-    if (!auth()->user()->hasRole('Administrador') || auth()->user()->status !== 'Activo') {
-        abort(403, 'No está autorizado para llevar a cabo esta acción.');
-    }
-    
+        // Verificar si el usuario autenticado tiene el rol 'Administrador' y está activo
+        if (!auth()->user()->hasRole('Administrador') || auth()->user()->status !== 'Activo') {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+        }
+
         $this->validate();
         $user = User::create([
             'name' => $this->name,
@@ -46,9 +46,9 @@ public function createUser()
         ]);
 
         // Asignar un rol al usuario si se ha seleccionado uno
-    if ($this->selectedRole) {
-        $user->assignRole($this->selectedRole);
-    }
+        if ($this->selectedRole) {
+            $user->assignRole($this->selectedRole);
+        }
         $this->openCreate = false;
         // session()->flash('message', 'Usuario Creado Satisfactoriamente!');
         // $message = session('message');

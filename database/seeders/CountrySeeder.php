@@ -10,26 +10,13 @@ class CountrySeeder extends Seeder
 {
     public function run()
     {
-        $countries = [
-            'Colombia',
-            'Argentina',
-            'Mexico',
-            'Spain',
-            'Brazil',
-            'Chile'
-            // Agrega los otros países que desees aquí
-        ];
+        $data = json_decode(file_get_contents(__DIR__ . '/Locations/countries.json'), true);
 
-        foreach ($countries as $countryName) {
-            // Verificar si ya existe el país en la base de datos
-            $country = Country::where('name', $countryName)->first();
-
-            if (!$country) {
-                Country::create(['name' => $countryName]);
-                $this->command->info('"' . $countryName . '" agregado.');
-            } else {
-                $this->command->info('"' . $countryName . '" ya existe en la base de datos.');
-            }
+        foreach ($data['data'] as $country) {
+            Country::create([
+                'id' => $country['id'],
+                'name' => $country['name'],
+            ]);
         }
     }
 }

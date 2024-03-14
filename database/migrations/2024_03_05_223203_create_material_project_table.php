@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('material_id');
-            $table->integer('quantity')->default(0);
-            $table->decimal('total_cost', 10, 2)->default(0);
+            $table->integer('quantity')->default(0)->nullable(false);
+            $table->decimal('total_cost', 10, 2)->default(0)->nullable(false);
             $table->timestamps();
 
             $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();

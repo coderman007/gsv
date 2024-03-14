@@ -10,10 +10,12 @@ class Client extends Model
     use HasFactory;
 
     protected $fillable = [
-        'location_id',
+        'city_id',
         'type',
         'name',
+        'document',
         'email',
+        'address',
         'phone',
         'status',
         'image',
@@ -24,8 +26,8 @@ class Client extends Model
         return $this->hasMany(Quotation::class);
     }
 
-    public function location()
+    public function city()
     {
-        return $this->belongsTo(Location::class);
+        return $this->belongsTo(City::class);
     }
 }

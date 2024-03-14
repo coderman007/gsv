@@ -13,16 +13,18 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('location_id');
+            $table->unsignedBigInteger('city_id');
 
             $table->enum('type', ['Persona', 'Empresa']);
             $table->string('name');
             $table->string('email')->nullable()->unique();
+            $table->string('address')->nullable();
+            $table->string('document')->nullable()->unique();
             $table->string('phone')->nullable();
             $table->string('image')->nullable();
             $table->enum('status', ['Activo', 'Inactivo'])->nullable()->default('Activo');
 
-            $table->foreign('location_id')->references('id')->on('locations')->cascadeOnDelete();
+            $table->foreign('city_id')->references('id')->on('cities')->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -1,0 +1,28 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Colombia"
+        },
+        {
+            "id": 2,
+            "name": "Ecuador"
+        },
+        {
+            "id": 3,
+            "name": "Panamá"
+        },
+        {
+            "id": 4,
+            "name": "Honduras"
+        },
+        {
+            "id": 5,
+            "name": "Venezuela"
+        },
+        {
+            "id": 6,
+            "name": "Perú"
+        }
+    ]
+}

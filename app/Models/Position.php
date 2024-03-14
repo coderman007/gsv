@@ -20,7 +20,6 @@ class Position extends Model
 
     public function projects()
     {
-        return $this->belongsToMany(Project::class)->withPivot('required_days', 'total_cost')->withTimestamps();
-
+        return $this->belongsToMany(Project::class)->withPivot('quantity', 'required_days', 'total_cost')->withTimestamps();
     }
 }

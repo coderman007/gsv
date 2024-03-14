@@ -10,16 +10,12 @@ class City extends Model
     use HasFactory;
 
     protected $fillable = [
+        'department_id',
         'name',
     ];
 
     public function department()
     {
         return $this->belongsTo(Department::class);
-    }
-
-    public function locations()
-    {
-        return $this->hasMany(Location::class);
     }
 }

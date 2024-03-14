@@ -42,7 +42,7 @@ class ClientList extends Component
     }
 
     #[On('createdClient')]
-    public function createdClient($client = null)
+    public function createdClient($clientData = null)
     {
     }
 
