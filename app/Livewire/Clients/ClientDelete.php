@@ -21,6 +21,7 @@ class ClientDelete extends Component
         if ($this->client) {
             $client = $this->client->delete();
             $this->dispatch('deletedClient', $client);
+            $this->dispatch('deletedClientNotification', $client);
             $this->openDelete = false;
         }
     }

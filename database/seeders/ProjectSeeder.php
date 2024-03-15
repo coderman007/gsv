@@ -20,7 +20,6 @@ class ProjectSeeder extends Seeder
                 'name' => 'SISTEMA DE GENERACIÓN SOLAR FOTOVOLTAICO 1.5 KWP ON-GRID',
                 'description' => 'Sistema de Generación Solar Fotovoltaico Tipo On-Grid, que proporciona 1.5 KWP',
                 'kilowatts_to_provide' => 1.5,
-                'zone' => 'Norte Antioqueño - Granja',
                 'status' => 'Activo',
             ],
             [
@@ -28,7 +27,6 @@ class ProjectSeeder extends Seeder
                 'name' => 'SISTEMA DE GENERACIÓN SOLAR FOTOVOLTAICO 4.4 KWP OFF-GRID 1600AH CAPACIDAD ALMACENAMIENTO',
                 'description' => 'Sistema de Generación Solar Fotovoltaico Tipo Off-Grid, que proporciona 4.4 KWP',
                 'kilowatts_to_provide' => 4.4,
-                'zone' => null,
                 'status' => 'Activo',
             ],
             [
@@ -36,7 +34,6 @@ class ProjectSeeder extends Seeder
                 'name' => 'SISTEMA DE GENERACIÓN SOLAR FOTOVOLTAICO 3.0 KWP ON-GRID',
                 'description' => 'Sistema de Generación Solar Fotovoltaico Tipo On-Grid, que proporciona 3.0 KWP',
                 'kilowatts_to_provide' => 3.0,
-                'zone' => 'ZONA_DEL_TERCER_PROYECTO',
                 'status' => 'Activo',
             ],
             [
@@ -44,7 +41,6 @@ class ProjectSeeder extends Seeder
                 'name' => 'SISTEMA DE GENERACIÓN SOLAR FOTOVOLTAICO 2.2 KWP OFF-GRID',
                 'description' => 'Sistema de Generación Solar Fotovoltaico Tipo Off-Grid, que proporciona 2.2 KWP',
                 'kilowatts_to_provide' => 2.2,
-                'zone' => 'ZONA_DEL_CUARTO_PROYECTO',
                 'status' => 'Activo',
             ],
             [
@@ -52,7 +48,6 @@ class ProjectSeeder extends Seeder
                 'name' => 'SISTEMA DE GENERACIÓN SOLAR FOTOVOLTAICO 5.5 KWP ON-GRID',
                 'description' => 'Sistema de Generación Solar Fotovoltaico Tipo On-Grid, que proporciona 5.5 KWP',
                 'kilowatts_to_provide' => 5.5,
-                'zone' => null,
                 'status' => 'Activo',
             ],
         ];

@@ -8,6 +8,7 @@ use App\Livewire\Layouts\LayoutList;
 use App\Livewire\ProjectCategories\ProjectCategoryList;
 use App\Livewire\ProjectTypes\ProjectTypeList;
 use App\Livewire\Projects\ProjectList;
+use App\Livewire\Quotations\QuotationCreate;
 use App\Livewire\Quotations\QuotationList;
 use App\Livewire\Resources\Positions\PositionList;
 use App\Livewire\Resources\Transports\TransportList;
@@ -44,6 +45,7 @@ Route::middleware([
     Route::get('project-categories', ProjectCategoryList::class)->name('project-categories');
     Route::get('project-types', ProjectTypeList::class)->name('project-types');
     Route::get('quotations', QuotationList::class)->name('quotations');
+    Route::get('quotations/create', QuotationCreate::class)->name('quotation-create');
     // Route::get('resources', ResourceList::class)->name('resources');
     Route::get('positions', PositionList::class)->name('positions');
     Route::get('transports', TransportList::class)->name('transports');

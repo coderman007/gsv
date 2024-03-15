@@ -3,7 +3,7 @@
         <div class="grid items-center w-full md:grid-cols-12 mt-2">
             {{-- Barra de búsqueda --}}
             <div class="col-span-4">
-                <x-input type="text" name="search" wire:model="search"
+                <x-input type="text" name="search" wire:model.live="search"
                     class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
                     placeholder="Buscar..." />
             </div>
@@ -43,6 +43,20 @@
                             @endif
                         </th>
 
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('type')">
+                            Tipo
+                            @if ($sortBy == 'type')
+                                @if ($sortDirection == 'asc')
+                                    <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
+                                @else
+                                    <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
+                                @endif
+                            @else
+                                <i class="ml-2 fa-solid fa-sort"></i>
+                            @endif
+                        </th>
+
+
                         <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('name')">
                             Nombre
                             @if ($sortBy == 'name')
@@ -56,8 +70,17 @@
                             @endif
                         </th>
 
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('document')">
                             NIT/Documento
+                            @if ($sortBy == 'document')
+                                @if ($sortDirection == 'asc')
+                                    <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
+                                @else
+                                    <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
+                                @endif
+                            @else
+                                <i class="ml-2 fa-solid fa-sort"></i>
+                            @endif
                         </th>
 
                         <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('email')">
@@ -81,16 +104,6 @@
                             Teléfono
                         </th>
 
-
-
-                        {{-- <th scope="col" class="px-6 py-3">
-                            Consumo Promedio
-                        </th>
-
-                        <th scope="col" class="px-6 py-3">
-                            Dimensión Cubierta (Mts<sup>2</sup>)
-                        </th> --}}
-
                         <th scope="col" class="px-6 py-3">
                             Estado
                         </th>
@@ -108,6 +121,7 @@
                                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {{ $client->id }}
                             </th>
+                            <td class="px-6 py-4 dark:text-lg">{{ $client->type }}</td>
                             <td class="px-6 py-4 dark:text-lg">{{ $client->name }}</td>
                             <td class="px-6 py-4 dark:text-lg">{{ $client->document }}</td>
                             <td class="px-6 py-4 dark:text-lg">{{ $client->email }}</td>

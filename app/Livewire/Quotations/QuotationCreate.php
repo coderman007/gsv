@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Quotations;
 
-use Livewire\Component;
-use App\Models\Quotation;
 use App\Models\Client;
 use App\Models\Project;
+use App\Models\Quotation;
 use Illuminate\Validation\Rule;
+use Livewire\Component;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 
 class QuotationCreate extends Component
 {
@@ -127,5 +129,11 @@ class QuotationCreate extends Component
     public function render()
     {
         return view('livewire.quotations.quotation-create');
+    }
+
+    #[On('clientStored')]
+    public function clientStored()
+    {
+        $this->clients = Client::all();
     }
 }

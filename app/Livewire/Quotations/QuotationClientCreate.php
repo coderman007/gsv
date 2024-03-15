@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Livewire\Clients;
+namespace App\Livewire\Quotations;
 
-use Livewire\Component;
 use App\Models\Client;
 use App\Models\City;
+use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class ClientCreate extends Component
+class QuotationClientCreate extends Component
 {
     use WithFileUploads;
 
@@ -42,7 +42,7 @@ class ClientCreate extends Component
             'email' => 'nullable|email',
             'address' => 'nullable|string',
             'phone' => 'nullable|string',
-            'status' => 'nullable|string|in:Activo, Inactivo',
+            'status' => 'nullable|string',
             'image'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -80,14 +80,12 @@ class ClientCreate extends Component
             'image',
         ]);
 
-        // Emitir eventos y notificaciones si es necesario
         $this->openCreate = false;
-        // Emite el evento Livewire
-        $this->dispatch('createdClient', $clientData);
-        // Emite la notificación
-        $this->dispatch('createdClientNotification', [
-            'title' => 'Éxito',
-            'text' => '¡Cliente Creado Exitosamente!',
+        $this->dispatch('clientStored', $clientData);
+        // Emitir el evento Livewire
+        $this->dispatch('clientStoredNotification', [
+            'title' => 'Success',
+            'text' => 'Cliente almacenado con Éxito!',
             'icon' => 'success'
         ]);
     }
@@ -111,7 +109,7 @@ class ClientCreate extends Component
 
     public function render()
     {
-        return view('livewire.clients.client-create', [
+        return view('livewire.quotations.quotation-client-create', [
             'filteredCities' => $this->filteredCities,
         ]);
     }

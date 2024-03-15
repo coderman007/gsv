@@ -10,11 +10,7 @@
                 <h1>Cotizaciones</h1>
             </div>
         </div>
-        <div class="col-span-4 mt-4 md:mt-0 md:block md:col-span-4">
-            <div class="md:text-right">
-                <livewire:quotations.quotation-create />
-            </div>
-        </div>
+
     </div>
 
     <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
@@ -69,38 +65,41 @@
                             </thead>
 
                             <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                                @foreach($quotations as $quotation)
-                                <tr>
-                                    <td
-                                        class="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
-                                        <div class="inline-flex items-center gap-x-3">
-                                            <input type="checkbox"
-                                                class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
-                                            <span>#{{ $quotation->id }}</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                                        {{ $quotation->quotation_date }}
-                                    </td>
-                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                                        {{ $quotation->validity_period }}
-                                    </td>
-                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                                        {{ $quotation->total_quotation_amount }}
-                                    </td>
-                                    <td class="px-4 py-4 text-sm whitespace-nowrap">
-                                        <div class="flex items-center gap-x-6">
-                                            <button
-                                                class="text-gray-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
-                                                Archive
-                                            </button>
-                                            <button
-                                                class="text-blue-500 transition-colors duration-200 hover:text-indigo-500 focus:outline-none">
-                                                Download
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @foreach ($quotations as $quotation)
+                                    <tr>
+                                        <td
+                                            class="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                                            <div class="inline-flex items-center gap-x-3">
+                                                <input type="checkbox"
+                                                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
+                                                <span>#{{ $quotation->id }}</span>
+                                            </div>
+                                        </td>
+                                        <td
+                                            class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                                            {{ $quotation->quotation_date }}
+                                        </td>
+                                        <td
+                                            class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                                            {{ $quotation->validity_period }}
+                                        </td>
+                                        <td
+                                            class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                                            {{ $quotation->total_quotation_amount }}
+                                        </td>
+                                        <td class="px-4 py-4 text-sm whitespace-nowrap">
+                                            <div class="flex items-center gap-x-6">
+                                                <button
+                                                    class="text-gray-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
+                                                    Archive
+                                                </button>
+                                                <button
+                                                    class="text-blue-500 transition-colors duration-200 hover:text-indigo-500 focus:outline-none">
+                                                    Download
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
 
@@ -129,15 +128,15 @@
     </section>
 
     @push('locaion_js')
-    <script>
-        // Notificación de creación de ubicaciones
-        Livewire.on('createdLocationNotification', function(){
-            swal.fire({
-                icon:'success'
-                , title: 'Ubicación Creada!'
-                , text: 'La ubicación ha sido almacenada correctamente!'
-            })
-        });
-    </script>
+        <script>
+            // Notificación de creación de ubicaciones
+            Livewire.on('createdLocationNotification', function() {
+                swal.fire({
+                    icon: 'success',
+                    title: 'Ubicación Creada!',
+                    text: 'La ubicación ha sido almacenada correctamente!'
+                })
+            });
+        </script>
     @endpush
 </div>

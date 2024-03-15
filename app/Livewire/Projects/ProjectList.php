@@ -2,28 +2,27 @@
 
 namespace App\Livewire\Projects;
 
-use Livewire\Attributes\Computed;
-use Livewire\Attributes\On;
 use Livewire\Component;
 use App\Models\Project;
-use App\Models\ProjectCategory;
-use App\Models\ProjectType;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
 
 class ProjectList extends Component
 {
     use WithPagination;
 
-    public $project;
     public $search = '';
     public $sortBy = 'id';
     public $sortDirection = 'asc';
-    public $perSearch = 10;
+    public $perPage = 10;
+    public $selectedCategory = null;
 
     public function updatingSearch()
     {
         $this->resetPage();
     }
+
     public function order($sort)
     {
         if ($this->sortBy == $sort) {
@@ -33,15 +32,36 @@ class ProjectList extends Component
             $this->sortDirection = "asc";
         }
     }
+
+    public function render()
+    {
+        $query = Project::query();
+
+        // Filtrar por categoría si se ha seleccionado una
+        if ($this->selectedCategory) {
+            $query->whereHas('project_category', function ($query) {
+                $query->where('id', $this->selectedCategory);
+            });
+        }
+
+        $projects = $query->where('id', 'like', '%' . $this->search . '%')
+            ->orWhere('name', 'like', '%' . $this->search . '%')
+            ->orderBy($this->sortBy, $this->sortDirection)
+            ->paginate($this->perPage);
+
+        return view('livewire.projects.project-list', [
+            'projects' => $projects,
+        ]);
+    }
+
     #[Computed()]
     public function projects()
     {
         return
             Project::where('id', 'like', '%' . $this->search . '%')
             ->orWhere('name', 'like', '%' . $this->search . '%')
-            ->orWhere('project_type', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate($this->perSearch);
+            ->paginate($this->perPage);
     }
 
     #[On('createdProject')]
@@ -57,16 +77,5 @@ class ProjectList extends Component
     #[On('deletedProject')]
     public function deletedProject($project = null)
     {
-    }
-
-    public function render()
-    {
-        $projects = Project::with(['project_category', 'project_type'])
-            ->where('quotation_date', 'LIKE', '%' . $this->search . '%')
-            ->orWhere('validity_period', 'LIKE', '%' . $this->search . '%')
-            ->orWhere('total_quotation_amount', 'LIKE', '%' . $this->search . '%')
-            ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate($this->perPage);
-        return view('livewire.projects.project-list');
     }
 }

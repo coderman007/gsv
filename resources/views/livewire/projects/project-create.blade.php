@@ -14,39 +14,108 @@
 
         <div class="w-1">
             <x-slot name="content">
-                <form wire:submit.prevent="createProject">
-                    <!-- Nombre del Proyecto -->
-                    <div class="mb-4">
-                        <label for="name" class="block text-sm font-medium text-gray-700">Nombre del Proyecto</label>
-                        <input type="text" wire:model="name" id="name" name="name"
-                            class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-                        @error('name') <span class="text-red-500">{{ $message }}</span> @enderror
-                    </div>
+                <div>
+                    <form wire:submit.prevent="saveProject" class="p-4 bg-white rounded shadow-md">
+                        <!-- Nombre del Proyecto -->
+                        <div class="mb-4">
+                            <label for="name" class="block text-sm font-medium text-gray-700">Nombre del
+                                Proyecto</label>
+                            <input wire:model.defer="name" type="text" id="name" name="name"
+                                class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                            @error('name')
+                                <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                    <!-- Descripción -->
-                    <div class="mb-4">
-                        <label for="description" class="block text-sm font-medium text-gray-700">Descripción</label>
-                        <input type="text" wire:model="description" id="description" name="description"
-                            class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-                        @error('description') <span class="text-red-500">{{ $message }}</span> @enderror
-                    </div>
+                        <!-- Descripción del Proyecto -->
+                        <div class="mb-4">
+                            <label for="description" class="block text-sm font-medium text-gray-700">Descripción del
+                                Proyecto</label>
+                            <textarea wire:model.defer="description" id="description" name="description" rows="3"
+                                class="mt-1 p-2 block w-full border-gray-300 rounded-md"></textarea>
+                            @error('description')
+                                <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                    <!-- Dropdown para Estado -->
-                    <div class="mb-4">
-                        <label for="status" class="block text-sm font-medium text-gray-700">Estado</label>
-                        <select wire:model="status" id="status" name="status"
-                            class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-                            <option value="" disabled>Selecciona un estado</option>
-                            <option value="Activo">Activo</option>
-                            <option value="Inactivo">Inactivo</option>
-                        </select>
-                        @error('status') <span class="text-red-500">{{ $message }}</span> @enderror
-                    </div>
+                        <!-- Kilovatios a Proveer -->
+                        <div class="mb-4">
+                            <label for="kilowatts_to_provide" class="block text-sm font-medium text-gray-700">Kilovatios
+                                a Proveer</label>
+                            <input wire:model.defer="kilowatts_to_provide" type="number" id="kilowatts_to_provide"
+                                name="kilowatts_to_provide" class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                            @error('kilowatts_to_provide')
+                                <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                    <!-- Resto de los campos del formulario -->
-                    <!-- ... -->
+                        <!-- Estado del Proyecto -->
+                        <div class="mb-4">
+                            <label for="status" class="block text-sm font-medium text-gray-700">Estado del
+                                Proyecto</label>
+                            <select wire:model.defer="status" id="status" name="status"
+                                class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                            @error('status')
+                                <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                </form>
+                        <!-- Selección de Posiciones -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">Posiciones</label>
+                            <select wire:model.live="selectedPosition"
+                                class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+
+                                <option value="">-- Seleccione una posición --</option>
+                                <option value="new">Crear Nueva Posición</option>
+                                @foreach ($positions as $position)
+                                    <option value="{{ $position->id }}">{{ $position->name }}</option>
+                                @endforeach
+                            </select>
+                            {{ $position->name }}
+                            @error('selectedPosition')
+                                <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+
+                            <!-- Mostrar campos adicionales para una nueva posición -->
+                            @if ($selectedPosition === 'new')
+                                <div class="mt-4">
+                                    <label for="positionQuantity"
+                                        class="block text-sm font-medium text-gray-700">Cantidad</label>
+                                    <input wire:model.defer="positionQuantity" type="number" id="positionQuantity"
+                                        name="positionQuantity"
+                                        class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                    @error('positionQuantity')
+                                        <span class="text-red-500">{{ $message }}</span>
+                                    @enderror
+
+                                    <label for="positionRequiredDays"
+                                        class="block text-sm font-medium text-gray-700 mt-4">Días Requeridos</label>
+                                    <input wire:model.defer="positionRequiredDays" type="number"
+                                        id="positionRequiredDays" name="positionRequiredDays"
+                                        class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                    @error('positionRequiredDays')
+                                        <span class="text-red-500">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Cantidad y Días de Posiciones -->
+                        <!-- Aquí se repetiría la estructura similar para los otros recursos: Materiales, Herramientas y Transporte -->
+
+                        <!-- Botón de Guardar -->
+                        <div class="mb-4">
+                            <button type="submit"
+                                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar
+                                Proyecto</button>
+                        </div>
+                    </form>
+                </div>
+
             </x-slot>
 
             <x-slot name="footer">

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->double('kilowatts_to_provide', 5, 2);
-            $table->string('zone')->nullable();
             $table->enum('status', ['Activo', 'Inactivo'])->default('Activo');
             $table->timestamps();
 

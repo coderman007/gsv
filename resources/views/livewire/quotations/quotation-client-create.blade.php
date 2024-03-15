@@ -1,27 +1,18 @@
-<div class="relative inline-block text-center cursor-pointer group">
-    <a href="#" wire:click="$set('openEdit', true)">
-        <i class="p-1 text-blue-400 rounded hover:text-white hover:bg-blue-500 fa-solid fa-pen-to-square"></i>
-        <div
-            class="absolute z-10 px-3 py-2 mb-2 text-center text-white bg-gray-700 rounded-lg opacity-0 pointer-events-none text-md group-hover:opacity-80 bottom-full -left-6">
-            Editar
-            <svg class="absolute left-0 w-full h-2 text-black top-full" x="0px" y="0px" viewBox="0 0 255 255"
-                xml:space="preserve">
-            </svg>
-        </div>
-    </a>
-    <x-dialog-modal maxWidth="2xl" wire:model="openEdit">
+<div>
+    <a href="#" class="text-sm text-indigo-600 hover:text-indigo-500 mt-1 block"
+        wire:click="$set('openCreate', true)">Agregar nuevo cliente</a>
+
+    <x-dialog-modal maxWidth="5xl" wire:model="openCreate">
         <div class="w-full mx-auto bg-white shadow-md p-6 rounded-md">
 
             <x-slot name="title">
-                <div class="text-center">
-                    <h2 class="text-xl font-semibold text-blue-400 dark:text-white">Actualizar Cliente</h2>
-                </div>
+                <h2 class="font-semibold text-2xl text-center pt-4 text-gray-600">Información del Cliente</h2>
             </x-slot>
-
             <x-slot name="content">
-                <form wire:submit.prevent="updateClient" enctype="multipart/form-data">
-                    <div class="my-5">
-                        <div class="flex justify-between my-6">
+
+                <form wire:submit.prevent="createClient">
+                    <div class="my-2">
+                        <div class="flex justify-between my-4">
                             <!-- Tipo de Cliente -->
                             <div class="w-1/2 pr-2 flex justify-center items-center">
                                 <div class="text-center">
@@ -33,6 +24,7 @@
                                             <span class="text-green-500">&#10003;</span> <!-- Chulito verde -->
                                         @endif
                                     </label>
+                                    <x-input-error for="type" />
                                     <div class="flex items-center space-x-4 justify-center">
                                         <label class="inline-flex items-center">
                                             <input type="radio" wire:model.live="type" value="Persona"
@@ -82,24 +74,27 @@
                             </div>
                         </div>
 
-                        <!-- Campo de búsqueda de ciudad con sugerencias -->
-                        <label for="city" class="text-lg font-semibold text-gray-600 py-2">
-                            Ciudad
-                        </label>
-                        <input type="text" id="city" wire:model.live="city" placeholder="Buscar ciudad"
-                            class="form-input rounded-md border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 w-full">
-                        @if ($filteredCities && count($filteredCities) > 0)
-                            <ul class="mt-2 border border-gray-300 rounded-md shadow-sm absolute z-10 bg-white w-full">
-                                @foreach ($filteredCities as $filteredCity)
-                                    <li class="py-1 px-3 cursor-pointer hover:bg-gray-100"
-                                        wire:click="selectCity('{{ $filteredCity }}')">
-                                        {{ $filteredCity }}
-                                    </li>
-                                @endforeach
-                            </ul>
-
-                            <x-input-error for="city" />
+                        @if ($type)
+                            <!-- Campo de búsqueda de ciudad con sugerencias -->
+                            <label for="city" class="text-lg font-semibold text-gray-600 py-2">
+                                Ciudad
+                            </label>
+                            <input type="text" id="city" wire:model.live="city" placeholder="Buscar ciudad"
+                                class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
+                            @if ($filteredCities && count($filteredCities) > 0)
+                                <ul
+                                    class="mt-2 border border-gray-300 rounded-md shadow-sm absolute z-10 bg-white w-full">
+                                    @foreach ($filteredCities as $filteredCity)
+                                        <li class="py-1 px-3 cursor-pointer hover:bg-gray-100"
+                                            wire:click="selectCity('{{ $filteredCity }}')">
+                                            {{ $filteredCity }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                            <x-input-error for="city_id" />
                         @endif
+
 
                         <!-- Campos específicos para Personas -->
                         @if ($type === 'Persona')
@@ -110,17 +105,38 @@
                         @if ($type === 'Empresa')
                             <x-company-client-form />
                         @endif
+
                     </div>
+
                 </form>
             </x-slot>
+
             <x-slot name="footer">
-                <div class="mt-5 flex justify-end">
-                    <button type="submit" wire:click="updateClient"
+                <div class="flex justify-end">
+                    <button type="submit" wire:click="createClient"
                         class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
-                        Actualizar Cliente
+                        Crear Cliente
                     </button>
                 </div>
             </x-slot>
         </div>
     </x-dialog-modal>
+
+    @push('js')
+        <script>
+            // Notificación de Cliente Almacenado
+            Livewire.on('clientStoredNotification', function() {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: 'Cliente Almacenado con éxito!',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    customClass: {
+                        title: 'swal2-title-small',
+                    }
+                });
+            });
+        </script>
+    @endpush
 </div>

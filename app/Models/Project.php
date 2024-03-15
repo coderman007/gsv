@@ -14,7 +14,6 @@ class Project extends Model
         'name',
         'description',
         'kilowatts_to_provide',
-        'zone',
         'status',
     ];
 

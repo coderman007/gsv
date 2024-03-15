@@ -14,7 +14,7 @@ class ClientList extends Component
 
     public $search = '';
     public $sortBy = 'id';
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
     public $perSearch = 10;
 
     public function updatingSearch()
@@ -35,7 +35,9 @@ class ClientList extends Component
     {
         return
             Client::where('id', 'like', '%' . $this->search . '%')
+            ->orWhere('type', 'like', '%' . $this->search . '%')
             ->orWhere('name', 'like', '%' . $this->search . '%')
+            ->orWhere('document', 'like', '%' . $this->search . '%')
             ->orWhere('email', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
@@ -59,5 +61,10 @@ class ClientList extends Component
     #[On('deletedClient')]
     public function deletedClient($client = null)
     {
+    }
+
+    public function render()
+    {
+        return view('livewire.clients.client-list');
     }
 }
