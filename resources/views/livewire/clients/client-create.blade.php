@@ -7,7 +7,7 @@
                 class="fa fa-solid fa-plus text-xl"></i> Cliente</span>
     </button>
 
-    <x-dialog-modal maxWidth="2xl" wire:model="openCreate">
+    <x-dialog-modal maxWidth="5xl" wire:model="openCreate">
         <div class="w-full mx-auto bg-white shadow-md p-6 rounded-md">
 
             <x-slot name="title">

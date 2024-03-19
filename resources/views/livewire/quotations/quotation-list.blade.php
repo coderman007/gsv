@@ -1,140 +1,160 @@
-<div class="container mx-auto mt-8">
-    <div class="grid items-center w-full md:grid-cols-12 mt-4">
-        <div class="col-span-4 ml-4 shadow-md shadow-gray-500 border dark:border-blue-500 rounded-lg">
-            <input type="text" name="search" wire:model.live="search"
-                class="w-full bg-white dark:text-gray-100 dark:bg-gray-900 border-none rounded-lg focus:ring-blue-400"
-                placeholder="Buscar..." />
-        </div>
-        <div class="inline mt-4 pl-4 pr-24 md:pl-0 md:pr-0 md:mt-0 md:block md:col-span-4">
-            <div class="text-3xl font-bold text-center text-blue-500 uppercase">
-                <h1>Cotizaciones</h1>
+<div>
+    @if ($quotations->count() > 0)
+        <div class="grid items-center w-full md:grid-cols-12 mt-2">
+            {{-- Barra de búsqueda --}}
+            <div class="col-span-4">
+                <x-input type="text" name="search" wire:model.live="search"
+                    class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
+                    placeholder="Buscar..." />
             </div>
-        </div>
-
-    </div>
-
-    <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
-        Resultados
-        <select name="perSearch" id="perSearch" wire:model="perSearch" class="rounded-lg cursor-pointer">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-        </select>
-    </div>
-
-    <section class="container px-4 mx-auto">
-        <div class="flex flex-col">
-            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                    <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-800">
-                                <tr>
-                                    <th scope="col"
-                                        class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        <div class="flex items-center gap-x-3">
-                                            <input type="checkbox"
-                                                class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
-                                            <button class="flex items-center gap-x-2">
-                                                <span>Quotation</span>
-                                                <!-- Icon for Quotation -->
-                                            </button>
-                                        </div>
-                                    </th>
-
-                                    <th scope="col"
-                                        class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        Quotation Date
-                                    </th>
-
-                                    <th scope="col"
-                                        class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        Validity Period
-                                    </th>
-
-                                    <th scope="col"
-                                        class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        Total Amount
-                                    </th>
-
-                                    <th scope="col" class="relative py-3.5 px-4">
-                                        <span class="sr-only">Actions</span>
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                                @foreach ($quotations as $quotation)
-                                    <tr>
-                                        <td
-                                            class="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
-                                            <div class="inline-flex items-center gap-x-3">
-                                                <input type="checkbox"
-                                                    class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
-                                                <span>#{{ $quotation->id }}</span>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                                            {{ $quotation->quotation_date }}
-                                        </td>
-                                        <td
-                                            class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                                            {{ $quotation->validity_period }}
-                                        </td>
-                                        <td
-                                            class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                                            {{ $quotation->total_quotation_amount }}
-                                        </td>
-                                        <td class="px-4 py-4 text-sm whitespace-nowrap">
-                                            <div class="flex items-center gap-x-6">
-                                                <button
-                                                    class="text-gray-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
-                                                    Archive
-                                                </button>
-                                                <button
-                                                    class="text-blue-500 transition-colors duration-200 hover:text-indigo-500 focus:outline-none">
-                                                    Download
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-
-                        </table>
-                    </div>
+            <div class="inline mt-4 pl-4 pr-24 md:pl-0 md:pr-0 md:mt-0 md:block md:col-span-4">
+                <div class="text-xl font-bold text-center text-blue-400 uppercase">
+                    <h1>Cotizaciones</h1>
                 </div>
             </div>
-        </div>
-
-        <!-- Paginación y otros elementos relacionados -->
-        <div class="flex items-center justify-between mt-6">
-            <!-- Botones de navegación y enlaces de paginación -->
-            <!-- ... -->
-
-            <!-- Números de página -->
-            <div class="items-center hidden md:flex gap-x-3">
-                <!-- ... Números de página ... -->
+            <div class="inline mt-4 md:mt-0 md:block md:col-span-4">
+                <a href="{{ route('quotation-create') }}">
+                    <button
+                        class="rounded-md px-3.5 py-2 m-1 overflow-hidden relative group cursor-pointer border-2 font-medium border-gray-500 hover:border-blue-500 text-white">
+                        <span
+                            class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
+                        <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease"><i
+                                class="fa fa-solid fa-plus text-xl"></i> Nueva Cotización</span>
+                    </button>
+                </a>
             </div>
+        </div>
+        <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
+            Resultados
+            <select name="perSearch" id="perSearch" wire:model.live="perSearch" class="rounded-lg cursor-pointer">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+        <div class="relative hidden md:block mt-2 md:mt-4 overflow-x-hidden shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead
+                    class="text-sm text-center text-gray-100 uppercase bg-gray-400 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('id')">
+                            ID
+                            @if ($sortBy == 'id')
+                                @if ($sortDirection == 'asc')
+                                    <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
+                                @else
+                                    <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
+                                @endif
+                            @else
+                                <i class="ml-2 fa-solid fa-sort"></i>
+                            @endif
+                        </th>
 
-            <!-- Botones de navegación y enlaces de paginación -->
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('quotation_date')">
+                            Fecha de Cotización
+                            @if ($sortBy == 'quotation_date')
+                                @if ($sortDirection == 'asc')
+                                    <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
+                                @else
+                                    <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
+                                @endif
+                            @else
+                                <i class="ml-2 fa-solid fa-sort"></i>
+                            @endif
+                        </th>
 
+                        <th scope="col" class="px-6 py-3 cursor-pointer"
+                            wire:click="order('total_quotation_amount')">
+                            Monto Total
+                            @if ($sortBy == 'total_quotation_amount')
+                                @if ($sortDirection == 'asc')
+                                    <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
+                                @else
+                                    <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
+                                @endif
+                            @else
+                                <i class="ml-2 fa-solid fa-sort"></i>
+                            @endif
+                        </th>
 
-            <div class="mt-4">
+                        <th scope="col" class="px-6 py-3">
+                            Acciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($quotations as $quotation)
+                        <tr
+                            class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <th scope="row"
+                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ $quotation->id }}
+                            </th>
+                            <td class="px-6 py-4 dark:text-lg">{{ $quotation->quotation_date }}</td>
+                            <td class="px-6 py-4 dark:text-lg">{{ $quotation->total_quotation_amount }}</td>
+
+                            <td class="flex justify-around py-4 pl-2 pr-8">
+                                <div class="flex">
+                                    <livewire:quotations.quotation-show :quotation="$quotation" :key="time() . $quotation->id" />
+                                    <livewire:quotations.quotation-edit :quotation="$quotation" :key="time() . $quotation->id" />
+                                    <livewire:quotations.quotation-delete :quotation="$quotation" :key="time() . $quotation->id" />
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-3xl text-center dark:text-gray-200">
+                                No hay Cotizaciones Disponibles
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+            <div class="px-3 py-1">
                 {{ $quotations->links() }}
             </div>
-    </section>
+        </div>
+    @else
+        <!-- Mensaje de no hay Cotizaciones -->
+        <h1 class="my-64 text-5xl text-center dark:text-gray-200">
+            <div>¡Ups!</div><br> <span class="mt-4"> No se encontraron coincidencias en la búsqueda. </span>
+        </h1>
+        <div class="flex justify-center w-full h-auto">
+            <livewire:quotations.quotation-create />
+            <button
+                class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
+                <a href="{{ route('quotations') }}">Volver</a>
+            </button>
+        </div>
+    @endif
 
-    @push('locaion_js')
+    @push('js')
         <script>
-            // Notificación de creación de ubicaciones
-            Livewire.on('createdLocationNotification', function() {
+            // Notificación de creación de cotizaciones
+            Livewire.on('createdQuotationNotification', function() {
                 swal.fire({
                     icon: 'success',
-                    title: 'Ubicación Creada!',
-                    text: 'La ubicación ha sido almacenada correctamente!'
+                    title: 'Cotización Creada!',
+                    text: 'La cotización se ha creado correctamente!'
+                })
+            });
+
+            // Notificación de edición de cotizaciones
+            Livewire.on('updatedQuotationNotification', function() {
+                swal.fire({
+                    icon: 'success',
+                    title: 'Cotización Actualizada!',
+                    text: 'La cotización se ha actualizado correctamente!'
+                })
+            });
+
+            // Notificación de eliminación de cotizaciones
+            Livewire.on('deletedQuotationNotification', function() {
+                swal.fire({
+                    icon: 'success',
+                    title: 'Cotización Eliminada!',
+                    text: 'La cotización se ha eliminado correctamente!'
                 })
             });
         </script>

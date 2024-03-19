@@ -2,8 +2,9 @@
 
 namespace App\Livewire\Quotations;
 
-use App\Models\Quotation;
 use Livewire\Component;
+use App\Models\Quotation;
+use App\Models\Client;
 use Livewire\WithPagination;
 
 class QuotationList extends Component
@@ -11,22 +12,41 @@ class QuotationList extends Component
     use WithPagination;
 
     public $search = '';
-    public $perPage = 10;
-    public $sortBy = 'quotation_date';
+    public $sortBy = 'id';
     public $sortDirection = 'desc';
-    public $openCreate;
+    public $perSearch = 10;
 
-    protected $queryString = ['search', 'perPage', 'sortBy', 'sortDirection'];
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function order($sort)
+    {
+        if ($this->sortBy == $sort) {
+            $this->sortDirection = ($this->sortDirection == "desc") ? "asc" : "desc";
+        } else {
+            $this->sortBy = $sort;
+            $this->sortDirection = "asc";
+        }
+    }
+
+    public function quotations()
+    {
+        return Quotation::with(['project', 'client'])
+            ->whereHas('client', function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->orWhere('quotation_date', 'like', '%' . $this->search . '%')
+            ->orWhere('total_quotation_amount', 'like', '%' . $this->search . '%')
+            ->orderBy($this->sortBy, $this->sortDirection)
+            ->paginate($this->perSearch);
+    }
 
     public function render()
     {
-        $quotations = Quotation::with(['project', 'client'])
-            ->where('quotation_date', 'LIKE', '%' . $this->search . '%')
-            ->orWhere('validity_period', 'LIKE', '%' . $this->search . '%')
-            ->orWhere('total_quotation_amount', 'LIKE', '%' . $this->search . '%')
-            ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate($this->perPage);
-
-        return view('livewire.quotations.quotation-list', compact('quotations'));
+        return view('livewire.quotations.quotation-list', [
+            'quotations' => $this->quotations(),
+        ]);
     }
 }
