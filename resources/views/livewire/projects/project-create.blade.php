@@ -58,6 +58,45 @@
                                     <span class="text-red-500">{{ $message }}</span>
                                 @enderror
                             </div>
+
+                            <!-- Campo para mostrar el valor total de la mano de obra -->
+                            <div class="mb-4">
+                                <label for="totalLaborCost" class="text-lg font-semibold text-gray-600 py-2">Costo Total
+                                    de Mano de Obra</label>
+                                <input wire:model="totalLaborCost" type="text" id="totalLaborCost"
+                                    name="totalLaborCost" readonly
+                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                            </div>
+
+                            <!-- Campo para mostrar el valor total de los materiales -->
+                            <div class="mb-4">
+                                <label for="totalMaterialsCost" class="text-lg font-semibold text-gray-600 py-2">Costo
+                                    Total
+                                    de Materiales</label>
+                                <input wire:model="totalMaterialsCost" type="text" id="totalMaterialsCost"
+                                    name="totalMaterialsCost" readonly
+                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                            </div>
+
+                            <!-- Campo para mostrar el valor total de las herramnientas -->
+                            <div class="mb-4">
+                                <label for="totalToolsCost" class="text-lg font-semibold text-gray-600 py-2">Costo
+                                    Total
+                                    de Herramientas</label>
+                                <input wire:model="totalToolsCost" type="text" id="totalToolsCost"
+                                    name="totalToolsCost" readonly
+                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                            </div>
+
+                            <!-- Campo para mostrar el valor total del transporte -->
+                            <div class="mb-4">
+                                <label for="totalTransportCost" class="text-lg font-semibold text-gray-600 py-2">Costo
+                                    Total
+                                    del transporte</label>
+                                <input wire:model="totalTransportCost" type="text" id="totalTransportCost"
+                                    name="totalTransportCost" readonly
+                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                            </div>
                         </div>
 
                         <div class="mt-8">
@@ -72,7 +111,7 @@
                                         class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full"
                                         type="button">Materiales</button>
                                     <button wire:click="showToolsForm"
-                                        class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full"
+                                        class="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full"
                                         type="button">Herramientas</button>
                                     <button wire:click="showTransportForm"
                                         class="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-full"

@@ -3,6 +3,7 @@
 namespace App\Livewire\Projects;
 
 use App\Models\Project;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ProjectCreate extends Component
@@ -13,7 +14,11 @@ class ProjectCreate extends Component
     public $description;
     public $kilowatts_to_provide;
     public $status;
-    public $showResource = ''; // Added property to track selected resource
+    public $showResource = '';
+    public $totalLaborCost = 0;
+    public $totalMaterialsCost = 0;
+    // public $totalToolsCost = 0;
+    // public $totalTransportCost = 0;
 
     // Reglas de validación
     protected $rules = [
@@ -37,6 +42,10 @@ class ProjectCreate extends Component
             'description' => $this->description,
             'kilowatts_to_provide' => $this->kilowatts_to_provide,
             'status' => $this->status,
+            'total_labor_cost' => $this->totalLaborCost, // Asignar el valor total de la mano de obra
+            'total_materials_cost' => $this->totalMaterialsCost, // Asignar el valor total de los materiales
+            // 'total_tools_cost' => $this->totalToolsCost, // Asignar el valor total de las herramientas
+            // 'total_transport_cost' => $this->totalTransportCost, // Asignar el valor total del transporte
         ]);
 
         // Redireccionar o mostrar mensaje de éxito
@@ -68,6 +77,26 @@ class ProjectCreate extends Component
     public function showTransportForm()
     {
         $this->showResource = 'transport'; // Update property based on clicked resource
+    }
+
+    #[On('totalLaborCostUpdated')]  // Escuchar el evento
+    public function updateTotalLaborCost($totalLaborCost)
+    {
+        // Actualizar el valor recibido en ProjectCreate
+        $this->totalLaborCost = number_format($totalLaborCost, 2);
+    }
+
+    #[On('totalMaterialsCostUpdated')]  // Escuchar el evento
+    public function updateTotalMaterialsCost($totalMaterialsCost)
+    {
+        // Actualizar el valor recibido en ProjectCreate
+        $this->totalMaterialsCost = number_format($totalMaterialsCost, 2);
+    }
+
+    #[On('hideResourceForm')]  // Escuchar el evento
+    public function hideResourceForm()
+    {
+        $this->showResource = '';
     }
 
     public function render()
