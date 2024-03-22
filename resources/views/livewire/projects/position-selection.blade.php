@@ -66,29 +66,26 @@
         </div>
 
         <!-- Columna 5: Costo Total de Mano de Obra -->
-        <div class="col-span-1">
-            <div class="mb-4">
-                <label for="totalLaborCost" class="block text-lg font-medium text-gray-700">Total Mano de Obra</label>
-                <div class="relative rounded-md shadow-sm">
-                    <input type="text" readonly wire:model="formattedTotalLaborCost" id="totalLaborCost"
-                        class="text-right mt-1 p-2 pl-10 block w-full border-teal-500 rounded-md bg-teal-100 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-md">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                        <span class="text-gray-500 sm:text-sm"><i
-                                class="fas fa-coins ml-1 text-yellow-500 mr-2"></i>COP</span>
-                    </div>
+        <div class="col-span-2 flex items-center">
+            <!-- Cambié 'col-span-1' a 'col-span-2' para ocupar dos columnas y añadí la clase 'flex items-center' -->
+            <label for="totalLaborCost" class="block text-lg font-medium mr-4 text-gray-700">Total Mano de Obra</label>
+            <div class="relative rounded-md shadow-sm flex-1">
+                <input type="text" readonly wire:model="formattedTotalLaborCost" id="totalLaborCost"
+                    class="text-right mt-1 p-2 pl-10 block w-full border-teal-500 rounded-md bg-teal-100 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-md">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                    <span class="text-gray-500 sm:text-sm"><i
+                            class="fas fa-coins ml-1 text-yellow-500 mr-2"></i>COP</span>
                 </div>
             </div>
-        </div>
-
-        <!-- Columna 6: Botón para enviar el valor total de la mano de obra -->
-        <div class="col-span-1">
-            <div class="mt-4">
+       
+            <!-- Cambié 'col-span-1' a 'col-span-2' para ocupar dos columnas y añadí la clase 'flex items-center' -->
+            <div class="ml-4">
                 <button wire:click="sendTotalLaborCost" type="button"
                     class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-full">
                     Enviar
                 </button>
             </div>
         </div>
-
     </label>
 </div>
+

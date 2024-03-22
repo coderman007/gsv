@@ -19,6 +19,23 @@
 
                         <div class="grid grid-cols-2 gap-4">
                             <div class="mb-4">
+                                <label for="project_category" class="text-lg font-semibold text-gray-600 py-2">Categoría
+                                    de Proyecto</label>
+                                <select wire:model="selectedCategory" id="project_category" name="project_category"
+                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                    @if ($categories)
+                                        <option value="">Seleccionar Categoría</option>
+                                        @foreach ($categories as $id => $name)
+                                            <option value="{{ $id }}">{{ $name }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @error('selectedCategory')
+                                    <span class="text-red-500">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="mb-4">
                                 <label for="name" class="text-lg font-semibold text-gray-600 py-2">Nombre del
                                     Proyecto</label>
                                 <input wire:model="name" type="text" id="name" name="name"
@@ -70,22 +87,21 @@
 
                             <!-- Campo para mostrar el valor total de los materiales -->
                             <div class="mb-4">
-                                <label for="totalMaterialsCost" class="text-lg font-semibold text-gray-600 py-2">Costo
+                                <label for="totalMaterialCost" class="text-lg font-semibold text-gray-600 py-2">Costo
                                     Total
                                     de Materiales</label>
-                                <input wire:model="totalMaterialsCost" type="text" id="totalMaterialsCost"
-                                    name="totalMaterialsCost" readonly
+                                <input wire:model="totalMaterialCost" type="text" id="totalMaterialCost"
+                                    name="totalMaterialCost" readonly
                                     class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             </div>
 
                             <!-- Campo para mostrar el valor total de las herramnientas -->
                             <div class="mb-4">
-                                <label for="totalToolsCost" class="text-lg font-semibold text-gray-600 py-2">Costo
+                                <label for="totalToolCost" class="text-lg font-semibold text-gray-600 py-2">Costo
                                     Total
                                     de Herramientas</label>
-                                <input wire:model="totalToolsCost" type="text" id="totalToolsCost"
-                                    name="totalToolsCost" readonly
-                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                <input wire:model="totalToolCost" type="text" id="totalToolCost" name="totalToolCost"
+                                    readonly class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             </div>
 
                             <!-- Campo para mostrar el valor total del transporte -->
@@ -136,6 +152,17 @@
                 </div>
             </x-slot>
             <x-slot name="footer">
+                <div class="mx-auto">
+                    <x-secondary-button wire:click="$set('openCreate', false)"
+                        class="mr-4 text-gray-500 border border-gray-500 shadow-lg hover:bg-gray-400 hover:shadow-gray-400">
+                        Cancelar
+                    </x-secondary-button>
+                    <x-secondary-button
+                        class="text-blue-500 border border-blue-500 shadow-lg hover:bg-blue-400 hover:shadow-blue-400 disabled:opacity-50 disabled:bg-blue-600 disabled:text-white"
+                        wire:click="saveProject" wire:loading.attr="disabled" wire:target="saveProject">
+                        Agregar
+                    </x-secondary-button>
+                </div>
             </x-slot>
         </div>
     </x-dialog-modal>

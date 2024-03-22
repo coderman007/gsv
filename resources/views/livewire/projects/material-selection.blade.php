@@ -53,7 +53,7 @@
         </div>
 
         <div class="ml-4">
-            <button wire:click="sendTotalMaterialsCost" type="button"
+            <button wire:click="sendTotalMaterialCost" type="button"
                 class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full">
                 Enviar
             </button>

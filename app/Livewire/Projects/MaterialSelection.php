@@ -14,7 +14,7 @@ class MaterialSelection extends Component
     public $materials = [];
     public $selectedMaterials = [];
     public $quantities = [];
-    public $totalMaterialsCost = 0;
+    public $totalMaterialCost = 0;
     public $formattedTotalMaterialCost;
 
     protected $rules = [
@@ -43,17 +43,17 @@ class MaterialSelection extends Component
             $material = Material::find($materialId);
             $totalCost += $quantity * $material->unit_price;
         }
-        $this->totalMaterialsCost = $totalCost;
+        $this->totalMaterialCost = $totalCost;
         $this->formattedTotalMaterialCost = number_format($totalCost, 2);
     }
 
     // Agregar un método para enviar el valor total de los materiales
-    public function sendTotalMaterialsCost()
+    public function sendTotalMaterialCost()
     {
-        $this->dispatch('totalMaterialsCostUpdated', $this->totalMaterialsCost);
+        $this->dispatch('totalMaterialCostUpdated', $this->totalMaterialCost);
 
         // Emitir un evento adicional para ocultar el formulario de recursos
-        if ($this->totalMaterialsCost > 0) {
+        if ($this->totalMaterialCost > 0) {
             $this->dispatch('hideResourceForm');
         }
     }

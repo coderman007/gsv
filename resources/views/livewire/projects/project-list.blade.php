@@ -25,7 +25,7 @@
                 <option value="50">50</option>
             </select>
         </div>
-        <div class="relative hidden md:block mt-2 md:mt-4 overflow-x-hidden shadow-md sm:rounded-lg">
+        <div class="relative hidden md:block sm:mx-4 mt-2 md:mt-4 overflow-x-hidden shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead
                     class="text-sm text-center text-gray-100 uppercase bg-gray-400 dark:bg-gray-700 dark:text-gray-400">
@@ -56,9 +56,9 @@
                             @endif
                         </th>
 
-                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('project_type')">
-                            Tipo de Proyecto
-                            @if ($sortBy == 'project_type')
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('description')">
+                            Descripción
+                            @if ($sortBy == 'description')
                                 @if ($sortDirection == 'asc')
                                     <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
                                 @else
@@ -70,23 +70,7 @@
                         </th>
 
                         <th scope="col" class="px-6 py-3">
-                            Cliente
-                        </th>
-
-                        <th scope="col" class="px-6 py-3">
-                            Descripción
-                        </th>
-
-                        <th scope="col" class="px-6 py-3">
-                            Kilowatts Requeridos
-                        </th>
-
-                        <th scope="col" class="px-6 py-3">
-                            Fecha de Inicio
-                        </th>
-
-                        <th scope="col" class="px-6 py-3">
-                            Término Estimado
+                            Kilowatts a Proveer
                         </th>
 
                         <th scope="col" class="px-6 py-3">
@@ -109,11 +93,12 @@
 
                             <td class="px-6 py-4 dark:text-lg">{{ $project->name }}</td>
                             <td class="px-6 py-4 dark:text-lg">{{ $project->description }}</td>
-                            <td class="px-6 py-4 dark:text-lg">{{ $project->required_kilowatts }}</td>
+                            <td class="px-6 py-4 dark:text-lg">{{ $project->kilowatts_to_provide }}</td>
                             <td
                                 class="px-6 py-4 dark:text-lg {{ $project->status === 'Activo' ? 'text-green-600' : 'text-red-500' }}">
                                 {{ $project->status }}
                             </td>
+                           
                             <td class="flex justify-around py-4 pl-2 pr-8">
                                 <div class="flex">
                                     {{-- <livewire:projects.project-show :project='$project' :key='$project->id' />

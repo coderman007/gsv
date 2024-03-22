@@ -44,28 +44,26 @@ class Project extends Model
 
     public function totalLaborCost()
     {
-        // Implementa la lógica para sumar los costos totales de las posiciones asociadas
-        return $this->positions->sum('pivot.total_cost');
+        // Retornar una relación que calcule el costo total de las posiciones asociadas
+        return $this->positions()->sum('total_cost');
     }
 
-
-    // Dentro del modelo Project
     public function totalMaterialCost()
     {
-        // Implementa la lógica para sumar los costos totales de los materiales asociados
-        return $this->materials->sum('pivot.total_cost');
+        // Retornar una relación que calcule el costo total de los materiales asociados
+        return $this->materials()->sum('total_cost');
     }
 
     public function totalToolCost()
     {
-        // Implementa la lógica para sumar los costos totales de las herramientas asociadas
-        return $this->tools->sum('pivot.total_cost');
+        // Retornar una relación que calcule el costo total de las herramientas asociadas
+        return $this->tools()->sum('total_cost');
     }
 
     public function totalTransportCost()
     {
-        // Implementa la lógica para sumar los costos totales de los transportes asociados
-        return $this->transports->sum('pivot.total_cost');
+        // Retornar una relación que calcule el costo total de los transportes asociados
+        return $this->transports()->sum('total_cost');
     }
 
     public function quotations()
