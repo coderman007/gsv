@@ -2,7 +2,7 @@
     @if ($this->clients->count() > 0)
         <div class="grid items-center w-full md:grid-cols-12 mt-2">
             {{-- Barra de búsqueda --}}
-            <div class="col-span-4">
+            <div class="col-span-4  sm:mx-4">
                 <x-input type="text" name="search" wire:model.live="search"
                     class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
                     placeholder="Buscar..." />
@@ -25,7 +25,7 @@
                 <option value="50">50</option>
             </select>
         </div>
-        <div class="relative hidden md:block mt-2 md:mt-4 overflow-x-hidden shadow-md sm:rounded-lg">
+        <div class="relative hidden md:block mt-2 sm:mx-4 md:mt-4 overflow-x-hidden shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead
                     class="text-sm text-center text-gray-100 uppercase bg-gray-400 dark:bg-gray-700 dark:text-gray-400">

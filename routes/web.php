@@ -43,7 +43,6 @@ Route::middleware([
     Route::get('clients-create', ClientCreate::class)->name('clients-create');
     Route::get('projects', ProjectList::class)->name('projects');
     Route::get('project-categories', ProjectCategoryList::class)->name('project-categories');
-    Route::get('project-types', ProjectTypeList::class)->name('project-types');
     Route::get('quotations', QuotationList::class)->name('quotations');
     Route::get('quotations/create', QuotationCreate::class)->name('quotation-create');
     // Route::get('resources', ResourceList::class)->name('resources');

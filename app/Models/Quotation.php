@@ -23,7 +23,8 @@ class Quotation extends Model
         'margin',
         'discount',
         'subtotal',
-        'iva',
+        // 'iva', Se va. No aplica
+        // Costo actual del Kilovatio
         'total_quotation_amount',
     ];
 
