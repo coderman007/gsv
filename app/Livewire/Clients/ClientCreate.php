@@ -31,7 +31,7 @@ class ClientCreate extends Component
         $this->cities = City::all()->pluck('name');
     }
 
-    public function createClient()
+    public function createClient(): void
     {
         // Validar datos del cliente y de ubicación
         $this->validate([

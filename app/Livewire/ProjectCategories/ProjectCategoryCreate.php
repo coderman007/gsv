@@ -3,46 +3,50 @@
 namespace App\Livewire\ProjectCategories;
 
 use App\Models\ProjectCategory;
+use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class ProjectCategoryCreate extends Component
 {
+    use WithFileUploads;
+
     public $openCreate = false;
-    public $name, $description, $status;
+    public $name, $description, $status, $image;
 
     protected $rules = [
         'name' => 'required|min:5|max:255',
         'description' => 'required|min:5|max:255',
-        'status' => 'required'
+        'status' => 'required',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
     ];
 
-    public function createCategory()
+    public function createCategory(): void
     {
-        // Verificar si el usuario autenticado existe
-        if (!auth()->check()) {
-            abort(403, 'No está autorizado para llevar a cabo esta acción.');
-        }
-
-        // Verificar si el usuario autenticado tiene el rol 'Administrador' y está activo
-        if (!auth()->user()->hasRole('Administrador') || auth()->user()->status !== 'Activo') {
-            abort(403, 'No está autorizado para llevar a cabo esta acción.');
-        }
-
         $this->validate();
 
-        $category = ProjectCategory::create([
+        // Almacenar la imagen de la categoría si se proporciona
+        $image_url = null;
+        if ($this->image) {
+            $image_url = $this->image->store('categories', 'public');
+        }
+
+        $projectCategory = ProjectCategory::create([
             'name' => $this->name,
             'description' => $this->description,
             'status' => $this->status,
+            'image' => $image_url,
         ]);
 
+        // Emitir el evento Livewire después de la creación
+        $this->dispatch('createdProjectCategory', $projectCategory);
+
+        // Restablecer los campos y cerrar el formulario
+        $this->reset(['name', 'description', 'status', 'image']);
         $this->openCreate = false;
-        $this->dispatch('createdProjectCategory', $category);
-        $this->dispatch('createdProjectCategoryNotification');
-        $this->reset('name', 'description', 'status');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.project-categories.project-category-create');
     }

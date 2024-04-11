@@ -8,6 +8,7 @@ use Livewire\Component;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
+use Illuminate\View\View;
 
 class UserList extends Component
 {
@@ -18,12 +19,12 @@ class UserList extends Component
     public $sortDirection = 'asc';
     public $perSearch = 10;
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function order($sort)
+    public function order($sort): void
     {
         if ($this->sortBy == $sort) {
             $this->sortDirection = ($this->sortDirection == "desc") ? "asc" : "desc";
@@ -63,7 +64,7 @@ class UserList extends Component
     {
     }
 
-    public function render()
+    public function render(): View
     {
         $users = $this->users();
         return view('livewire.users.user-list', compact('users'));

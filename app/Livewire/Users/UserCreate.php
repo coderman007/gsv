@@ -4,6 +4,7 @@ namespace App\Livewire\Users;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
 
@@ -21,11 +22,11 @@ class UserCreate extends Component
         'password' => 'required|min:8',
         'status' => 'required'
     ];
-    public function mount()
+    public function mount():void
     {
         $this->roles = Role::all();
     }
-    public function createUser()
+    public function createUser():void
     {
         // Verificar si el usuario autenticado existe
         if (!auth()->check()) {
@@ -56,7 +57,7 @@ class UserCreate extends Component
         $this->dispatch('createdUserNotification');
         $this->reset('name', 'email', 'password', 'status', 'selectedRole');
     }
-    public function render()
+    public function render():View
     {
         return view('livewire.users.user-create');
     }

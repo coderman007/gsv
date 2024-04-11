@@ -43,7 +43,7 @@
         </div>
         <div class="inline mt-4 pl-4 pr-24 md:pl-0 md:pr-0 md:mt-0 md:block md:col-span-4">
             <div class="text-3xl font-bold text-center text-blue-500 uppercase">
-                <h1>Usuarios</span></h1>
+                <h1>Usuarios</h1>
             </div>
         </div>
         <div class="col-span-4 mt-4 md:mt-0 md:block md:col-span-4">
@@ -69,7 +69,7 @@
                         <thead class="bg-gray-300">
                             <tr>
                                 <th data-title="Ordenar por ID" wire:click="order('id')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    class="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     ID
                                     @if ($sortBy == 'id')
                                     @if ($sortDirection == 'asc')
@@ -81,7 +81,7 @@
                                 </th>
 
                                 <th data-title="Ordenar por nombre" wire:click="order('name')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    class="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     Nombre
                                     @if ($sortBy == 'name')
                                     @if ($sortDirection == 'asc')
@@ -93,7 +93,7 @@
                                 </th>
 
                                 <th data-title="Ordenar por correo electrónico" wire:click="order('email')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    class="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     Correo Electrónico
                                     @if ($sortBy == 'email')
                                     @if ($sortDirection == 'asc')
@@ -105,7 +105,7 @@
                                 </th>
 
                                 <th data-title="Ordenar por Rol" wire:click="order('roles.name')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    class="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     Rol
                                     @if ($sortBy == 'roles.name')
                                     @if ($sortDirection == 'asc')
@@ -117,11 +117,11 @@
                                 </th>
 
                                 <th
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    class="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     Estado
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
+                                    class="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
                                     Acciones
                                 </th>
                             </tr>
@@ -130,7 +130,7 @@
                             @foreach($users as $user)
                             <tr wire:key="user-list-{{ $user->id }}"
                                 class="hover:bg-gray-100 text-gray-500 dark:hover:bg-blue-800">
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $user->id }}</td>
+                                <td class="px-6 text-center py-4 whitespace-nowrap">{{ $user->id }}</td>
                                 <td class="flex justify-start px-6 py-4 whitespace-nowrap">
                                     <button
                                         class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
@@ -140,12 +140,12 @@
                                     <span class="ml-2">{{ $user->name }}</span>
                                 </td>
 
-                                <td class="px-6 py-4 whitespace-nowrap text-left">{{ $user->email }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center">{{ $user->email }}</td>
 
-                                <td class="px-6 py-4 whitespace-nowrap text-left">{{ $user->roles->first()->name ??
+                                <td class="px-6 py-4 whitespace-nowrap text-center">{{ $user->roles->first()->name ??
                                     'Sin Rol' }}</td>
 
-                                <td class="px-6 py-4 whitespace-nowrap text-left">
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
                                     @if ($user->status == 'Activo')
                                     <span class="bg-green-100 px-2 py-1 rounded-md text-green-500">{{ $user->status
                                         }}</span>
@@ -154,8 +154,8 @@
                                         }}</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-left">
-                                    <div class="flex items-center">
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <div class="flex justify-center items-center gap-1">
                                         <livewire:users.user-show :user='$user' wire:key='user-show{{ $user->id}}' />
                                         <livewire:users.user-edit :userId='$user->id'
                                             wire:key='user-edit-{{ $user->id}}' />
@@ -189,6 +189,7 @@
     @push('js')
     <script>
         // Notificación de creación de usuarios
+
         Livewire.on('createdUserNotification', function(){
             swal.fire({
                 icon:'success'

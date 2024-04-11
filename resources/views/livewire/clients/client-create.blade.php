@@ -15,7 +15,7 @@
             </x-slot>
 
             <x-slot name="content">
-                <form wire:submit.prevent="createClient">
+                <form wire:submit="createClient">
                     <div class="my-5">
                         <div class="flex justify-between my-6">
                             <!-- Tipo de Cliente -->
@@ -66,9 +66,9 @@
                                             <input type="file" class="hidden" wire:model="image">
                                             <div class="absolute top-0 h-48 w-72">
                                                 @if ($image)
-                                                    <img class="object-cover w-full h-full rounded-lg"
-                                                        src="{{ $image->temporaryUrl() }}" class="mb-4"
-                                                        alt="Foto de Perfil">
+                                                    <img class="object-cover w-full h-full rounded-lg mb-4"
+                                                        src="{{ $image->temporaryUrl() }}"
+                                                        alt="Imagen de Cliente">
                                                 @endif
                                             </div>
                                         </label>
@@ -108,9 +108,7 @@
                         @if ($type === 'Empresa')
                             <x-company-client-form />
                         @endif
-
                     </div>
-
                 </form>
             </x-slot>
 

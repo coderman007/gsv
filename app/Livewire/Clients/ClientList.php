@@ -2,9 +2,10 @@
 
 namespace App\Livewire\Clients;
 
+use Illuminate\View\View;
+use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
-use Livewire\Component;
 use App\Models\Client;
 use Livewire\WithPagination;
 
@@ -17,11 +18,11 @@ class ClientList extends Component
     public $sortDirection = 'desc';
     public $perSearch = 10;
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
-    public function order($sort)
+    public function order($sort): void
     {
         if ($this->sortBy == $sort) {
             $this->sortDirection = ($this->sortDirection == "desc") ? "asc" : "desc";
@@ -63,7 +64,7 @@ class ClientList extends Component
     {
     }
 
-    public function render()
+    public function render():View
     {
         return view('livewire.clients.client-list');
     }

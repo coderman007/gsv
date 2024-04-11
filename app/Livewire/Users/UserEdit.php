@@ -3,6 +3,7 @@
 namespace App\Livewire\Users;
 
 use App\Models\User;
+use Illuminate\View\View;
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
 
@@ -11,8 +12,8 @@ class UserEdit extends Component
     public $openEdit = false;
     public $userId;
     public $name, $email, $password, $roles, $status = "";
-    public $selectedRole; // Agrega esta línea
-    public $user; // Agrega esta línea
+    public $selectedRole;
+    public $user;
 
     protected $rules = [
         'name' => 'required|min:5|max:255',
@@ -21,7 +22,7 @@ class UserEdit extends Component
         'status' => 'required'
     ];
 
-    public function mount($userId)
+    public function mount($userId):void
     {
         try {
             $this->userId = $userId;
@@ -35,7 +36,7 @@ class UserEdit extends Component
         }
     }
 
-    public function updateUser()
+    public function updateUser(): void
     {
         // Verificar si el usuario autenticado existe
         if (!auth()->check()) {
@@ -68,7 +69,7 @@ class UserEdit extends Component
         $this->dispatch('updatedUserNotification');
     }
 
-    public function render()
+    public function render():View
     {
         return view('livewire.users.user-edit');
     }

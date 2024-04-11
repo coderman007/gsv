@@ -1,21 +1,28 @@
-<div>
+<div class="container mx-auto mt-8">
     @if ($this->clients->count() > 0)
-        <div class="grid items-center w-full md:grid-cols-12 mt-2">
+        <section class="flex justify-between w-full mx-4">
+
             {{-- Barra de búsqueda --}}
-            <div class="col-span-4  sm:mx-4">
+            <div class="flex justify-start w-1/3">
                 <x-input type="text" name="search" wire:model.live="search"
                     class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
                     placeholder="Buscar..." />
             </div>
-            <div class="inline mt-4 pl-4 pr-24 md:pl-0 md:pr-0 md:mt-0 md:block md:col-span-4">
+
+            {{-- Título --}}
+            <div class="flex justify-center w-1/3">
                 <div class="text-xl font-bold text-center text-blue-400 uppercase">
                     <h1>Clientes</h1>
                 </div>
             </div>
-            <div class="inline mt-4 md:mt-0 md:block md:col-span-4">
+
+            {{-- Componente de creación --}}
+            <div class="flex justify-end w-1/3 mr-8">
                 <livewire:clients.client-create />
             </div>
-        </div>
+        </section>
+
+        {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
             Resultados
             <select name="perSearch" id="perSearch" wire:model.live="perSearch" class="rounded-lg cursor-pointer">
@@ -25,6 +32,8 @@
                 <option value="50">50</option>
             </select>
         </div>
+
+        <!-- Tabla de Clientes -->
         <div class="relative hidden md:block mt-2 sm:mx-4 md:mt-4 overflow-x-hidden shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead
@@ -113,9 +122,9 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse ($this->clients as $client)
-                        <tr
+                        <tr  wire:key="client-{{ $client->id }}"
                             class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <th scope="row"
                                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -133,7 +142,7 @@
                             </td>
 
                             <td class="flex justify-around py-4 pl-2 pr-8">
-                                <div class="flex">
+                                <div class="flex justify-center items-center gap-1">
                                     <livewire:clients.client-show :client="$client" :key="time() . $client->id" />
                                     <livewire:clients.client-edit :client="$client" :key="time() . $client->id" />
                                     <livewire:clients.client-delete :client="$client" :key="time() . $client->id" />
@@ -149,6 +158,7 @@
                     @endforelse
                 </tbody>
             </table>
+
             <div class="px-3 py-1">
                 {{ $this->clients->links() }}
             </div>
@@ -158,6 +168,7 @@
         <h1 class="my-64 text-5xl text-center dark:text-gray-200">
             <div>¡Ups!</div><br> <span class="mt-4"> No se encontraron coincidencias en la búsqueda. </span>
         </h1>
+
         <div class="flex justify-center w-full h-auto">
             <livewire:clients.client-create />
             <button

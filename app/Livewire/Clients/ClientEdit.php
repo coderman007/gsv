@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Clients;
 
+use Illuminate\View\View;
 use Livewire\Component;
 use App\Models\Client;
 use App\Models\City;
@@ -27,7 +28,7 @@ class ClientEdit extends Component
     public $status;
     public $image;
 
-    public function mount(Client $client)
+    public function mount(Client $client): void
     {
         $this->client = $client;
         $this->cities = City::all()->pluck('name');
@@ -40,9 +41,10 @@ class ClientEdit extends Component
         $this->address = $client->address;
         $this->phone = $client->phone;
         $this->status = $client->status;
+//        $this->image = $client->image;
     }
 
-    public function updateClient()
+    public function updateClient():void
     {
         $this->validate([
             'city_id' => 'required|exists:cities,id',
@@ -65,15 +67,14 @@ class ClientEdit extends Component
                 'email' => $this->email,
                 'address' => $this->address,
                 'phone' => $this->phone,
-                'address' => $this->address,
-                'phone' => $this->phone,
                 'status' => $this->status,
             ];
 
             $this->client->update($clientData);
 
             if ($this->image) {
-                $this->client->update(['image' => $this->image->store('clients', 'public')]);
+                $image_url = $this->image->store('clients');
+                $this->client->update(['image' => $image_url]);
             }
 
             // Emitir eventos y notificaciones si es necesario
@@ -92,13 +93,13 @@ class ClientEdit extends Component
         }
     }
 
-    public function updatedCity($value)
+    public function updatedCity($value): void
     {
         // Filtrar las ciudades basadas en la entrada del usuario
         $this->filteredCities = City::where('name', 'like', '%' . $value . '%')->pluck('name');
     }
 
-    public function selectCity($city)
+    public function selectCity($city): void
     {
         $selectedCity = City::where('name', $city)->first();
         if ($selectedCity) {
@@ -109,7 +110,7 @@ class ClientEdit extends Component
     }
 
 
-    public function render()
+    public function render():View
     {
         return view('livewire.clients.client-edit');
     }

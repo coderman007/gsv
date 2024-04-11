@@ -2,6 +2,7 @@
 
 namespace App\Livewire\ProjectCategories;
 
+use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -16,18 +17,14 @@ class ProjectCategoryList extends Component
     public $sortBy = 'id';
     public $sortDirection = 'asc';
     public $perSearch = 10;
+    public $showFullDescription = false; // Nuevo estado
 
-    public function mount()
-    {
-        $this->sortBy = 'id';
-    }
-
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
         $this->resetPage();
     }
 
-    public function order($sort)
+    public function order($sort): void
     {
         if ($this->sortBy == $sort) {
             $this->sortDirection = ($this->sortDirection == "desc") ? "asc" : "desc";
@@ -35,8 +32,6 @@ class ProjectCategoryList extends Component
             $this->sortBy = $sort;
             $this->sortDirection = "asc";
         }
-
-        $this->resetPage();
     }
 
     #[Computed]
@@ -49,7 +44,16 @@ class ProjectCategoryList extends Component
     }
 
     #[On('createdProjectCategory')]
-    public function createdProjectCategory($projectCategory = null)
+    public function createdProjectCategory($projectCategory = null): void
+    {
+        if ($projectCategory) {
+            // Recargar la lista de categorías de proyecto
+            $this->projectCategories->fresh();
+        }
+    }
+
+    #[On('notification')]
+    public function notify($message = null)
     {
     }
 
@@ -62,9 +66,26 @@ class ProjectCategoryList extends Component
     public function deletedProjectCategory($projectCategory = null)
     {
     }
-    public function render()
+
+    public function toggleDescription($categoryId): void
     {
-        $categories = $this->projectCategories();
-        return view('livewire.project-categories.project-category-list', compact('categories'));
+        if ($this->showFullDescription === $categoryId) {
+            $this->showFullDescription = null;
+        } else {
+            $this->showFullDescription = $categoryId;
+        }
+    }
+
+    // Dentro de la clase ProjectCategoryList
+
+    public function closeDescription(): void
+    {
+        $this->showFullDescription = false;
+    }
+
+
+    public function render():View
+    {
+        return view('livewire.project-categories.project-category-list');
     }
 }
