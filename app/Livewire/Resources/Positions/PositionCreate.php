@@ -3,6 +3,7 @@
 namespace App\Livewire\Resources\Positions;
 
 use App\Models\Position;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class PositionCreate extends Component
@@ -19,7 +20,7 @@ class PositionCreate extends Component
         'realDailyCost' => 'required|numeric|min:0',
     ];
 
-    public function createPosition()
+    public function createPosition(): void
     {
         $this->validate();
 
@@ -39,7 +40,7 @@ class PositionCreate extends Component
         $this->reset('name', 'basic', 'benefitFactor', 'realMonthlyCost', 'realDailyCost');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.resources.positions.position-create');
     }

@@ -1,63 +1,69 @@
-<div>
-    <div class="relative inline-block text-center cursor-pointer group">
-        <a href="#" wire:click="$set('openShow', true)">
-            <i class="p-1 text-green-400 rounded hover:text-white hover:bg-green-500 fa-solid fa-eye"></i>
-            <div
-                class="absolute z-10 px-2 py-2 mb-2 text-center text-white bg-gray-700 rounded-lg opacity-0 pointer-events-none text-md group-hover:opacity-80 bottom-full -left-3">
-                Ver
-                <svg class="absolute left-0 w-full h-2 text-black top-full" x="0px" y="0px" viewBox="0 0 255 255"
-                    xml:space="preserve">
-                </svg>
-            </div>
-        </a>
+<div class="relative inline-block text-center cursor-pointer group">
+    <a href="#" wire:click="$set('openShow', true)">
+        <div
+            class="flex items-center justify-center p-2 text-gray-200 rounded-md bg-gradient-to-br from-green-300 to-green-500 hover:from-green-500 hover:to-gray-700 hover:text-white transition duration-300 ease-in-out">
+            <i class="fas fa-eye"></i>
+        </div>
+        <div
+            class="absolute z-10 px-3 py-2 text-center text-white bg-gray-800 rounded-lg opacity-0 pointer-events-none text-md group-hover:opacity-80 bottom-full -left-3">
+            Ver
+            <svg class="absolute left-0 w-full h-2 text-black top-full" x="0px" y="0px" viewBox="0 0 255 255"
+                 xml:space="preserve">
+            </svg>
+        </div>
+    </a>
+        <!-- Modal de detalle -->
+        <x-dialog-modal maxWidth="3xl" wire:model="openShow">
+            <div class="w-full mx-auto bg-white shadow-md p-6 rounded-md">
+                <!-- Título del modal -->
+                <x-slot name="title">
+                    <h2 class="font-semibold text-2xl text-center pt-4 text-blue-500">Detalle de Posición Laboral</h2>
+                </x-slot>
 
-        <x-dialog-modal wire:model="openShow">
-            <x-slot name="title">
-                <!-- Puedes agregar un título aquí si es necesario -->
-            </x-slot>
+                <!-- Contenido del modal -->
+                <x-slot name="content">
+                    <div class="flex flex-col items-center mt-6 p-4 bg-gray-50 rounded-lg">
+                        <!-- Nombre -->
+                        <div class="space-y-2 w-full text-lg">
+                            <label for="name" class="font-semibold text-gray-700">Nombre de la Posición:</label>
+                            <p id="name" class="text-gray-800">{{ $position->name }}</p>
+                        </div>
 
-            <x-slot name="content">
-                <div class="md:px-5 pb-5">
-                    <div class="md:mx-6">
-                        <div class="bg-gray-500 p-4 rounded-lg text-white text-center">
-                            <!-- Mostrar detalles del recurso de mano de obra -->
-                            <h3 class="text-xl font-semibold">{{ $position->name }}</h3>
-                            <p class="p-2 rounded-md text-lg text-center">
-                                Salario Básico: {{ $position->basic }}
-                            </p>
-                            <p class="p-2 rounded-md text-lg text-center">
-                                Factor de Beneficio: {{ $position->benefit_factor }}%
-                            </p>
-                            <p class="p-2 rounded-md text-lg text-center">
-                                Costo Mensual Real: {{ $position->real_monthly_cost }}
-                            </p>
-                            <p class="p-2 rounded-md text-lg text-center">
-                                Costo Diario Real: {{ $position->real_daily_cost }}
-                            </p>
+                        <!-- Salario Básico -->
+                        <div class="space-y-2 w-full text-lg">
+                            <label for="basic" class="font-semibold text-gray-700">Salario Básico:</label>
+                            <p id="basic" class="text-gray-800">{{ $position->basic }}</p>
+                        </div>
+
+                        <!-- Factor de Beneficio -->
+                        <div class="space-y-2 w-full text-lg">
+                            <label for="benefit_factor" class="font-semibold text-gray-700">Factor de Beneficio:</label>
+                            <p id="benefit_factor" class="text-gray-800">{{ $position->benefit_factor }}</p>
+                        </div>
+
+                        <!-- Costo Mensual Real -->
+                        <div class="space-y-2 w-full text-lg">
+                            <label for="real_monthly_cost" class="font-semibold text-gray-700">Costo Mensual Real:</label>
+                            <p id="real_monthly_cost" class="text-gray-800">{{ $position->real_monthly_cost }}</p>
+                        </div>
+
+                        <!-- Costo Diario Real -->
+                        <div class="space-y-2 w-full text-lg">
+                            <label for="real_daily_cost" class="font-semibold text-gray-700">Costo Diario Real:</label>
+                            <p id="real_daily_cost" class="text-gray-800">{{ $position->real_daily_cost }}</p>
                         </div>
                     </div>
-                </div>
-            </x-slot>
+                </x-slot>
 
-            <x-slot name="footer">
-                <div class="mx-auto">
-                    <a href="#_" wire:click="$set('openShow', false)"
-                        class="box-border relative z-30 inline-flex items-center justify-center w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-red-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-red-200 ring-offset-red-100 hover:ring-offset-red-500 ease focus:outline-none">
-                        <span
-                            class="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
-                        <span
-                            class="absolute top-0 left-0 w-20 h-8 -mt-1 -ml-12 transition-all duration-300 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
-                        <span class="relative z-20 flex items-center text-md">
-                            <svg class="w-5 h-5 mr-2 font-extrabold " fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                            Salir
-                        </span>
-                    </a>
-                </div>
-            </x-slot>
+                <!-- Pie del modal con el botón de cierre -->
+                <x-slot name="footer">
+                    <div class="flex justify-end">
+                        <button wire:click="$set('openShow', false)"
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
+                            Cerrar Detalle
+                        </button>
+                    </div>
+                </x-slot>
+            </div>
         </x-dialog-modal>
-    </div>
 </div>

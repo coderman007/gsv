@@ -3,6 +3,7 @@
 namespace App\Livewire\Resources\Materials;
 
 use App\Models\Material;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class MaterialDelete extends Component
@@ -10,12 +11,12 @@ class MaterialDelete extends Component
     public $openDelete = false;
     public $material;
 
-    public function mount(Material $material)
+    public function mount(Material $material): void
     {
         $this->material = $material;
     }
 
-    public function deleteMaterial()
+    public function deleteMaterial(): void
     {
         // Verificar si el usuario autenticado existe
         if (!auth()->check()) {
@@ -36,7 +37,7 @@ class MaterialDelete extends Component
         }
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.resources.materials.material-delete');
     }

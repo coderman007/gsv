@@ -2,14 +2,18 @@
 
 namespace App\Livewire\ProjectCategories;
 
+use Illuminate\View\View;
 use Livewire\Component;
 use App\Models\ProjectCategory;
+use Livewire\WithFileUploads;
 
 class ProjectCategoryEdit extends Component
 {
+    use WithFileUploads;
+
     public $openEdit = false;
     public $categoryId;
-    public $name, $description, $status = "";
+    public $name, $description, $image, $status = "";
     public $category;
 
     protected $rules = [
@@ -18,7 +22,7 @@ class ProjectCategoryEdit extends Component
         'status' => 'required'
     ];
 
-    public function mount($categoryId)
+    public function mount($categoryId): void
     {
         $this->categoryId = $categoryId;
         $this->category = ProjectCategory::findOrFail($categoryId);
@@ -27,35 +31,39 @@ class ProjectCategoryEdit extends Component
         $this->status = $this->category->status;
     }
 
-    public function updateCategory()
+    public function updateCategory(): void
     {
-        // Verificar si el usuario autenticado existe
-        if (!auth()->check()) {
-            abort(403, 'No está autorizado para llevar a cabo esta acción.');
-        }
-
-        // Verificar si el usuario autenticado tiene el rol 'Administrador' y está activo
-        if (!auth()->user()->hasRole('Administrador') || auth()->user()->status !== 'Activo') {
-            abort(403, 'No está autorizado para llevar a cabo esta acción.');
-        }
-
         $this->validate();
 
-        $category = ProjectCategory::findOrFail($this->categoryId);
-
-        $category->update([
+        // Actualizar la información de la categoría
+        $this->category->update([
             'name' => $this->name,
             'description' => $this->description,
             'status' => $this->status,
         ]);
 
-        $this->openEdit = false;
-        // Puedes emitir eventos si lo necesitas
-        $this->dispatch('updatedProjectCategory', $category);
+        // Actualizar la imagen de la categoría si se proporciona
+        if ($this->image) {
+            // Eliminar la imagen anterior si existe
+            if ($this->category->image) {
+                unlink(public_path('storage/' . $this->category->image));
+            }
+
+            // Almacenar la nueva imagen
+            $image_url = $this->image->store('categories', 'public');
+            $this->category->update(['image' => $image_url]);
+        }
+
+        // Emitir el evento Livewire después de la actualización
+        $this->dispatch('updatedProjectCategory', $this->category);
         $this->dispatch('updatedProjectCategoryNotification');
+
+        // Restablecer los campos y cerrar el formulario
+        $this->reset(['name', 'description', 'status', 'image']);
+        $this->openEdit = false;
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.project-categories.project-category-edit');
     }

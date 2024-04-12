@@ -122,8 +122,8 @@
                                 <td class="px-6 text-left py-4 whitespace-nowrap">{{ $position->real_monthly_cost }}</td>
                                 <td class="px-6 text-left py-4 whitespace-nowrap">{{ $position->real_daily_cost }}</td>
 
-                                <td class="px-6 py-4 whitespace-nowrap text-left">
-                                    <div class="flex items-center">
+                                <td class="text-center pr-8">
+                                    <div class="flex justify-center items-center gap-1">
                                         <livewire:resources.positions.position-show :position='$position'
                                             wire:key='position-show{{ $position->id}}' />
                                         <livewire:resources.positions.position-edit :positionId='$position->id'

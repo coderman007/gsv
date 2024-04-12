@@ -1,173 +1,190 @@
 <div class="container mx-auto mt-8">
-    @if ($materials->count() > 0)
-    <div class="grid items-center w-full md:grid-cols-12 mt-4">
-        <div class="col-span-4 ml-4 shadow-md shadow-gray-500 border dark:border-blue-500 rounded-lg">
-            <input type="text" name="search" wire:model.live="search"
-                class="w-full bg-white dark:text-gray-100 dark:bg-gray-900 border-none rounded-lg focus:ring-blue-400"
-                placeholder="Buscar..." />
-        </div>
-        <div class="inline mt-4 pl-4 pr-24 md:pl-0 md:pr-0 md:mt-0 md:block md:col-span-4">
-            <div class="text-3xl font-bold text-center text-blue-500 uppercase">
-                <h1>Materiales</h1>
+    @if ($this->materials->count() > 0)
+        <section class="flex justify-between w-full mx-4">
+
+            {{-- Barra de búsqueda --}}
+            <div class="flex justify-start w-1/3">
+                <x-input type="text" name="search" wire:model.live="search"
+                         class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
+                         placeholder="Buscar..." />
             </div>
-        </div>
-        <div class="col-span-4 mt-4 md:mt-0 md:block md:col-span-4">
-            <div class="md:text-right">
-                <livewire:resources.materials.material-create />
-            </div>
-        </div>
-    </div>
-    <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
-        Resultados
-        <select name="perSearch" id="perSearch" wire:model.live="perSearch" class="rounded-lg cursor-pointer">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-        </select>
-    </div>
-    <div class="flex flex-col">
-        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-0">
-                <div class="overflow-hidden border border-gray-300 dark:border-gray-700 shadow-md sm:rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-300">
-                            <tr>
-                                <th data-title="Ordenar por ID" wire:click="order('id')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
-                                    ID
-                                    @if ($sortBy == 'id')
-                                    @if ($sortDirection == 'asc')
-                                    <span>&uarr;</span>
-                                    @else
-                                    <span>&darr;</span>
-                                    @endif
-                                    @endif
-                                </th>
 
-                                <th data-title="Ordenar por Categoría" wire:click="order('category')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
-                                    Categoría
-                                    @if ($sortBy == 'category')
-                                    @if ($sortDirection == 'asc')
-                                    <span>&uarr;</span>
-                                    @else
-                                    <span>&darr;</span>
-                                    @endif
-                                    @endif
-                                </th>
-
-                                <th data-title="Ordenar por Referencia" wire:click="order('reference')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
-                                    Referencia
-                                    @if ($sortBy == 'reference')
-                                    @if ($sortDirection == 'asc')
-                                    <span>&uarr;</span>
-                                    @else
-                                    <span>&darr;</span>
-                                    @endif
-                                    @endif
-                                </th>
-
-                                <th data-title="Ordenar por Descripción" wire:click="order('description')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
-                                    Descripción
-                                    @if ($sortBy == 'description')
-                                    @if ($sortDirection == 'asc')
-                                    <span>&uarr;</span>
-                                    @else
-                                    <span>&darr;</span>
-                                    @endif
-                                    @endif
-                                </th>
-
-                                <th data-title="Ordenar por Precio Unitario" wire:click="order('unit_price')"
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
-                                    Precio Unitario
-                                    @if ($sortBy == 'unit_price')
-                                    @if ($sortDirection == 'asc')
-                                    <span>&uarr;</span>
-                                    @else
-                                    <span>&darr;</span>
-                                    @endif
-                                    @endif
-                                </th>
-
-                                <th
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-400 uppercase">
-                                    Acciones
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700">
-                            @foreach ($materials as $material)
-                            <tr wire:key="material-list-{{ $material->id }}"
-                                class="hover:bg-gray-100 text-gray-500 dark:hover:bg-blue-800">
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $material->id }}</td>
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $material->category }}</td>
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $material->reference }}</td>
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $material->description }}</td>
-                                <td class="px-6 text-left py-4 whitespace-nowrap">{{ $material->unit_price }}</td>
-
-                                <td class="px-6 py-4 whitespace-nowrap text-left">
-                                    <div class="flex items-center">
-                                        <livewire:resources.materials.material-show :material='$material'
-                                            wire:key='material-show{{ $material->id }}' />
-                                        <livewire:resources.materials.material-edit :materialId='$material->id'
-                                            wire:key='material-edit-{{ $material->id }}' />
-                                        <livewire:resources.materials.material-delete :material='$material'
-                                            wire:key='material-delete-{{ $material->id }}' />
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    <div class="mt-4">
-                        {{ $materials->links() }}
-                    </div>
+            {{-- Título --}}
+            <div class="flex justify-center w-1/3">
+                <div class="text-xl font-bold text-center text-blue-400 uppercase">
+                    <h1>Materiales</h1>
                 </div>
             </div>
+
+            {{-- Componente de creación --}}
+            <div class="flex justify-end w-1/3 mr-8">
+                <livewire:resources.materials.material-create />
+            </div>
+        </section>
+
+        {{-- Opciones de visualización --}}
+        <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
+            Resultados
+            <select name="perSearch" id="perSearch" wire:model.live="perSearch" class="rounded-lg cursor-pointer">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
         </div>
-    </div>
+
+        <!-- Tabla de Materiales -->
+        <div class="relative hidden md:block mt-2 sm:mx-4 md:mt-4 overflow-x-hidden shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead
+                    class="text-sm text-center text-gray-100 uppercase bg-gray-400 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('id')">
+                        ID
+                        @if ($sortBy == 'id')
+                            @if ($sortDirection == 'asc')
+                                <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
+                            @else
+                                <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
+                            @endif
+                        @else
+                            <i class="ml-2 fa-solid fa-sort"></i>
+                        @endif
+                    </th>
+
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('reference')">
+                        Referencia
+                        @if ($sortBy == 'reference')
+                            @if ($sortDirection == 'asc')
+                                <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
+                            @else
+                                <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
+                            @endif
+                        @else
+                            <i class="ml-2 fa-solid fa-sort"></i>
+                        @endif
+                    </th>
+
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('description')">
+                        Descripción
+                        @if ($sortBy == 'description')
+                            @if ($sortDirection == 'asc')
+                                <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
+                            @else
+                                <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
+                            @endif
+                        @else
+                            <i class="ml-2 fa-solid fa-sort"></i>
+                        @endif
+                    </th>
+
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('unit_price')">
+                        Precio Unitario
+                        @if ($sortBy == 'unit_price')
+                            @if ($sortDirection == 'asc')
+                                <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
+                            @else
+                                <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
+                            @endif
+                        @else
+                            <i class="ml-2 fa-solid fa-sort"></i>
+                        @endif
+                    </th>
+
+                    <th scope="col" class="px-6 py-3">
+                        Imagen
+                    </th>
+
+                    <th scope="col" class="px-6 py-3">
+                        Acciones
+                    </th>
+                </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700">
+                @forelse ($this->materials as $material)
+                    <tr  wire:key="material-{{ $material->id }}"
+                         class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <th scope="row"
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ $material->id }}
+                        </th>
+                        <td class="px-6 py-4 dark:text-lg">{{ $material->reference }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $material->description }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $material->unit_price }}</td>
+                        <td class="px-6 py-4 mx-auto">
+                            @if($material->image)
+                                <img src="{{ asset('storage/' . $material->image) }}" alt="Imagen de Material" class="ml-10 border-2 border-gray-500 object-cover w-12 h-12 rounded-full">
+                            @else
+                                No Image
+                            @endif
+                        </td>
+
+                        <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
+                            <div class="flex justify-center items-center gap-1">
+                                <livewire:resources.materials.material-show :material="$material" :key="time() . $material->id" />
+                                <livewire:resources.materials.material-edit :materialId="$material->id" :key="time() . $material->id" />
+
+                                <livewire:resources.materials.material-delete :material="$material" :key="time() . $material->id" />
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="12" class="text-3xl text-center dark:text-gray-200">
+                            No hay Materiales Disponibles
+                        </td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+
+            <div class="px-3 py-1">
+                {{ $this->materials->links() }}
+            </div>
+        </div>
     @else
-    <!-- Mensaje de no hay materiales -->
-    <h1 class="my-64 text-5xl text-center dark:text-gray-200">
-        <div>¡Ups!</div><br> <span class="mt-4"> No se encontraron coincidencias en la búsqueda. </span>
-    </h1>
-    <div class="flex justify-center w-full h-auto">
-        <button
-            class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
-            <a href="{{ route('materials') }}">Volver</a>
-        </button>
-    </div>
+        <!-- Mensaje de no hay Materiales -->
+        <h1 class="my-64 text-5xl text-center dark:text-gray-200">
+            <div>¡Ups!</div><br> <span class="mt-4"> No se encontraron coincidencias en la búsqueda. </span>
+        </h1>
+
+        <div class="flex justify-center w-full h-auto">
+            <livewire:resources.materials.material-create />
+            <button
+                class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
+                <a href="{{ route('materials') }}">Volver</a>
+            </button>
+        </div>
     @endif
+
     @push('js')
-    <script>
-        // Agrega aquí tus scripts JavaScript necesarios
-            Livewire.on('createdMaterialNotification', function(){
+        <script>
+            // Notificación de creación de materiales
+            Livewire.on('createdMaterialNotification', function() {
                 swal.fire({
-                    icon:'success'
-                    , title: 'Elemento Creado!'
-                    , text: 'El elemento se ha creado correctamente!'
+                    icon: 'success',
+                    title: 'Material Creado!',
+                    text: 'El material se ha creado correctamente!'
                 })
             });
 
-            Livewire.on('updatedMaterialNotification', function(){
+            // Notificación de edición de materiales
+            Livewire.on('updatedMaterialNotification', function() {
                 swal.fire({
-                    icon:'success'
-                    , title: 'Elemento Actualizado!'
-                    , text: 'El elemento se ha actualizado correctamente!'
+                    icon: 'success',
+                    title: 'Material Actualizado!',
+                    text: 'El material se ha actualizado correctamente!'
                 })
             });
 
-            Livewire.on('deletedMaterialNotification', function(){
+            // Notificación de eliminación de materiales
+            Livewire.on('deletedMaterialNotification', function() {
                 swal.fire({
-                    icon: 'success'
-                    , title: 'Elemento Eliminado!'
-                    , text: 'El elemento se ha eliminado correctamente!'
+                    icon: 'success',
+                    title: 'Material Eliminado!',
+                    text: 'El material se ha eliminado correctamente!'
                 })
             });
-    </script>
+        </script>
     @endpush
 </div>

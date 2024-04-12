@@ -20,7 +20,7 @@ class PositionEdit extends Component
         'real_daily_cost' => 'required|numeric|min:0',
     ];
 
-    public function mount($positionId)
+    public function mount($positionId): void
     {
         $this->positionId = $positionId;
         $this->position = Position::findOrFail($positionId);
@@ -31,7 +31,7 @@ class PositionEdit extends Component
         $this->real_daily_cost = $this->position->real_daily_cost;
     }
 
-    public function updateposition()
+    public function updatePosition(): void
     {
         // Aquí puedes realizar las validaciones adicionales necesarias
 

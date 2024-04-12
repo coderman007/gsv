@@ -3,53 +3,59 @@
 namespace App\Livewire\Resources\Tools;
 
 use App\Models\Tool;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class ToolEdit extends Component
 {
-    public $openEdit = false;
+    use WithFileUploads;
+
     public $toolId;
-    public $category, $name, $unitPrice;
-    public $tool;
+    public $openEdit = false;
+    public $name, $unitPricePerDay, $image;
 
     protected $rules = [
-        'category' => 'required|min:5|max:255',
-        'name' => 'required|min:5|max:255',
-        'unitPrice' => 'required|numeric|min:0',
+        'name' => 'required|string|max:255',
+        'unitPricePerDay' => 'required|numeric|min:0',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
     ];
 
-    public function mount($toolId)
+    public function mount($toolId): void
     {
-        try {
-            $this->toolId = $toolId;
-            $this->tool = Tool::findOrFail($toolId);
-            $this->category = $this->tool->category;
-            $this->name = $this->tool->name;
-            $this->unitPrice = $this->tool->unit_price;
-        } catch (\Exception $exception) {
-            abort(404, ['Herramienta no encontrada', $exception->getMessage()]);
-        }
+        $this->toolId = $toolId;
+        $tool = Tool::findOrFail($toolId);
+        $this->name = $tool->name;
+        $this->unitPricePerDay = $tool->unit_price_per_day;
     }
 
-    public function updateTool()
+    public function updateTool(): void
     {
         $this->validate();
 
         $tool = Tool::findOrFail($this->toolId);
-
         $tool->update([
-            'category' => $this->category,
             'name' => $this->name,
-            'unit_price' => $this->unitPrice,
+            'unit_price_per_day' => $this->unitPricePerDay,
         ]);
 
-        $this->openEdit = false;
+        if ($this->image) {
+            Storage::delete($tool->image); // Elimina la imagen anterior si existe
+            $imagePath = $this->image->store('tools', 'public');
+            $tool->image = $imagePath;
+            $tool->save();
+        }
+
         $this->dispatch('updatedTool', $tool);
         $this->dispatch('updatedToolNotification');
+        $this->openEdit = false;
     }
 
-    public function render()
+    public function render(): View
     {
-        return view('livewire.resources.tools.tool-edit');
+        $tool = Tool::findOrFail($this->toolId);
+        return view('livewire.resources.tools.tool-edit', compact('tool'));
     }
+
 }

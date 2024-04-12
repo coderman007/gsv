@@ -2,10 +2,11 @@
 
 namespace App\Livewire\Resources\Materials;
 
+use Illuminate\View\View;
 use Livewire\Component;
-use App\Models\Material;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
+use App\Models\Material;
 use Livewire\WithPagination;
 
 class MaterialList extends Component
@@ -14,15 +15,15 @@ class MaterialList extends Component
 
     public $search = '';
     public $sortBy = 'id';
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
     public $perSearch = 10;
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function order($sort)
+    public function order($sort): void
     {
         if ($this->sortBy == $sort) {
             $this->sortDirection = ($this->sortDirection == "desc") ? "asc" : "desc";
@@ -30,22 +31,25 @@ class MaterialList extends Component
             $this->sortBy = $sort;
             $this->sortDirection = "asc";
         }
-
-        $this->resetPage();
     }
 
-    #[Computed]
+    #[Computed()]
     public function materials()
     {
-        return Material::where('category', 'like', '%' . $this->search . '%')
-            ->orWhere('reference', 'like', '%' . $this->search . '%')
+        return Material::where('reference', 'like', '%' . $this->search . '%')
             ->orWhere('description', 'like', '%' . $this->search . '%')
+            ->orWhere('unit_price', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
     }
 
     #[On('createdMaterial')]
-    public function createdMaterial($material = null)
+    public function createdMaterial($materialData = null)
+    {
+    }
+
+    #[On('notification')]
+    public function notify($message = null)
     {
     }
 
@@ -59,9 +63,8 @@ class MaterialList extends Component
     {
     }
 
-    public function render()
+    public function render(): View
     {
-        $materials = $this->materials();
-        return view('livewire.resources.materials.material-list', compact('materials'));
+        return view('livewire.resources.materials.material-list');
     }
 }

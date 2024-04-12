@@ -76,7 +76,7 @@
                 <div class="flex justify-end">
                     <button type="submit" wire:click="createCategory"
                             class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
-                        Crear Cliente
+                        Crear Categoría de Proyecto
                     </button>
                 </div>
             </x-slot>

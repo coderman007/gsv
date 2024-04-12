@@ -67,7 +67,7 @@
                                             <div class="text-center">
                                                 <span class="font-normal text-gray-600">Imagen Cliente</span>
                                             </div>
-                                            <input type="file" class="hidden" wire:model.lazy="image">
+                                            <input type="file" class="hidden" wire:model="image">
                                             <div class="absolute top-0 h-48 w-72">
                                                 @if ($image)
                                                     <img class="object-cover w-full h-full rounded-lg mb-4" src="{{ $image->temporaryUrl() }}" alt="Imagen del cliente">

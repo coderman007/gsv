@@ -2,10 +2,11 @@
 
 namespace App\Livewire\Resources\Tools;
 
+use Illuminate\View\View;
 use Livewire\Component;
-use App\Models\Tool;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
+use App\Models\Tool;
 use Livewire\WithPagination;
 
 class ToolList extends Component
@@ -14,15 +15,15 @@ class ToolList extends Component
 
     public $search = '';
     public $sortBy = 'id';
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
     public $perSearch = 10;
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function order($sort)
+    public function order($sort): void
     {
         if ($this->sortBy == $sort) {
             $this->sortDirection = ($this->sortDirection == "desc") ? "asc" : "desc";
@@ -30,11 +31,9 @@ class ToolList extends Component
             $this->sortBy = $sort;
             $this->sortDirection = "asc";
         }
-
-        $this->resetPage();
     }
 
-    #[Computed]
+    #[Computed()]
     public function tools()
     {
         return Tool::where('name', 'like', '%' . $this->search . '%')
@@ -43,7 +42,12 @@ class ToolList extends Component
     }
 
     #[On('createdTool')]
-    public function createdTool($tool = null)
+    public function createdTool($toolData = null)
+    {
+    }
+
+    #[On('notification')]
+    public function notify($message = null)
     {
     }
 
@@ -57,9 +61,8 @@ class ToolList extends Component
     {
     }
 
-    public function render()
+    public function render(): View
     {
-        $tools = $this->tools();
-        return view('livewire.resources.tools.tool-list', compact('tools'));
+        return view('livewire.resources.tools.tool-list');
     }
 }

@@ -3,36 +3,51 @@
 namespace App\Livewire\Resources\Tools;
 
 use App\Models\Tool;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class ToolCreate extends Component
 {
+    use WithFileUploads;
+
     public $openCreate = false;
-    public $category, $name, $unitPrice;
+    public $name, $unitPricePerDay, $image;
 
     protected $rules = [
-        'category' => 'required|string|max:255',
         'name' => 'required|string|max:255',
-        'unitPrice' => 'required|numeric|min:0',
+        'unitPricePerDay' => 'required|numeric|min:0',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
     ];
 
-    public function createTool()
+
+    public function createTool(): void
     {
         $this->validate();
 
+        // Almacenar la imagen de la herramienta si se proporciona
+        $image_url = null;
+        if ($this->image) {
+            $image_url = $this->image->store('tools', 'public');
+        }
+
         $tool = Tool::create([
-            'category' => $this->category,
             'name' => $this->name,
-            'unit_price' => $this->unitPrice,
+            'unit_price_per_day' => $this->unitPricePerDay,
+            'image' => $image_url,
         ]);
 
         $this->openCreate = false;
+
+        // Emitir eventos
         $this->dispatch('createdTool', $tool);
         $this->dispatch('createdToolNotification');
-        $this->reset('category', 'name', 'unitPrice');
+
+        $this->reset('name', 'unitPricePerDay', 'image');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.resources.tools.tool-create');
     }

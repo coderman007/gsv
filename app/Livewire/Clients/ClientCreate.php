@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Clients;
 
+use Illuminate\View\View;
 use Livewire\Component;
 use App\Models\Client;
 use App\Models\City;
@@ -92,13 +93,13 @@ class ClientCreate extends Component
         ]);
     }
 
-    public function updatedCity($value)
+    public function updatedCity($value): void
     {
         // Filtrar las ciudades basadas en la entrada del usuario
         $this->filteredCities = City::where('name', 'like', '%' . $value . '%')->pluck('name');
     }
 
-    public function selectCity($city)
+    public function selectCity($city): void
     {
         $selectedCity = City::where('name', $city)->first();
         if ($selectedCity) {
@@ -109,7 +110,7 @@ class ClientCreate extends Component
     }
 
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.clients.client-create', [
             'filteredCities' => $this->filteredCities,

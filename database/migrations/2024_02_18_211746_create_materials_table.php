@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('reference');
             $table->text('description');
             $table->double('unit_price');
+            $table->string('image')->nullable();
             $table->timestamps();
 
             $table->foreign('material_category_id')->references('id')->on('material_categories')->cascadeOnDelete();

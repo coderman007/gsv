@@ -3,6 +3,7 @@
 namespace App\Livewire\Resources\Positions;
 
 use App\Models\Position;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class PositionDelete extends Component
@@ -10,12 +11,12 @@ class PositionDelete extends Component
     public $openDelete = false;
     public $position;
 
-    public function mount(Position $position)
+    public function mount(Position $position): void
     {
         $this->position = $position;
     }
 
-    public function deletePosition()
+    public function deletePosition(): void
     {
         // Verificar si el usuario autenticado existe
         if (!auth()->check()) {
@@ -28,15 +29,15 @@ class PositionDelete extends Component
         }
 
         // Si la mano de obra a eliminar existe, proceder con la eliminación
-        if ($this->Position) {
-            $position = $this->Position->delete();
+        if ($this->position) {
+            $position = $this->position->delete();
             $this->dispatch('deletedPosition', $position);
             $this->dispatch('deletedPositionNotification');
             $this->openDelete = false;
         }
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.resources.positions.position-delete');
     }

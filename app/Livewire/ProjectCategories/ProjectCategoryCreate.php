@@ -31,6 +31,7 @@ class ProjectCategoryCreate extends Component
             $image_url = $this->image->store('categories', 'public');
         }
 
+
         $projectCategory = ProjectCategory::create([
             'name' => $this->name,
             'description' => $this->description,
@@ -40,6 +41,7 @@ class ProjectCategoryCreate extends Component
 
         // Emitir el evento Livewire después de la creación
         $this->dispatch('createdProjectCategory', $projectCategory);
+        $this->dispatch('createdProjectCategoryNotification');
 
         // Restablecer los campos y cerrar el formulario
         $this->reset(['name', 'description', 'status', 'image']);
