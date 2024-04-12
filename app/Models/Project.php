@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
@@ -17,27 +20,27 @@ class Project extends Model
         'status',
     ];
 
-    public function projectCategory()
+    public function projectCategory(): BelongsTo
     {
         return $this->belongsTo(ProjectCategory::class);
     }
 
-    public function positions()
+    public function positions(): BelongsToMany
     {
         return $this->belongsToMany(Position::class)->withPivot('required_days', 'total_cost')->withTimestamps();
     }
 
-    public function materials()
+    public function materials(): BelongsToMany
     {
         return $this->belongsToMany(Material::class)->withPivot('quantity', 'total_cost')->withTimestamps();
     }
 
-    public function tools()
+    public function tools(): BelongsToMany
     {
         return $this->belongsToMany(Tool::class)->withPivot('required_days', 'quantity', 'total_cost')->withTimestamps();
     }
 
-    public function transports()
+    public function transports(): BelongsToMany
     {
         return $this->belongsToMany(Transport::class)->withPivot('required_days', 'quantity', 'total_cost')->withTimestamps();
     }
@@ -66,7 +69,7 @@ class Project extends Model
         return $this->transports()->sum('total_cost');
     }
 
-    public function quotations()
+    public function quotations(): HasMany
     {
         return $this->hasMany(Quotation::class);
     }

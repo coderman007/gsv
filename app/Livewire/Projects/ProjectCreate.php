@@ -4,6 +4,7 @@ namespace App\Livewire\Projects;
 
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -45,7 +46,7 @@ class ProjectCreate extends Component
         'selectedCategory' => 'required|exists:project_categories,id',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->categories = ProjectCategory::pluck('name', 'id')->toArray();
         // Initialize selected resources arrays
@@ -65,7 +66,7 @@ class ProjectCreate extends Component
     }
 
     // Method to save the project
-    public function saveProject()
+    public function saveProject(): void
     {
         $this->validate();
 
@@ -108,7 +109,7 @@ class ProjectCreate extends Component
         // Redirect or show success message
         $this->openCreate = false;
         $this->dispatch('createdProject', $project);
-        $this->dispatch('newProjectNotification', [
+        $this->dispatch('createdProjectNotification', [
             'title' => 'Success',
             'text' => 'Proyecto Creado Exitosamente!',
             'icon' => 'success'
@@ -116,28 +117,28 @@ class ProjectCreate extends Component
         $this->reset();
     }
 
-    public function showLaborForm()
+    public function showLaborForm(): void
     {
         $this->showResource = 'labor'; // Update property based on the selected resource
     }
 
-    public function showMaterialsForm()
+    public function showMaterialsForm(): void
     {
         $this->showResource = 'materials'; // Update property based on the selected resource
     }
 
-    public function showToolsForm()
+    public function showToolsForm(): void
     {
         $this->showResource = 'tools'; // Update property based on the selected resource
     }
 
-    public function showTransportForm()
+    public function showTransportForm(): void
     {
         $this->showResource = 'transport'; // Update property based on the selected resource
     }
 
     #[On('totalLaborCostUpdated')]  // Listen for the event
-    public function updateTotalLaborCost($totalLaborCost)
+    public function updateTotalLaborCost($totalLaborCost): void
     {
         // Update the received value in ProjectCreate
         $this->totalLaborCost = number_format($totalLaborCost, 2);
@@ -155,7 +156,7 @@ class ProjectCreate extends Component
     }
 
     #[On('totalMaterialCostUpdated')]  // Listen for the event
-    public function updateTotalMaterialCost($totalMaterialCost)
+    public function updateTotalMaterialCost($totalMaterialCost): void
     {
         // Update the received value in ProjectCreate
         $this->totalMaterialCost = number_format($totalMaterialCost, 2);
@@ -171,7 +172,7 @@ class ProjectCreate extends Component
     }
 
     #[On('totalToolCostUpdated')]  // Listen for the event
-    public function updateTotalToolCost($totalToolCost)
+    public function updateTotalToolCost($totalToolCost): void
     {
         // Update the received value in ProjectCreate
         $this->totalToolCost = number_format($totalToolCost, 2);
@@ -187,7 +188,7 @@ class ProjectCreate extends Component
     }
 
     #[On('totalTransportCostUpdated')]  // Listen for the event
-    public function updateTotalTransportCost($totalTransportCost)
+    public function updateTotalTransportCost($totalTransportCost): void
     {
 
         // Update the received value in ProjectCreate
@@ -204,12 +205,12 @@ class ProjectCreate extends Component
     }
 
     #[On('hideResourceForm')]  // Listen for the event
-    public function hideResourceForm()
+    public function hideResourceForm(): void
     {
         $this->showResource = ''; // Reset the property to hide the resource form
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.projects.project-create');
     }

@@ -10,12 +10,12 @@ class ProjectCategoryDelete extends Component
     public $openDelete = false;
     public $category;
 
-    public function mount(ProjectCategory $category)
+    public function mount(ProjectCategory $category): void
     {
         $this->category = $category;
     }
 
-    public function deleteCategory()
+    public function deleteCategory(): void
     {
         // Verificar si el usuario autenticado existe
         if (!auth()->check()) {

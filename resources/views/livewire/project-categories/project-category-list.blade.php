@@ -111,7 +111,6 @@
                             @endif
                         </td>
 
-
                         <td
                             class=" {{ $category->status === 'Activo' ? 'text-green-600' : 'text-red-500' }}">
                             {{ $category->status }}

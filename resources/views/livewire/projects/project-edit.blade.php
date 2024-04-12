@@ -1,103 +1,83 @@
-<div>
-    <div class="relative inline-block text-center cursor-pointer group">
-        <a href="#" wire:click="$set('openEdit', true)">
-            <i class="p-1 text-blue-400 rounded hover:text-white hover:bg-blue-500 fa-solid fa-pen-to-square"></i>
-            <div
-                class="absolute z-10 px-3 py-2 mb-2 text-center text-white bg-gray-700 rounded-lg opacity-0 pointer-events-none text-md group-hover:opacity-80 bottom-full -left-6">
-                Editar
-                <svg class="absolute left-0 w-full h-2 text-black top-full" x="0px" y="0px" viewBox="0 0 255 255"
-                    xml:space="preserve">
-                </svg>
-            </div>
-        </a>
-    </div>
+<div class="relative inline-block text-center cursor-pointer group">
+    <a href="#" wire:click="$set('openEdit', true)">
+        <div
+            class="flex items-center justify-center p-2 text-gray-200 rounded-md bg-gradient-to-br from-blue-300 to-blue-500 hover:from-blue-500 hover:to-gray-700 hover:text-white transition duration-300 ease-in-out">
+            <i class="fas fa-edit"></i>
+        </div>
+        <div
+            class="absolute z-10 px-3 py-2 text-center text-white bg-gray-800 rounded-lg opacity-0 pointer-events-none text-md group-hover:opacity-80 bottom-full -left-3">
+            Editar
+            <svg class="absolute left-0 w-full h-2 text-black top-full" x="0px" y="0px" viewBox="0 0 255 255"
+                 xml:space="preserve">
+            </svg>
+        </div>
+    </a>
 
-    <x-dialog-modal wire:model="openEdit">
-        <x-slot name="title">
-            <h2 class="mt-3 text-2xl text-center">Actualizar Proyecto</h2>
-        </x-slot>
+    <x-dialog-modal maxWidth="3xl" wire:model="openEdit">
+        <div class="w-full mx-auto bg-white shadow-md p-6 rounded-md">
+            <x-slot name="title">
+                <h2 class="font-semibold text-2xl text-center pt-4 text-blue-500">Editar Proyecto</h2>
+            </x-slot>
 
-        <x-slot name="content">
-            <form wire:submit="updateProject">
+            <x-slot name="content">
+                <form wire:submit.prevent="updateProject" class="flex flex-col items-center mt-6 p-4 bg-gray-50 rounded-lg">
+                    <!-- Dropdown para seleccionar la categoría -->
+                    <div class="space-y-2 w-3/4 text-xs">
+                        <label for="selectedCategory" class="block text-gray-700">Categoría:</label>
+                        <select wire:model="selectedCategory" id="selectedCategory"
+                                class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
+                            <option value="">Seleccione una categoría</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error for="selectedCategory"/>
+                    </div>
 
-                <!-- Cliente del Proyecto -->
-                <div class="mb-4">
-                    <label for="client_id" class="block text-sm font-medium text-gray-700">Nombre del Cliente</label>
-                    <select wire:model="client_id" id="client_id" name="client_id"
-                        class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-                        @foreach($clients as $client)
-                        <option value="{{ $client->id }}">{{ $client->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('client_id') <span class="text-red-500">{{ $message }}</span> @enderror
+                    <!-- Campo para ingresar el nombre del proyecto -->
+                    <div class="space-y-2 w-3/4 text-xs">
+                        <label for="name" class="block text-gray-700">Nombre:</label>
+                        <input wire:model="name" type="text" id="name"
+                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
+                        <x-input-error for="name"/>
+                    </div>
+
+                    <!-- Campo para ingresar la descripción del proyecto -->
+                    <div class="space-y-2 w-3/4 text-xs">
+                        <label for="description" class="block text-gray-700">Descripción:</label>
+                        <textarea wire:model="description" id="description"
+                                  class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-30 px-4 my-2"></textarea>
+                        <x-input-error for="description"/>
+                    </div>
+
+                    <!-- Campo para ingresar los kilovatios a proporcionar -->
+                    <div class="space-y-2 w-3/4 text-xs">
+                        <label for="kilowattsToProvide" class="block text-gray-700">Kilovatios a Proporcionar:</label>
+                        <input wire:model="kilowattsToProvide" type="number" id="kilowattsToProvide"
+                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
+                        <x-input-error for="kilowattsToProvide"/>
+                    </div>
+
+                    <!-- Campo para ingresar el estado del proyecto -->
+                    <div class="space-y-2 w-3/4 text-xs">
+                        <select wire:model="status"
+                                class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-4"
+                                required="required">
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                        <x-input-error for="status"/>
+                    </div>
+                </form>
+            </x-slot>
+            <x-slot name="footer">
+                <div class="flex justify-end">
+                    <button type="submit" wire:click="updateProject"
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
+                        Actualizar
+                    </button>
                 </div>
-
-                <!-- Nombre del Proyecto -->
-                <div class="mb-4">
-                    <label for="name" class="block text-sm font-medium text-gray-700">Nombre del Proyecto</label>
-                    <input type="text" wire:model="name" id="name" name="name"
-                        class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-                    @error('name') <span class="text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Tipo de Proyecto -->
-                <div class="mb-4">
-                    <label for="project_type" class="block text-sm font-medium text-gray-700">Tipo de Proyecto</label>
-                    <input type="text" wire:model="project_type" id="project_type" name="project_type"
-                        class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-                    @error('project_type') <span class="text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Descripción -->
-                <div class="mb-4">
-                    <label for="description" class="block text-sm font-medium text-gray-700">Descripción</label>
-                    <input type="text" wire:model="description" id="description" name="description"
-                        class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-                    @error('description') <span class="text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Kilowatts Requeridos -->
-                <div class="mb-4">
-                    <label for="required_kilowatts" class="block text-sm font-medium text-gray-700">Kilowatts
-                        Requeridos</label>
-                    <input type="number" wire:model="required_kilowatts" id="required_kilowatts"
-                        name="required_kilowatts"
-                        class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-                    @error('required_kilowatts') <span class="text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Fecha de inicio -->
-                <div class="mb-4">
-                    <label for="start_date" class="block text-sm font-medium text-gray-700">Fecha de Inicio</label>
-                    <input type="date" wire:model="start_date" id="start_date" name="start_date"
-                        class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-                    @error('start_date') <span class="text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Término Estimado -->
-                <div class="mb-4">
-                    <label for="expected_end_date" class="block text-sm font-medium text-gray-700">Término
-                        Estimado</label>
-                    <input type="date" wire:model="expected_end_date" id="expected_end_date" name="expected_end_date"
-                        class="mt-1 block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-                    @error('expected_end_date') <span class="text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-            </form>
-        </x-slot>
-
-        <x-slot name="footer">
-            <div class="mx-auto">
-                <x-secondary-button wire:click="$set('openEdit', false)"
-                    class="mr-4 text-gray-500 border border-gray-500 shadow-lg hover:shadow-gray-400">
-                    Cancelar
-                </x-secondary-button>
-                <x-secondary-button
-                    class="text-blue-500 border border-blue-500 shadow-lg hover:shadow-blue-400 disabled:opacity-25"
-                    wire:click="updateProject" wire:loading.attr="disabled">
-                    Actualizar
-                </x-secondary-button>
-            </div>
-        </x-slot>
+            </x-slot>
+        </div>
     </x-dialog-modal>
 </div>
