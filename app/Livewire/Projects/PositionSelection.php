@@ -3,6 +3,7 @@
 namespace App\Livewire\Projects;
 
 use App\Models\Position;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class PositionSelection extends Component
@@ -24,15 +25,15 @@ class PositionSelection extends Component
     ];
 
 
-    public function mount()
+    public function mount(): void
     {
         $this->updateTotalLaborCost();
         $this->formattedTotalLaborCost = number_format($this->totalLaborCost, 2);
     }
 
-    public function calculatePartialCost($positionId)
+    public function calculatePartialCost($positionId): void
     {
-        $index = array_search($positionId, $this->selectedPositions);
+        $index = in_array($positionId, $this->selectedPositions);
 
         if ($index !== false && isset($this->positionQuantities[$positionId]) && isset($this->positionRequiredDays[$positionId])) {
             $position = Position::find($positionId);
@@ -42,26 +43,26 @@ class PositionSelection extends Component
         }
     }
 
-    public function updatedPositionQuantities($value, $positionId)
+    public function updatedPositionQuantities($value, $positionId): void
     {
         $this->calculatePartialCost($positionId);
         $this->updateTotalLaborCost();
     }
 
-    public function updatedPositionRequiredDays($value, $positionId)
+    public function updatedPositionRequiredDays($value, $positionId): void
     {
         $this->calculatePartialCost($positionId);
         $this->updateTotalLaborCost();
     }
 
-    public function updateTotalLaborCost()
+    public function updateTotalLaborCost(): void
     {
         $this->totalLaborCost = array_sum($this->partialCosts);
         $this->formattedTotalLaborCost = number_format($this->totalLaborCost, 2);
     }
 
     // Agregar un método para enviar el valor total de la mano de obra
-    public function sendTotalLaborCost()
+    public function sendTotalLaborCost(): void
     {
         $this->dispatch('totalLaborCostUpdated', $this->totalLaborCost);
 
@@ -71,7 +72,7 @@ class PositionSelection extends Component
         }
     }
 
-    public function render()
+    public function render(): View
     {
         $allPositions = Position::all();
         return view('livewire.projects.position-selection', compact('allPositions'));

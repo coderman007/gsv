@@ -19,12 +19,21 @@
         <x-input-error for="document" />
     </div>
 
+    <!-- Representante -->
+    <div class="space-y-2 w-full text-xs">
+        <label class="text-lg font-semibold text-gray-600 py-2">Representante</label>
+        <input placeholder="Representante" wire:model="representative"
+               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"
+               required="required" type="text">
+        <x-input-error for="representativeName" />
+    </div>
+
     <!-- Email de la Empresa-->
     <div class="space-y-2 w-full text-xs">
         <label class="text-lg font-semibold text-gray-600 py-2">Correo Electrónico</label>
         <input placeholder="Correo Electrónico" wire:model="email"
             class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"
-            required="required" type="text">
+            required="required" type="email">
         <x-input-error for="email" />
     </div>
 

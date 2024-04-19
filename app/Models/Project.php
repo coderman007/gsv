@@ -20,6 +20,10 @@ class Project extends Model
         'status',
     ];
 
+    protected $attributes = [
+        'status' => 'Activo'
+    ];
+
     public function projectCategory(): BelongsTo
     {
         return $this->belongsTo(ProjectCategory::class);

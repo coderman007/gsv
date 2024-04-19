@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Projects;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
+use LaravelIdea\Helper\App\Models\_IH_Project_C;
 use Livewire\Component;
 use App\Models\Project;
 use App\Models\ProjectCategory; // Agrega esta línea
@@ -60,7 +62,7 @@ class ProjectList extends Component
     }
 
     #[Computed]
-    public function projects()
+    public function projects(): array|LengthAwarePaginator|_IH_Project_C
     {
         return
             Project::where('id', 'like', '%' . $this->search . '%')

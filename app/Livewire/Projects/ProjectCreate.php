@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Projects;
 
+use App\Models\Position;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use Illuminate\View\View;
@@ -15,7 +16,6 @@ class ProjectCreate extends Component
     public $name;
     public $description;
     public $kilowatts_to_provide;
-    public $status;
     public $showResource = '';
     public $totalLaborCost = 0;
     public $totalMaterialCost = 0;
@@ -42,7 +42,6 @@ class ProjectCreate extends Component
         'name' => 'required|string|max:255',
         'description' => 'required|string',
         'kilowatts_to_provide' => 'required|numeric|min:0',
-        'status' => 'required|string|in:Activo,Inactivo',
         'selectedCategory' => 'required|exists:project_categories,id',
     ];
 
@@ -68,6 +67,7 @@ class ProjectCreate extends Component
     // Method to save the project
     public function saveProject(): void
     {
+
         $this->validate();
 
         // Create a new project in the database
@@ -76,15 +76,17 @@ class ProjectCreate extends Component
             'name' => $this->name,
             'description' => $this->description,
             'kilowatts_to_provide' => $this->kilowatts_to_provide,
-            'status' => $this->status,
         ]);
 
-        // Associate positions and update costs in the 'position_project' pivot table
-        $project->positions()->attach($this->selectedPositions, [
-            'quantity' => $this->selectedPositionQuantity,
-            'required_days' => $this->selectedPositionRequiredDays,
-            'total_cost' => $this->totalLaborCost,
-        ]);
+        // Asociar posiciones y actualizar costos en la tabla pivote 'position_project'
+        foreach ($this->selectedPositions as $positionId) {
+            $project->positions()->attach($positionId, [
+                'quantity' => $this->positionQuantities[$positionId],
+                'required_days' => $this->positionRequiredDays[$positionId],
+                'total_cost' => $this->partialCosts[$positionId],
+            ]);
+
+        }
 
         // Associate materials and update costs in the 'material_project' pivot table
         $project->materials()->attach($this->selectedMaterials, [

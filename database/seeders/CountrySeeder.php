@@ -8,7 +8,7 @@ use App\Models\Country;
 
 class CountrySeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $data = json_decode(file_get_contents(__DIR__ . '/Locations/countries.json'), true);
 

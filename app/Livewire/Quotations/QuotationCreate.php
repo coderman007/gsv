@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\Quotation;
 use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -16,13 +17,14 @@ class QuotationCreate extends Component
     public $clients;
     public $selectedClientId;
     public $newClientModal = false;
+    public $showProjectDetails = false;
     public $project;
 
     // Datos importantes que definirán el proyecto
     public $average_energy_consumption; // Consumo promedio de energía del cliente
-    public $solar_radiation_level; // Nivel de irradiación solar (Se tomo con base en la ubicación del cliente)
+    public $solar_radiation_level; // Nivel de irradiación solar (Se tomó con base en la ubicación del cliente)
     public $transformer; // Define la potencia del transformador (Monofásico/Trifásico)
-    public $roof_dimension; // Define las dimensiones de la cubierta donde se va a realizar la instalación los paneles solares
+    public $roof_dimension; // Define las dimensiones de la cubierta donde se va a realizar la instalación de los paneles solares
 
     // Propiedades para los recursos
     public $totalLaborCost;
@@ -36,7 +38,6 @@ class QuotationCreate extends Component
     public $validity_period;
     public $margin;
     public $subtotal;
-    public $iva;
     public $discount;
     public $total_quotation_amount;
 
@@ -51,22 +52,16 @@ class QuotationCreate extends Component
         'validity_period' => 'required|integer|min:1',
         'margin' => 'nullable|numeric|min:0',
         'subtotal' => 'required|numeric|min:0',
-        'iva' => 'required|numeric|min:0',
         'discount' => 'nullable|numeric|min:0',
         'total_quotation_amount' => 'required|numeric|min:0',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->clients = Client::all();
-        $this->totalLaborCost = 0; // Inicializar en 0 u obtener el valor de la lógica correspondiente
-        $this->totalMaterialCost = 0; // Inicializar en 0 u obtener el valor de la lógica correspondiente
-        $this->totalToolCost = 0; // Inicializar en 0 u obtener el valor de la lógica correspondiente
-        $this->totalTransportCost = 0; // Inicializar en 0 u obtener el valor de la lógica correspondiente
     }
 
-
-    public function createQuotation()
+    public function createQuotation(): void
     {
         $this->validate();
 
@@ -86,11 +81,10 @@ class QuotationCreate extends Component
         // Calcula el subtotal
         $subtotal = $totalLaborCost + $totalMaterialCost + $totalToolCost + $totalTransportCost;
 
-        // Calcula el IVA (asumiendo una tasa del 19%)
-        $iva = $subtotal * 0.19;
+        // Lógica adicional para calcular el subtotal
 
         // Calcula el monto total de la cotización
-        $totalQuotationAmount = $subtotal + $iva;
+        $totalQuotationAmount = $subtotal;
 
         Quotation::create([
             'project_id' => $this->project->id,
@@ -104,7 +98,6 @@ class QuotationCreate extends Component
             'validity_period' => $this->validity_period,
             'margin' => $this->margin,
             'subtotal' => $subtotal,
-            'iva' => $iva,
             'discount' => $this->discount,
             'total_quotation_amount' => $totalQuotationAmount,
         ]);
@@ -114,25 +107,32 @@ class QuotationCreate extends Component
         session()->flash('message', 'Cotización creada exitosamente.');
     }
 
+    public function updatedAverageEnergyConsumption(): void
+    {
+        $project = Project::where('kilowatts_to_provide', '>=', $this->average_energy_consumption)
+            ->orderBy('kilowatts_to_provide', 'asc')
+            ->first();
 
+        $this->project = $project;
+    }
 
-    public function showNewClientModal()
+    public function showNewClientModal(): void
     {
         $this->newClientModal = true;
     }
 
-    public function hideNewClientModal()
+    public function hideNewClientModal(): void
     {
         $this->newClientModal = false;
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.quotations.quotation-create');
     }
 
     #[On('clientStored')]
-    public function clientStored()
+    public function clientStored(): void
     {
         $this->clients = Client::all();
     }

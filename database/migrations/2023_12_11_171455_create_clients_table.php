@@ -17,12 +17,13 @@ return new class extends Migration
 
             $table->enum('type', ['Persona', 'Empresa']);
             $table->string('name');
+            $table->string('representative')->nullable();
             $table->string('email')->nullable()->unique();
             $table->string('address')->nullable();
             $table->string('document')->nullable()->unique();
             $table->string('phone')->nullable();
             $table->string('image')->nullable();
-            $table->enum('status', ['Activo', 'Inactivo'])->nullable()->default('Activo');
+            $table->enum('status', ['Activo', 'Inactivo'])->default('Activo');
 
             $table->foreign('city_id')->references('id')->on('cities')->cascadeOnDelete();
             $table->timestamps();

@@ -150,11 +150,20 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="12" class="text-3xl text-center dark:text-gray-200">
-                                No hay Clientes Disponibles
-                            </td>
-                        </tr>
+                        @if($search)
+                            <tr>
+                                <td colspan="12" class="text-3xl text-center dark:text-gray-200">
+                                    No se encontraron coincidencias en la búsqueda.
+                                </td>
+                            </tr>
+                        @else
+                            <!-- No hay registros en la base de datos -->
+                            <tr>
+                                <td colspan="12" class="text-3xl text-center dark:text-gray-200">
+                                    Aún no hay registros de clientes.
+                                </td>
+                            </tr>
+                        @endif
                     @endforelse
                 </tbody>
             </table>
@@ -165,12 +174,14 @@
         </div>
     @else
         <!-- Mensaje de no hay Clientes -->
-        <h1 class="my-64 text-5xl text-center dark:text-gray-200">
+        <div class="flex justify-end m-4 p-4">
+        <livewire:clients.client-create />
+        </div>
+        <h1 class="my-48 text-5xl text-center dark:text-gray-200">
             <div>¡Ups!</div><br> <span class="mt-4"> No se encontraron coincidencias en la búsqueda. </span>
         </h1>
 
         <div class="flex justify-center w-full h-auto">
-            <livewire:clients.client-create />
             <button
                 class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
                 <a href="{{ route('clients') }}">Volver</a>

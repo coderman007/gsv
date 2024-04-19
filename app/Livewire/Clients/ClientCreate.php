@@ -16,6 +16,7 @@ class ClientCreate extends Component
     public $type;
     public $name;
     public $document;
+    public $representative;
     public $email;
     public $address;
     public $phone;
@@ -26,7 +27,7 @@ class ClientCreate extends Component
     public $cities; // Variable para almacenar todas las ciudades
     public $filteredCities = []; // Variable para almacenar las ciudades filtradas
 
-    public function mount()
+    public function mount(): void
     {
         // Cargar todas las ciudades al inicializar el componente
         $this->cities = City::all()->pluck('name');
@@ -39,11 +40,11 @@ class ClientCreate extends Component
             'city_id' => 'required|exists:cities,id',
             'type' => 'required|in:Persona,Empresa',
             'name' => 'required|string',
+            'representative' => 'nullable|string',
             'document' => 'nullable|string',
             'email' => 'nullable|email',
             'address' => 'nullable|string',
             'phone' => 'nullable|string',
-            'status' => 'nullable|string|in:Activo, Inactivo',
             'image'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -59,10 +60,10 @@ class ClientCreate extends Component
             'type' => $this->type,
             'name' => $this->name,
             'document' => $this->document,
+            'representative' => $this->representative,
             'email' => $this->email,
             'address' => $this->address,
             'phone' => $this->phone,
-            'status' => $this->status,
             'image' => $image_url,
         ];
 
@@ -73,10 +74,10 @@ class ClientCreate extends Component
             'type',
             'name',
             'document',
+            'representative',
             'email',
             'address',
             'phone',
-            'status',
             'city',
             'image',
         ]);

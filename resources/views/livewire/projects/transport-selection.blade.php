@@ -33,7 +33,7 @@
                     @if (in_array($transport->id, $selectedTransports))
                         <div class="mb-2">
                             <label for="requiredDays{{ $transport->id }}"
-                                class="block text-sm font-medium text-gray-700">Días Requeridos</label>
+                                class="block text-sm font-medium text-gray-700">Días</label>
                             <input wire:model.live="requiredDays.{{ $transport->id }}" type="number"
                                 id="requiredDays{{ $transport->id }}" name="requiredDays{{ $transport->id }}"
                                 class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">

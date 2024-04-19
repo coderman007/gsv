@@ -11,7 +11,7 @@ class DepartmentSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
         $data = json_decode(file_get_contents(__DIR__ . '/Locations/departments.json'), true);
 

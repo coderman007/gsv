@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Client extends Model
 {
@@ -13,6 +15,7 @@ class Client extends Model
         'city_id',
         'type',
         'name',
+        'representative',
         'document',
         'email',
         'address',
@@ -21,12 +24,16 @@ class Client extends Model
         'image',
     ];
 
-    public function quotations()
+    protected $attributes = [
+        'status' => 'Activo',
+    ];
+
+    public function quotations(): HasMany
     {
         return $this->hasMany(Quotation::class);
     }
 
-    public function city()
+    public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
     }

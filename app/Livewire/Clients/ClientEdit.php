@@ -21,11 +21,11 @@ class ClientEdit extends Component
 
     public $type;
     public $name;
+    public $representative;
     public $document;
     public $email;
     public $address;
     public $phone;
-    public $status;
     public $image;
 
     public function mount(Client $client): void
@@ -33,15 +33,14 @@ class ClientEdit extends Component
         $this->client = $client;
         $this->cities = City::all()->pluck('name');
         $this->city_id = $client->city_id;
-        $this->city = $client->city->name; // Obtener el nombre de la ciudad del cliente
+        $this->city = $client->city->name;
         $this->type = $client->type;
         $this->name = $client->name;
         $this->document = $client->document;
+        $this->representative = $client->representative;
         $this->email = $client->email;
         $this->address = $client->address;
         $this->phone = $client->phone;
-        $this->status = $client->status;
-//        $this->image = $client->image;
     }
 
     public function updateClient():void
@@ -51,10 +50,10 @@ class ClientEdit extends Component
             'type' => 'required|string',
             'name' => 'required|string',
             'document' => 'nullable|string',
+            'representative' => 'nullable|string',
             'email' => 'nullable|email|unique:clients,email,' . $this->client->id,
             'address' => 'nullable|string',
             'phone' => 'nullable|string',
-            'status' => 'nullable|string',
             'image'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -64,10 +63,10 @@ class ClientEdit extends Component
                 'type' => $this->type,
                 'name' => $this->name,
                 'document' => $this->document,
+                'representative' => $this->representative,
                 'email' => $this->email,
                 'address' => $this->address,
                 'phone' => $this->phone,
-                'status' => $this->status,
             ];
 
             $this->client->update($clientData);

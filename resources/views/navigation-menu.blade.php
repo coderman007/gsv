@@ -76,7 +76,7 @@
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link class="hover:text-blue-500" href="{{ route('projects') }}" :active="request()->routeIs('projects')">
-                        {{ __('Projectos') }}
+                        {{ __('APU\'S') }}
                     </x-nav-link>
                 </div>
 

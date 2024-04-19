@@ -1,6 +1,6 @@
 <div>
     <button wire:click="$set('openCreate', true)"
-        class="rounded-md px-3.5 py-2 m-1 overflow-hidden relative group cursor-pointer border-2 font-medium border-gray-500 hover:border-blue-500 text-white">
+            class="rounded-md px-3.5 py-2 m-1 overflow-hidden relative group cursor-pointer border-2 font-medium border-gray-500 hover:border-blue-500 text-white">
         <span
             class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
         <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease"><i
@@ -9,20 +9,23 @@
 
     <x-dialog-modal maxWidth="7xl" wire:model="openCreate">
         <x-slot name="title">
-            <h2 class="mt-3 text-2xl text-center">Nuevo Proyecto</h2>
+            <h2 class="mt-3 text-2xl text-center">Nuevo APU</h2>
         </x-slot>
+        <x-slot name="content">
+            <div class="grid grid-cols-2 gap-4 bg-gray-100 p-2 rounded-lg">
+                <!-- Columna izquierda -->
+                <div class="col-span-1 bg-white p-4 rounded-lg">
+                    <!-- Título -->
+                    <h2 class="text-center text-2xl font-bold mb-4">Formulario</h2>
 
-        <div class="w-1">
-            <x-slot name="content">
-                <div>
-                    <form wire:submit.prevent="saveProject" class="p-4 bg-white rounded shadow-md">
-
-                        <div class="grid grid-cols-2 gap-4">
+                    <!-- Contenedor de información -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Columna Izquierda -->
+                        <div class="col-span-1">
                             <div class="mb-4">
-                                <label for="project_category" class="text-lg font-semibold text-gray-600 py-2">Categoría
-                                    de Proyecto</label>
+                                <label for="project_category" class="text-lg font-semibold text-gray-600 py-2">Categoría</label>
                                 <select wire:model="selectedCategory" id="project_category" name="project_category"
-                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                        class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                                     @if ($categories)
                                         <option value="">Seleccionar Categoría</option>
                                         @foreach ($categories as $id => $name)
@@ -31,139 +34,110 @@
                                     @endif
                                 </select>
                                 @error('selectedCategory')
-                                    <span class="text-red-500">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="name" class="text-lg font-semibold text-gray-600 py-2">Nombre del
-                                    Proyecto</label>
-                                <input wire:model="name" type="text" id="name" name="name"
-                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
-                                @error('name')
-                                    <span class="text-red-500">{{ $message }}</span>
+                                <span class="text-red-500">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="mb-4">
-                                <label for="description" class="text-lg font-semibold text-gray-600 py-2">Descripción
-                                    del Proyecto</label>
-                                <textarea wire:model="description" id="description" name="description" rows="3"
-                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md"></textarea>
-                                @error('description')
-                                    <span class="text-red-500">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="mb-4">
-                                <label for="kilowatts_to_provide"
-                                    class="text-lg font-semibold text-gray-600 py-2">Kilovatios a Proveer</label>
+                                <label for="kilowatts_to_provide" class="text-lg font-semibold text-gray-600 py-2">Potencia</label>
                                 <input wire:model="kilowatts_to_provide" type="number" id="kilowatts_to_provide"
-                                    name="kilowatts_to_provide"
-                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                       name="kilowatts_to_provide"
+                                       class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                                 @error('kilowatts_to_provide')
-                                    <span class="text-red-500">{{ $message }}</span>
+                                <span class="text-red-500">{{ $message }}</span>
                                 @enderror
-                            </div>
-                            <div class="mb-4">
-                                <label for="status" class="text-lg font-semibold text-gray-600 py-2">Estado del
-                                    Proyecto</label>
-                                <select wire:model="status" id="status" name="status"
-                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
-                                    <option value="Activo">Activo</option>
-                                    <option value="Inactivo">Inactivo</option>
-                                </select>
-                                @error('status')
-                                    <span class="text-red-500">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <!-- Campo para mostrar el valor total de la mano de obra -->
-                            <div class="mb-4">
-                                <label for="totalLaborCost" class="text-lg font-semibold text-gray-600 py-2">Costo Total
-                                    de Mano de Obra</label>
-                                <input wire:model="totalLaborCost" type="text" id="totalLaborCost"
-                                    name="totalLaborCost" readonly
-                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
-                            </div>
-
-                            <!-- Campo para mostrar el valor total de los materiales -->
-                            <div class="mb-4">
-                                <label for="totalMaterialCost" class="text-lg font-semibold text-gray-600 py-2">Costo
-                                    Total
-                                    de Materiales</label>
-                                <input wire:model="totalMaterialCost" type="text" id="totalMaterialCost"
-                                    name="totalMaterialCost" readonly
-                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
-                            </div>
-
-                            <!-- Campo para mostrar el valor total de las herramnientas -->
-                            <div class="mb-4">
-                                <label for="totalToolCost" class="text-lg font-semibold text-gray-600 py-2">Costo
-                                    Total
-                                    de Herramientas</label>
-                                <input wire:model="totalToolCost" type="text" id="totalToolCost" name="totalToolCost"
-                                    readonly class="mt-1 p-2 block w-full border-gray-300 rounded-md">
-                            </div>
-
-                            <!-- Campo para mostrar el valor total del transporte -->
-                            <div class="mb-4">
-                                <label for="totalTransportCost" class="text-lg font-semibold text-gray-600 py-2">Costo
-                                    Total
-                                    del transporte</label>
-                                <input wire:model="totalTransportCost" type="text" id="totalTransportCost"
-                                    name="totalTransportCost" readonly
-                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             </div>
                         </div>
+                        <!-- Columna Derecha -->
+                        <div class="col-span-1">
+                            <div class="mb-4">
+                                <label for="name" class="text-lg font-semibold text-gray-600 py-2">Nombre</label>
+                                <input wire:model="name" type="text" id="name" name="name"
+                                       class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                @error('name')
+                                <span class="text-red-500">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="mb-4">
+                                <label for="description" class="text-lg font-semibold text-gray-600 py-2">Descripción</label>
+                                <textarea wire:model="description" id="description" name="description" rows="1"
+                                          class="mt-1 p-2 block w-full border-gray-300 rounded-md"></textarea>
+                                @error('description')
+                                <span class="text-red-500">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
 
-                        <div class="mt-8">
-                            <div class="text-center">
-                                <h2 class="text-2xl font-bold mb-4">Recursos del Proyecto</h2>
-                                <div class="flex justify-center space-x-4">
-                                    <button wire:click="showLaborForm"
+
+                </div>
+
+                <!-- Columna derecha -->
+                <div class="col-span-1 bg-white p-4 rounded-lg">
+                    <!-- Título -->
+                    <h2 class="text-center text-2xl font-bold mb-4">Recursos del Proyecto</h2>
+
+                    <!-- Contenedor de información -->
+                    <div class="p-4 rounded-lg">
+                        <div class="flex justify-center space-x-4">
+                            <div class="flex flex-col justify-center">
+                                <button wire:click="showLaborForm"
                                         class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-full"
-                                        type="button">Mano
-                                        de obra</button>
-                                    <button wire:click="showMaterialsForm"
-                                        class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full"
-                                        type="button">Materiales</button>
-                                    <button wire:click="showToolsForm"
-                                        class="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full"
-                                        type="button">Herramientas</button>
-                                    <button wire:click="showTransportForm"
-                                        class="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-full"
-                                        type="button">Transporte</button>
-                                </div>
+                                        type="button">Mano de obra
+                                </button>
+                                <div class="text-teal-500 font-bold text-center ">{{ $totalLaborCost }}</div>
                             </div>
-
-                            <div class="mt-8">
-                                <!-- Mostrar componente Livewire correspondiente -->
-                                @if ($showResource === 'labor')
-                                    <livewire:projects.position-selection />
-                                @elseif ($showResource === 'materials')
-                                    <livewire:projects.material-selection />
-                                @elseif ($showResource === 'tools')
-                                    <livewire:projects.tool-selection />
-                                @elseif ($showResource === 'transport')
-                                    <livewire:projects.transport-selection />
-                                @endif
+                            <div class="flex flex-col justify-center">
+                                <button wire:click="showMaterialsForm"
+                                        class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full"
+                                        type="button">Materiales
+                                </button>
+                                <div class="text-indigo-500 font-bold text-center ">{{ $totalMaterialCost }}</div>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <button wire:click="showToolsForm"
+                                        class="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full"
+                                        type="button">Herramientas
+                                </button>
+                                <div class="text-sky-500 font-bold text-center ">{{ $totalToolCost }}</div>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <button wire:click="showTransportForm"
+                                        class="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-full"
+                                        type="button">Transporte
+                                </button>
+                                <div class="text-slate-500 font-bold text-center ">{{ $totalTransportCost }}</div>
                             </div>
                         </div>
-                    </form>
+                    </div>
+
+                    <div class="mt-8">
+                        <!-- Mostrar componente Livewire correspondiente -->
+                        @if ($showResource === 'labor')
+                            <livewire:projects.position-selection/>
+                        @elseif ($showResource === 'materials')
+                            <livewire:projects.material-selection/>
+                        @elseif ($showResource === 'tools')
+                            <livewire:projects.tool-selection/>
+                        @elseif ($showResource === 'transport')
+                            <livewire:projects.transport-selection/>
+                        @endif
+                    </div>
                 </div>
-            </x-slot>
-            <x-slot name="footer">
-                <div class="mx-auto">
-                    <x-secondary-button wire:click="$set('openCreate', false)"
-                        class="mr-4 text-gray-500 border border-gray-500 shadow-lg hover:bg-gray-400 hover:shadow-gray-400">
-                        Cancelar
-                    </x-secondary-button>
-                    <x-secondary-button
-                        class="text-blue-500 border border-blue-500 shadow-lg hover:bg-blue-400 hover:shadow-blue-400 disabled:opacity-50 disabled:bg-blue-600 disabled:text-white"
-                        wire:click="saveProject" wire:loading.attr="disabled" wire:target="saveProject">
-                        Agregar
-                    </x-secondary-button>
-                </div>
-            </x-slot>
-        </div>
+            </div>
+
+        </x-slot>
+        <x-slot name="footer">
+            <div class="mx-auto">
+                <x-secondary-button wire:click="$set('openCreate', false)"
+                                    class="mr-4 text-gray-500 border border-gray-500 shadow-lg hover:bg-gray-400 hover:shadow-gray-400">
+                    Cancelar
+                </x-secondary-button>
+                <x-secondary-button
+                    class="text-blue-500 border border-blue-500 shadow-lg hover:bg-blue-400 hover:shadow-blue-400 disabled:opacity-50 disabled:bg-blue-600 disabled:text-white"
+                    wire:click="saveProject" wire:loading.attr="disabled" wire:target="saveProject">
+                    Agregar
+                </x-secondary-button>
+            </div>
+        </x-slot>
     </x-dialog-modal>
 </div>

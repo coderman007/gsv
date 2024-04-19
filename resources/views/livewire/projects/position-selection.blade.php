@@ -33,8 +33,7 @@
                     @if (in_array($position->id, $selectedPositions))
                         <div class="mb-2">
                             <label for="requiredDays{{ $position->id }}"
-                                class="block text-sm font-medium text-gray-700">Días
-                                Requeridos</label>
+                                class="block text-sm font-medium text-gray-700">Días</label>
                             <input wire:model.live="positionRequiredDays.{{ $position->id }}" type="number"
                                 id="requiredDays{{ $position->id }}" name="requiredDays{{ $position->id }}"
                                 class="mt-1 p-2 block w-full border-teal-300 rounded-md focus:ring-teal-500 focus:border-teal-500">
@@ -77,7 +76,7 @@
                             class="fas fa-coins ml-1 text-yellow-500 mr-2"></i>COP</span>
                 </div>
             </div>
-       
+
             <!-- Cambié 'col-span-1' a 'col-span-2' para ocupar dos columnas y añadí la clase 'flex items-center' -->
             <div class="ml-4">
                 <button wire:click="sendTotalLaborCost" type="button"

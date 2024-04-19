@@ -25,9 +25,10 @@ return new class extends Migration
             $table->decimal('external_commissions', 10, 2)->nullable();
             $table->decimal('margin', 10, 2)->nullable();
             $table->decimal('discount', 10, 2)->nullable();
-            $table->decimal('iva', 5, 2);
+            $table->decimal('total_cost_kilowatt');
             $table->decimal('subtotal', 12, 2);
             $table->decimal('total_quotation_amount', 12, 2);
+            $table->enum('status', ['Activa', 'Expirada', 'Aceptada'])->default('Activa');
             $table->timestamps();
 
             $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();

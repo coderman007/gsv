@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class ProjectSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $projectData = [
             [
@@ -59,8 +59,8 @@ class ProjectSeeder extends Seeder
 
         if ($project) {
             // Obtener las posiciones por nombre
-            $engineerB = Position::where('name', 'Ingeniero B')->first();
             $engineerA = Position::where('name', 'Ingeniero A')->first();
+            $engineerB = Position::where('name', 'Ingeniero B')->first();
             $electrician = Position::where('name', 'Oficial Electricista')->first();
 
             // Asociar las posiciones al proyecto con el número de días requeridos
@@ -104,7 +104,7 @@ class ProjectSeeder extends Seeder
             }
 
             // Asociar materiales al proyecto con la cantidad necesaria
-            $material1 = Material::where('reference', 'varilla roscada zincada de 3/8 x 3 mtrs')->first();
+            $material1 = Material::where('reference', 'varilla roscada zincada de 3/8 x 3 mts')->first();
             $material2 = Material::where('reference', 'estacón de polipropileno 5x300 cms')->first();
             $material3 = Material::where('reference', 'varilla cooper weld 2.40 mts con grapa')->first();
 
