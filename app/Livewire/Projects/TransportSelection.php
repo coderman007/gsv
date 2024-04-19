@@ -3,6 +3,7 @@
 namespace App\Livewire\Projects;
 
 use App\Models\Transport;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class TransportSelection extends Component
@@ -23,15 +24,15 @@ class TransportSelection extends Component
         'requiredDays.*' => 'nullable|numeric|min:0',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->updateTotalTransportCost();
         $this->formattedTotalTransportCost = number_format($this->totalTransportCost, 2);
     }
 
-    public function calculatePartialCost($transportId)
+    public function calculatePartialCost($transportId): void
     {
-        $index = array_search($transportId, $this->selectedTransports);
+        $index = in_array($transportId, $this->selectedTransports);
 
         if ($index !== false && isset($this->quantities[$transportId]) && isset($this->requiredDays[$transportId])) {
             $transport = Transport::find($transportId);
@@ -45,28 +46,35 @@ class TransportSelection extends Component
         }
     }
 
-    public function updatedQuantities($value, $transportId)
+    public function updatedQuantities($value, $transportId): void
     {
         $this->calculatePartialCost($transportId);
         $this->updateTotalTransportCost();
     }
 
-    public function updatedRequiredDays($value, $transportId)
+    public function updatedRequiredDays($value, $transportId): void
     {
         $this->calculatePartialCost($transportId);
         $this->updateTotalTransportCost();
     }
 
-    public function updateTotalTransportCost()
+    public function updateTotalTransportCost(): void
     {
         $this->totalTransportCost = array_sum($this->partialCosts);
         $this->formattedTotalTransportCost = number_format($this->totalTransportCost, 2);
     }
 
     // Agregar un método para enviar el valor total del transporte
-    public function sendTotalTransportCost()
+    public function sendTotalTransportCost(): void
     {
         $this->dispatch('totalTransportCostUpdated', $this->totalTransportCost);
+
+        $this->dispatch('transportSelectionUpdated', [
+            'selectedTransports' => $this->selectedTransports,
+            'transportQuantities' => $this->quantities,
+            'transportRequiredDays' => $this->requiredDays,
+            'totalTransportCost' => $this->totalTransportCost,
+        ]);
 
         // Emitir un evento adicional si el costo total del transporte es mayor que 0
         if ($this->totalTransportCost > 0) {
@@ -74,7 +82,7 @@ class TransportSelection extends Component
         }
     }
 
-    public function render()
+    public function render(): View
     {
         $this->transports = Transport::all();
         return view('livewire.projects.transport-selection');

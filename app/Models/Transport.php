@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Transport extends Model
 {
@@ -21,7 +22,7 @@ class Transport extends Model
         'salary_per_month',
         'salary_per_hour',
     ];
-    public function projects()
+    public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class)->
             withPivot('quantity', 'required_days', 'total_cost')->

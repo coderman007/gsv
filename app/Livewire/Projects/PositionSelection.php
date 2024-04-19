@@ -27,6 +27,7 @@ class PositionSelection extends Component
 
     public function mount(): void
     {
+        $this->positions = Position::all();
         $this->updateTotalLaborCost();
         $this->formattedTotalLaborCost = number_format($this->totalLaborCost, 2);
     }
@@ -36,24 +37,38 @@ class PositionSelection extends Component
         $index = in_array($positionId, $this->selectedPositions);
 
         if ($index !== false && isset($this->positionQuantities[$positionId]) && isset($this->positionRequiredDays[$positionId])) {
-            $position = Position::find($positionId);
-            $this->partialCosts[$positionId] = $this->positionQuantities[$positionId] * $this->positionRequiredDays[$positionId] * $position->real_daily_cost;
+            if (is_numeric($this->positionQuantities[$positionId]) && is_numeric($this->positionRequiredDays[$positionId])) {
+                $position = Position::find($positionId);
+                $this->partialCosts[$positionId] = $this->positionQuantities[$positionId] * $this->positionRequiredDays[$positionId] * $position->real_daily_cost;
+            } else {
+                $this->partialCosts[$positionId] = 0;
+            }
         } else {
             $this->partialCosts[$positionId] = 0;
         }
     }
 
+
     public function updatedPositionQuantities($value, $positionId): void
     {
+        if (!is_numeric($value)) {
+            $this->positionQuantities[$positionId] = null;
+        }
+
         $this->calculatePartialCost($positionId);
         $this->updateTotalLaborCost();
     }
 
     public function updatedPositionRequiredDays($value, $positionId): void
     {
+        if (!is_numeric($value)) {
+            $this->positionRequiredDays[$positionId] = null;
+        }
+
         $this->calculatePartialCost($positionId);
         $this->updateTotalLaborCost();
     }
+
 
     public function updateTotalLaborCost(): void
     {
@@ -66,6 +81,13 @@ class PositionSelection extends Component
     {
         $this->dispatch('totalLaborCostUpdated', $this->totalLaborCost);
 
+        $this->dispatch('positionSelectionUpdated', [
+            'selectedPositions' => $this->selectedPositions,
+            'positionQuantities' => $this->positionQuantities,
+            'positionRequiredDays' => $this->positionRequiredDays,
+            'totalLaborCost' => $this->totalLaborCost,
+        ]);
+
         // Emitir un evento adicional para ocultar el formulario de recursos
         if ($this->totalLaborCost > 0) {
             $this->dispatch('hideResourceForm');
@@ -74,7 +96,6 @@ class PositionSelection extends Component
 
     public function render(): View
     {
-        $allPositions = Position::all();
-        return view('livewire.projects.position-selection', compact('allPositions'));
+        return view('livewire.projects.position-selection');
     }
 }

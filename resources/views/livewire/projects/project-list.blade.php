@@ -25,7 +25,7 @@
         {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
             Resultados
-            <select name="perSearch" id="perSearch" wire:model.live="perSearch" class="rounded-lg cursor-pointer">
+            <select name="perPage" id="perSearch" wire:model.live="perPage" class="rounded-lg cursor-pointer">
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
@@ -108,7 +108,7 @@
                 <tbody>
                 @forelse ($this->projects as $project)
                     <tr
-                        class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" wire:key="project-{{ $project->id }}">
                         <th scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ $project->id }}

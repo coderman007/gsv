@@ -5,6 +5,7 @@
 namespace App\Livewire\Projects;
 
 use App\Models\Material;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class MaterialSelection extends Component
@@ -23,19 +24,19 @@ class MaterialSelection extends Component
         'quantities.*' => 'nullable|numeric|min:0',
     ];
 
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
         $this->materials = Material::where('reference', 'like', '%' . $this->search . '%')
             ->orWhere('description', 'like', '%' . $this->search . '%')
             ->get();
     }
 
-    public function updatedQuantities()
+    public function updatedQuantities(): void
     {
         $this->calculateTotalMaterialCost();
     }
 
-    public function calculateTotalMaterialCost()
+    public function calculateTotalMaterialCost(): void
     {
         $totalCost = 0;
         foreach ($this->selectedMaterials as $materialId) {
@@ -48,9 +49,15 @@ class MaterialSelection extends Component
     }
 
     // Agregar un método para enviar el valor total de los materiales
-    public function sendTotalMaterialCost()
+    public function sendTotalMaterialCost(): void
     {
         $this->dispatch('totalMaterialCostUpdated', $this->totalMaterialCost);
+
+        $this->dispatch('materialSelectionUpdated', [
+            'selectedMaterials' => $this->selectedMaterials,
+            'materialQuantities' => $this->quantities,
+            'totalMaterialCost' => $this->totalMaterialCost,
+        ]);
 
         // Emitir un evento adicional para ocultar el formulario de recursos
         if ($this->totalMaterialCost > 0) {
@@ -58,7 +65,7 @@ class MaterialSelection extends Component
         }
     }
 
-    public function render()
+    public function render(): View
     {
         if (!empty($this->search)) {
             $this->materials = Material::where('reference', 'like', '%' . $this->search . '%')

@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Projects;
 
-use App\Models\Position;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use Illuminate\View\View;
@@ -67,7 +66,6 @@ class ProjectCreate extends Component
     // Method to save the project
     public function saveProject(): void
     {
-
         $this->validate();
 
         // Create a new project in the database
@@ -78,35 +76,40 @@ class ProjectCreate extends Component
             'kilowatts_to_provide' => $this->kilowatts_to_provide,
         ]);
 
-        // Asociar posiciones y actualizar costos en la tabla pivote 'position_project'
+        // Associate positions and update costs in the 'position_project' pivot table
         foreach ($this->selectedPositions as $positionId) {
             $project->positions()->attach($positionId, [
-                'quantity' => $this->positionQuantities[$positionId],
-                'required_days' => $this->positionRequiredDays[$positionId],
-                'total_cost' => $this->partialCosts[$positionId],
+                'quantity' => $this->selectedPositionQuantity[$positionId],
+                'required_days' => $this->selectedPositionRequiredDays[$positionId],
+                'total_cost' => $this->totalLaborCost,
             ]);
-
         }
 
         // Associate materials and update costs in the 'material_project' pivot table
-        $project->materials()->attach($this->selectedMaterials, [
-            'quantity' => $this->selectedMaterialQuantity,
-            'total_cost' => $this->totalMaterialCost,
-        ]);
+        foreach ($this->selectedMaterials as $materialId) {
+            $project->materials()->attach($materialId, [
+                'quantity' => $this->selectedMaterialQuantity[$materialId],
+                'total_cost' => $this->totalMaterialCost,
+            ]);
+        }
 
         // Associate tools and update costs in the 'project_tool' pivot table
-        $project->tools()->attach($this->selectedTools, [
-            'quantity' => $this->selectedToolQuantity,
-            'required_days' => $this->selectedToolRequiredDays,
-            'total_cost' => $this->totalToolCost,
-        ]);
+        foreach ($this->selectedTools as $toolId) {
+            $project->tools()->attach($toolId, [
+                'quantity' => $this->selectedToolQuantity[$toolId],
+                'required_days' => $this->selectedToolRequiredDays,
+                'total_cost' => $this->totalToolCost,
+            ]);
+        }
 
         // Associate transports and update costs in the 'project_transport' pivot table
-        $project->transports()->attach($this->selectedTransports, [
-            'quantity' => $this->selectedTransportQuantity,
-            'required_days' => $this->selectedTransportRequiredDays,
-            'total_cost' => $this->totalTransportCost,
-        ]);
+        foreach ($this->selectedTransports as $transportId) {
+            $project->transports()->attach($transportId, [
+                'quantity' => $this->selectedTransportQuantity[$transportId],
+                'required_days' => $this->selectedTransportRequiredDays[$transportId],
+                'total_cost' => $this->totalTransportCost,
+            ]);
+        }
 
         // Redirect or show success message
         $this->openCreate = false;
@@ -139,72 +142,90 @@ class ProjectCreate extends Component
         $this->showResource = 'transport'; // Update property based on the selected resource
     }
 
-    #[On('totalLaborCostUpdated')]  // Listen for the event
-    public function updateTotalLaborCost($totalLaborCost): void
+    #[On('positionSelectionUpdated')]
+    public function handlePositionSelectionUpdated($data): void
     {
-        // Update the received value in ProjectCreate
-        $this->totalLaborCost = number_format($totalLaborCost, 2);
+        // Update relevant properties with received data
+        $this->selectedPositions = $data['selectedPositions'];
+        $this->selectedPositionQuantity = $data['positionQuantities'];
+        $this->selectedPositionRequiredDays = $data['positionRequiredDays'];
+        $this->totalLaborCost = $data['totalLaborCost'];
 
-        // Update additional fields in the 'position_project' pivot table if the project already exists
+        // Update the 'position_project' pivot table if the project already exists
         if ($this->project) {
-            $this->project->positions()->syncWithoutDetaching([
-                $this->selectedPositions => [
-                    'quantity' => $this->selectedPositionQuantity,
-                    'required_days' => $this->selectedPositionRequiredDays,
-                    'total_cost' => $this->totalLaborCost,
-                ]
-            ]);
+            foreach ($this->selectedPositions as $positionId) {
+                $this->project->positions()->syncWithoutDetaching([
+                    $positionId => [
+                        'quantity' => $this->selectedPositionQuantity[$positionId],
+                        'required_days' => $this->selectedPositionRequiredDays[$positionId],
+                        'total_cost' => $this->totalLaborCost,
+                    ]
+                ]);
+            }
         }
     }
 
-    #[On('totalMaterialCostUpdated')]  // Listen for the event
-    public function updateTotalMaterialCost($totalMaterialCost): void
+    #[On('materialSelectionUpdated')]
+    public function handleMaterialSelectionUpdated($data): void
     {
-        // Update the received value in ProjectCreate
-        $this->totalMaterialCost = number_format($totalMaterialCost, 2);
+        // Update relevant properties with received data
+        $this->selectedMaterials = $data['selectedMaterials'];
+        $this->selectedMaterialQuantity = $data['materialQuantities'];
+        $this->totalMaterialCost = $data['totalMaterialCost'];
 
-        // Update the total cost in the 'material_project' pivot table if the project already exists
+        // Update the 'material_project' pivot table if the project already exists
         if ($this->project) {
-            $this->project->materials()->syncWithoutDetaching([
-                $this->selectedMaterials => [
-                    'total_cost' => $this->totalMaterialCost,
-                ]
-            ]);
+            foreach ($this->selectedMaterials as $materialId) {
+                $this->project->materials()->syncWithoutDetaching([
+                    $materialId => [
+                        'quantity' => $this->selectedMaterialQuantity[$materialId],
+                        'total_cost' => $this->totalMaterialCost,
+                    ]
+                ]);
+            }
         }
     }
 
-    #[On('totalToolCostUpdated')]  // Listen for the event
-    public function updateTotalToolCost($totalToolCost): void
+    #[On('toolSelectionUpdated')]
+    public function handleToolSelectionUpdated($data): void
     {
-        // Update the received value in ProjectCreate
-        $this->totalToolCost = number_format($totalToolCost, 2);
+        // Actualizar propiedades relevantes con los datos recibidos
+        $this->selectedTools = $data['selectedTools'];
+        $this->selectedToolQuantity = $data['toolQuantities'];
+        $this->totalToolCost = $data['totalToolCost'];
 
-        // Update the total cost in the 'project_tool' pivot table if the project already exists
+        // Actualizar los costos totales de las herramientas en la tabla pivot 'project_tool' si el proyecto ya existe
         if ($this->project) {
-            $this->project->tools()->syncWithoutDetaching([
-                $this->selectedTools => [
+            foreach ($this->selectedTools as $toolId) {
+                $this->project->tools()->updateExistingPivot($toolId, [
+                    'quantity' => $this->selectedToolQuantity[$toolId],
                     'total_cost' => $this->totalToolCost,
-                ]
-            ]);
+                ]);
+            }
         }
     }
 
-    #[On('totalTransportCostUpdated')]  // Listen for the event
-    public function updateTotalTransportCost($totalTransportCost): void
+    #[On('transportSelectionUpdated')]
+    public function handleTransportSelectionUpdated($data): void
     {
+        // Actualizar propiedades relevantes con los datos recibidos
+        $this->selectedTransports = $data['selectedTransports'];
+        $this->selectedTransportQuantity = $data['transportQuantities'];
+        $this->selectedTransportRequiredDays = $data['transportRequiredDays'];
+        $this->totalTransportCost = $data['totalTransportCost'];
 
-        // Update the received value in ProjectCreate
-        $this->totalTransportCost = number_format($totalTransportCost, 2);
-
-        // Update the total cost in the 'project_transport' pivot table if the project already exists
+        // Actualizar los costos totales de transporte en la tabla pivot 'project_transport' si el proyecto ya existe
         if ($this->project) {
-            $this->project->transports()->syncWithoutDetaching([
-                $this->selectedTransports => [
+            foreach ($this->selectedTransports as $transportId) {
+                $this->project->transports()->updateExistingPivot($transportId, [
+                    'quantity' => $this->selectedTransportQuantity[$transportId],
+                    'required_days' => $this->selectedTransportRequiredDays[$transportId],
                     'total_cost' => $this->totalTransportCost,
-                ]
-            ]);
+                ]);
+            }
         }
     }
+
 
     #[On('hideResourceForm')]  // Listen for the event
     public function hideResourceForm(): void
@@ -217,3 +238,53 @@ class ProjectCreate extends Component
         return view('livewire.projects.project-create');
     }
 }
+/* #[On('totalMaterialCostUpdated')]
+ public function updateTotalMaterialCost($totalMaterialCost): void
+ {
+     // Update the received value in ProjectCreate
+     $this->totalMaterialCost = number_format($totalMaterialCost, 2);
+
+     // Update the total cost in the 'material_project' pivot table if the project already exists
+     if ($this->project) {
+         $this->project->materials()->syncWithoutDetaching([
+             $this->selectedMaterials => [
+                 'total_cost' => $this->totalMaterialCost,
+             ]
+         ]);
+     }
+ }
+
+ #[On('totalToolCostUpdated')]  // Listen for the event
+ public function updateTotalToolCost($totalToolCost): void
+ {
+     // Update the received value in ProjectCreate
+     $this->totalToolCost = number_format($totalToolCost, 2);
+
+     // Update the total cost in the 'project_tool' pivot table if the project already exists
+     if ($this->project) {
+         $this->project->tools()->syncWithoutDetaching([
+             $this->selectedTools => [
+                 'total_cost' => $this->totalToolCost,
+             ]
+         ]);
+     }
+ }
+
+ #[On('totalTransportCostUpdated')]  // Listen for the event
+ public function updateTotalTransportCost($totalTransportCost): void
+ {
+
+     // Update the received value in ProjectCreate
+     $this->totalTransportCost = number_format($totalTransportCost, 2);
+
+     // Update the total cost in the 'project_transport' pivot table if the project already exists
+     if ($this->project) {
+         $this->project->transports()->syncWithoutDetaching([
+             $this->selectedTransports => [
+                 'total_cost' => $this->totalTransportCost,
+             ]
+         ]);
+     }
+ }*/
+
+

@@ -3,7 +3,7 @@
         <h3 class="mb-2">Mano de Obra</h3>
         <!-- Selección de Posiciones y Configuración -->
         <div class="mb-4 grid grid-cols-5 gap-4">
-            @foreach ($allPositions as $position)
+            @foreach ($positions as $position)
                 <!-- Columna 1: Checkbox -->
                 <div class="flex items-center col-span-2">
                     <input wire:model.live="selectedPositions" type="checkbox" value="{{ $position->id }}"
