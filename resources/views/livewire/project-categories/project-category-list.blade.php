@@ -53,7 +53,7 @@
                     </th>
 
                     <th scope="col" class="py-3 cursor-pointer" wire:click="order('name')">
-                        Correo
+                        Nombre
                         @if ($sortBy == 'name')
                             @if ($sortDirection == 'asc')
                                 <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
@@ -96,13 +96,19 @@
                         <td class="">
                             @if (strlen($category->description) > 80)
                                 @if ($showFullDescription === $category->id)
-                                    {{ $category->description }}
-                                    <button wire:click="toggleDescription({{ $category->id }})" class="text-blue-500 underline ml-2">
-                                        <i class="fas fa-minus-circle"></i> <!-- Icono de FontAwesome para "Ver menos" -->
-                                    </button>
+                                    <div class="bg-blue-50 p-2 m-2 text-md rounded-lg">
+                                        {{ $category->description }}
+
+                                        <button wire:click="toggleDescription({{ $category->id }})"
+                                                class="text-blue-500 underline ml-2">
+                                            <i class="fas fa-minus-circle"></i>
+                                            <!-- Icono de FontAwesome para "Ver menos" -->
+                                        </button>
+                                    </div>
                                 @else
                                     {{ Str::limit($category->description, 80) }}
-                                    <button wire:click="toggleDescription({{ $category->id }})" class="text-blue-500 underline ml-2">
+                                    <button wire:click="toggleDescription({{ $category->id }})"
+                                            class="text-blue-500 underline ml-2">
                                         <i class="fas fa-plus-circle"></i> <!-- Icono de FontAwesome para "Ver más" -->
                                     </button>
                                 @endif
@@ -163,6 +169,8 @@
     @push('js')
         <script>
             // Notificación de creación de categorías de proyectos
+            import swal from "sweetalert2";
+
             Livewire.on('createdProjectCategoryNotification', function () {
                 swal.fire({
                     icon: 'success'

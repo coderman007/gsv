@@ -2,13 +2,18 @@
 
 namespace App\Livewire\ProjectCategories;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
+use LaravelIdea\Helper\App\Models\_IH_ProjectCategory_C;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use App\Models\ProjectCategory;
 use Livewire\WithPagination;
 
+/**
+ * @property mixed|null $projectCategories
+ */
 class ProjectCategoryList extends Component
 {
     use WithPagination;
@@ -35,7 +40,7 @@ class ProjectCategoryList extends Component
     }
 
     #[Computed]
-    public function projectCategories()
+    public function projectCategories(): array|_IH_ProjectCategory_C|LengthAwarePaginator
     {
         return ProjectCategory::where('name', 'like', '%' . $this->search . '%')
             ->orWhere('description', 'like', '%' . $this->search . '%')
