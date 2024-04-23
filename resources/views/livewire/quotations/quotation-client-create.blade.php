@@ -1,6 +1,10 @@
 <div>
-    <a href="#" class="text-sm text-indigo-600 hover:text-indigo-500 mt-1 block"
-        wire:click="$set('openCreate', true)">Agregar nuevo cliente</a>
+    <x-info-button wire:click="$set('openCreate', true)">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Nuevo Cliente
+    </x-info-button>
 
     <x-dialog-modal maxWidth="5xl" wire:model="openCreate">
         <div class="w-full mx-auto bg-white shadow-md p-6 rounded-md">
@@ -10,7 +14,7 @@
             </x-slot>
             <x-slot name="content">
 
-                <form wire:submit.prevent="createClient">
+                <form wire:submit="createClient">
                     <div class="my-2">
                         <div class="flex justify-between my-4">
                             <!-- Tipo de Cliente -->
@@ -62,8 +66,8 @@
                                             <input type="file" class="hidden" wire:model="image">
                                             <div class="absolute top-0 h-48 w-72">
                                                 @if ($image)
-                                                    <img class="object-cover w-full h-full rounded-lg"
-                                                        src="{{ $image->temporaryUrl() }}" class="mb-4"
+                                                    <img class="object-cover w-full h-full mb-4 rounded-lg"
+                                                        src="{{ $image->temporaryUrl() }}"
                                                         alt="Foto de Perfil">
                                                 @endif
                                             </div>
@@ -125,6 +129,8 @@
     @push('js')
         <script>
             // Notificación de Cliente Almacenado
+            import Swal from "sweetalert2";
+
             Livewire.on('clientStoredNotification', function() {
                 Swal.fire({
                     position: "top-end",

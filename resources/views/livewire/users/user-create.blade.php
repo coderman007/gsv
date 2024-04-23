@@ -56,18 +56,6 @@
                                         wire:model="password" type="password" placeholder="Contraseña" />
                                     <x-input-error for="password" />
                                 </div>
-                                <!-- Dropdown para Estado -->
-                                <div class="px-5 pb-5">
-                                    <x-label class="text-left text-xl text-gray-700" value="Estado" />
-                                    <select
-                                        class="text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-300 focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400"
-                                        wire:model="status">
-                                        <option value="" disabled>Selecciona un estado</option>
-                                        <option value="Activo">Activo</option>
-                                        <option value="Inactivo">Inactivo</option>
-                                    </select>
-                                    <x-input-error for="status" />
-                                </div>
                             </div>
                         </div>
                     </x-slot>

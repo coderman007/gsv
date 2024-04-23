@@ -96,7 +96,7 @@
                         <td class="">
                             @if (strlen($category->description) > 80)
                                 @if ($showFullDescription === $category->id)
-                                    <div class="bg-blue-50 p-2 m-2 text-md rounded-lg">
+                                    <div class="bg-blue-50 p-2 m-2 text-gray-700 text-md rounded-lg">
                                         {{ $category->description }}
 
                                         <button wire:click="toggleDescription({{ $category->id }})"

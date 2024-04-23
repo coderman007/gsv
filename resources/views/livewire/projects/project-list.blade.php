@@ -93,7 +93,7 @@
                     </th>
 
                     <th scope="col" class="px-6 py-3">
-                        Kilowatts a Proveer
+                        Potencia
                     </th>
 
                     <th scope="col" class="px-6 py-3">
@@ -119,7 +119,7 @@
 
                         <td class="px-6 py-4 dark:text-lg">{{ $project->name }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->description }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $project->kilowatts_to_provide }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $project->kilowatts_to_provide . " Kwh" }}</td>
                         <td
                             class="px-6 py-4 dark:text-lg {{ $project->status === 'Activo' ? 'text-green-600' : 'text-red-500' }}">
                             {{ $project->status }}
@@ -151,47 +151,51 @@
             </div>
         </div>
     @else
+        <!-- Mensaje de no hay Clientes -->
+        <div class="flex justify-end m-4 p-4">
+            <livewire:projects.project-create/>
+        </div>
         <!-- Mensaje de no hay categorías -->
-        <h1 class="my-64 text-5xl text-center dark:text-gray-200">
-            <div>¡Ups!</div>
-            <br> <span class="mt-4"> No se encontraron coincidencias en la búsqueda. </span>
+        <h1 class="my-32 text-5xl text-center dark:text-gray-200">
+            <br> <span class="mt-4">Aún no hay datos. </span>
         </h1>
 
         <div class="flex justify-center w-full h-auto">
-            <livewire:projects.project-create/>
-            <button
-                class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
-                <a href="{{ route('projects') }}">Volver</a>
-            </button>
+            <a href="{{ route('projects') }}">
+            <x-gray-button>
+                Volver
+            </x-gray-button>
+                </a>
         </div>
     @endif
 
     @push('js')
         <script>
             // Notificación de creación de categorías de proyectos
+
             Livewire.on('createdProjectNotification', function () {
-                swal.fire({
+                Swal.fire({
                     icon: 'success'
-                    , title: 'Proyecto Creado!'
-                    , text: 'El proyecto se ha creado correctamente!'
+                    , title: 'APU Creado!'
+                    , text: 'El APU se ha creado correctamente!'
                 })
             });
 
             // Notificación de edición de categorías de proyectos
             Livewire.on('updatedProjectNotification', function () {
-                swal.fire({
+                Swal.fire({
                     icon: 'success'
-                    , title: 'Proyecto Actualizado!'
-                    , text: 'El proyecto se ha actualizado correctamente!'
+                    , title: 'APU Actualizado!'
+                    , text: 'El APU se ha actualizado correctamente!'
                 })
             });
 
             // Notificación de eliminación de categorías de proyectos
             Livewire.on('deletedProjectNotification', function () {
-                swal.fire({
+                Swal.fire({
                     icon: 'success'
-                    , title: 'Proyecto Eliminado!'
-                    , text: 'El proyecto se ha eliminado correctamente!'
+                    , title: 'APU Eliminado!'
+                    , text: 'El APU se ha eliminado correctamente!'
                 })
             });
         </script>

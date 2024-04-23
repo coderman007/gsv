@@ -1,11 +1,10 @@
 <div>
-    <button wire:click="$set('openCreate', true)"
-        class="rounded-md px-3.5 py-2 m-1 overflow-hidden relative group cursor-pointer border-2 font-medium border-gray-500 hover:border-blue-500 text-white">
-        <span
-            class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
-        <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease"><i
-                class="fa fa-solid fa-plus text-xl"></i> Cliente</span>
-    </button>
+    <x-info-button wire:click="$set('openCreate', true)">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Nuevo Cliente
+    </x-info-button>
 
     <x-dialog-modal maxWidth="5xl" wire:model="openCreate">
         <div class="w-full mx-auto bg-white shadow-md p-6 rounded-md">
@@ -114,10 +113,10 @@
 
             <x-slot name="footer">
                 <div class="mt-5 flex justify-end">
-                    <button type="submit" wire:click="createClient"
+                    <x-success-button type="submit" wire:click="createClient"
                         class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
                         Crear Cliente
-                    </button>
+                    </x-success-button>
                 </div>
             </x-slot>
         </div>

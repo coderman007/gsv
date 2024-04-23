@@ -50,7 +50,7 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            <!-- Subopciones de Recursos -->
+                            <!-- Sub opciones de Recursos -->
                             <x-dropdown-link class="hover:text-blue-500" href="{{ route('project-categories') }}"
                                 :active="request()->routeIs('project-categories')">
                                 {{ __('Categorías') }}
@@ -69,6 +69,10 @@
                             <x-dropdown-link class="hover:text-blue-500" href="{{ route('transports') }}"
                                 :active="request()->routeIs('transports')">
                                 {{ __('Transporte') }}
+                            </x-dropdown-link>
+                            <x-dropdown-link class="hover:text-blue-500" href="{{ route('irradiances') }}"
+                                             :active="request()->routeIs('irradiances')">
+                                {{ __('Irradiancia') }}
                             </x-dropdown-link>
                         </x-slot>
                     </x-dropdown>

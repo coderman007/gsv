@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             MaterialSeeder::class,
             ToolSeeder::class,
             TransportSeeder::class,
-            ProjectSeeder::class,
+//            ProjectSeeder::class,
         ]);
 
         // \App\Models\User::factory(10)->create();

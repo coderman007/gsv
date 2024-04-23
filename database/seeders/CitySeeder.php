@@ -13,7 +13,7 @@ class CitySeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $data = json_decode(file_get_contents(__DIR__ . '/Locations/cities.json'), true);
 

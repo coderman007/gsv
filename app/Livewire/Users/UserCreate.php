@@ -14,13 +14,11 @@ class UserCreate extends Component
     public $openCreate = false;
     public $name, $email, $password, $roles;
     public $selectedRole = "";
-    public $status = "";
 
     protected $rules = [
         'name' => 'required|min:5|max:255',
         'email' => 'required|email|unique:users,email',
         'password' => 'required|min:8',
-        'status' => 'required'
     ];
     public function mount():void
     {
@@ -43,7 +41,6 @@ class UserCreate extends Component
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
-            'status' => $this->status,
         ]);
 
         // Asignar un rol al usuario si se ha seleccionado uno
@@ -55,7 +52,7 @@ class UserCreate extends Component
         // $message = session('message');
         $this->dispatch('createdUser', $user);
         $this->dispatch('createdUserNotification');
-        $this->reset('name', 'email', 'password', 'status', 'selectedRole');
+        $this->reset('name', 'email', 'password', 'selectedRole');
     }
     public function render():View
     {

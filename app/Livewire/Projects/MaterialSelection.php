@@ -1,7 +1,5 @@
 <?php
 
-// app/Livewire/Projects/MaterialSelection.php
-
 namespace App\Livewire\Projects;
 
 use App\Models\Material;
@@ -10,7 +8,6 @@ use Livewire\Component;
 
 class MaterialSelection extends Component
 {
-    // Materiales
     public $search = '';
     public $materials = [];
     public $selectedMaterials = [];
@@ -31,8 +28,13 @@ class MaterialSelection extends Component
             ->get();
     }
 
-    public function updatedQuantities(): void
+    public function updatedQuantities($value, $materialId): void
     {
+        // Si el valor no es numérico, establece el valor como null
+        if (!is_numeric($value)) {
+            $this->quantities[$materialId] = null;
+        }
+
         $this->calculateTotalMaterialCost();
     }
 
@@ -41,14 +43,17 @@ class MaterialSelection extends Component
         $totalCost = 0;
         foreach ($this->selectedMaterials as $materialId) {
             $quantity = $this->quantities[$materialId] ?? 0;
-            $material = Material::find($materialId);
-            $totalCost += $quantity * $material->unit_price;
+            if (is_numeric($quantity)) {
+                $material = Material::find($materialId);
+                if ($material) {
+                    $totalCost += $quantity * $material->unit_price;
+                }
+            }
         }
         $this->totalMaterialCost = $totalCost;
         $this->formattedTotalMaterialCost = number_format($totalCost, 2);
     }
 
-    // Agregar un método para enviar el valor total de los materiales
     public function sendTotalMaterialCost(): void
     {
         $this->dispatch('totalMaterialCostUpdated', $this->totalMaterialCost);
@@ -59,7 +64,6 @@ class MaterialSelection extends Component
             'totalMaterialCost' => $this->totalMaterialCost,
         ]);
 
-        // Emitir un evento adicional para ocultar el formulario de recursos
         if ($this->totalMaterialCost > 0) {
             $this->dispatch('hideResourceForm');
         }

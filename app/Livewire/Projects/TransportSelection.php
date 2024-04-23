@@ -37,23 +37,42 @@ class TransportSelection extends Component
         if ($index !== false && isset($this->quantities[$transportId]) && isset($this->requiredDays[$transportId])) {
             $transport = Transport::find($transportId);
 
-            // Calculate daily cost of the transport
-            $dailyCost = $transport->salary_per_hour * 8; // Assuming 8 hours per day
+            // Verifica si las cantidades y los días requeridos son numéricos
+            if (is_numeric($this->quantities[$transportId]) && is_numeric($this->requiredDays[$transportId])) {
+                // Calculate daily cost of the transport
+                $dailyCost = $transport->salary_per_hour * 8; // Assuming 8 hours per day
 
-            $this->partialCosts[$transportId] = $this->quantities[$transportId] * $this->requiredDays[$transportId] * $dailyCost;
+                $this->partialCosts[$transportId] = $this->quantities[$transportId] * $this->requiredDays[$transportId] * $dailyCost;
+            } else {
+                // Si las cantidades o los días requeridos no son numéricos, establece el costo parcial en cero
+                $this->partialCosts[$transportId] = 0;
+            }
         } else {
             $this->partialCosts[$transportId] = 0;
         }
     }
 
+
     public function updatedQuantities($value, $transportId): void
     {
+        // Si el valor no es numérico, establece el valor como null
+        if (!is_numeric($value)) {
+            $this->quantities[$transportId] = null;
+        }
+
+        // Recalcula el costo parcial y total para reflejar cualquier cambio
         $this->calculatePartialCost($transportId);
         $this->updateTotalTransportCost();
     }
 
     public function updatedRequiredDays($value, $transportId): void
     {
+        // Si el valor no es numérico, establece el valor como null
+        if (!is_numeric($value)) {
+            $this->requiredDays[$transportId] = null;
+        }
+
+        // Recalcula el costo parcial y total para reflejar cualquier cambio
         $this->calculatePartialCost($transportId);
         $this->updateTotalTransportCost();
     }

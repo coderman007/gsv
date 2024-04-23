@@ -15,6 +15,7 @@ use App\Livewire\Resources\Transports\TransportList;
 use App\Livewire\Resources\Materials\MaterialList;
 use App\Livewire\Resources\Tools\ToolList;
 use App\Livewire\Users\UserList;
+use App\Livewire\Resources\Irradiances\IrradianceEdit;
 
 // use App\Http\Controllers\QuotationController;
 
@@ -51,4 +52,5 @@ Route::middleware([
     Route::get('materials', MaterialList::class)->name('materials');
     Route::get('tools', ToolList::class)->name('tools');
     Route::get('layouts', LayoutList::class)->name('layouts');
+    Route::get('irradiances', IrradianceEdit::class)->name('irradiances');
 });

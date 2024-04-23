@@ -97,7 +97,7 @@ class ProjectCreate extends Component
         foreach ($this->selectedTools as $toolId) {
             $project->tools()->attach($toolId, [
                 'quantity' => $this->selectedToolQuantity[$toolId],
-                'required_days' => $this->selectedToolRequiredDays,
+                'required_days' => $this->selectedToolRequiredDays[$toolId],
                 'total_cost' => $this->totalToolCost,
             ]);
         }
@@ -116,7 +116,7 @@ class ProjectCreate extends Component
         $this->dispatch('createdProject', $project);
         $this->dispatch('createdProjectNotification', [
             'title' => 'Success',
-            'text' => 'Proyecto Creado Exitosamente!',
+            'text' => 'APU Creado Exitosamente!',
             'icon' => 'success'
         ]);
         $this->reset();
@@ -189,16 +189,16 @@ class ProjectCreate extends Component
     #[On('toolSelectionUpdated')]
     public function handleToolSelectionUpdated($data): void
     {
-        // Actualizar propiedades relevantes con los datos recibidos
         $this->selectedTools = $data['selectedTools'];
         $this->selectedToolQuantity = $data['toolQuantities'];
+        $this->selectedToolRequiredDays = $data['toolRequiredDays']; // Actualizar días requeridos
         $this->totalToolCost = $data['totalToolCost'];
 
-        // Actualizar los costos totales de las herramientas en la tabla pivot 'project_tool' si el proyecto ya existe
         if ($this->project) {
             foreach ($this->selectedTools as $toolId) {
                 $this->project->tools()->updateExistingPivot($toolId, [
                     'quantity' => $this->selectedToolQuantity[$toolId],
+                    'required_days' => $this->selectedToolRequiredDays[$toolId], // Guardar días requeridos
                     'total_cost' => $this->totalToolCost,
                 ]);
             }
@@ -230,7 +230,7 @@ class ProjectCreate extends Component
     #[On('hideResourceForm')]  // Listen for the event
     public function hideResourceForm(): void
     {
-        $this->showResource = ''; // Reset the property to hide the resource form
+        $this->showResource = '';
     }
 
     public function render(): View
@@ -238,53 +238,5 @@ class ProjectCreate extends Component
         return view('livewire.projects.project-create');
     }
 }
-/* #[On('totalMaterialCostUpdated')]
- public function updateTotalMaterialCost($totalMaterialCost): void
- {
-     // Update the received value in ProjectCreate
-     $this->totalMaterialCost = number_format($totalMaterialCost, 2);
-
-     // Update the total cost in the 'material_project' pivot table if the project already exists
-     if ($this->project) {
-         $this->project->materials()->syncWithoutDetaching([
-             $this->selectedMaterials => [
-                 'total_cost' => $this->totalMaterialCost,
-             ]
-         ]);
-     }
- }
-
- #[On('totalToolCostUpdated')]  // Listen for the event
- public function updateTotalToolCost($totalToolCost): void
- {
-     // Update the received value in ProjectCreate
-     $this->totalToolCost = number_format($totalToolCost, 2);
-
-     // Update the total cost in the 'project_tool' pivot table if the project already exists
-     if ($this->project) {
-         $this->project->tools()->syncWithoutDetaching([
-             $this->selectedTools => [
-                 'total_cost' => $this->totalToolCost,
-             ]
-         ]);
-     }
- }
-
- #[On('totalTransportCostUpdated')]  // Listen for the event
- public function updateTotalTransportCost($totalTransportCost): void
- {
-
-     // Update the received value in ProjectCreate
-     $this->totalTransportCost = number_format($totalTransportCost, 2);
-
-     // Update the total cost in the 'project_transport' pivot table if the project already exists
-     if ($this->project) {
-         $this->project->transports()->syncWithoutDetaching([
-             $this->selectedTransports => [
-                 'total_cost' => $this->totalTransportCost,
-             ]
-         ]);
-     }
- }*/
 
 
