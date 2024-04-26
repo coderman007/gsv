@@ -1,5 +1,3 @@
-<!-- resources/views/livewire/resources/materials/additional-cost-show.blade.php -->
-
 <div class="relative inline-block text-center cursor-pointer group">
     <a href="#" wire:click="$set('openShow', true)">
         <div class="flex items-center justify-center p-2 text-gray-200 rounded-md bg-gradient-to-br from-green-300 to-green-500 hover:from-green-500 hover:to-gray-700 hover:text-white transition duration-300 ease-in-out">
@@ -21,31 +19,20 @@
             <div class="flex justify-center items-center w-full h-full bg-white dark:bg-gray-800">
                 <div class="w-full bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden">
                     <div class="grid grid-cols-2 gap-4 p-4">
-                        <div class="mb-4">
-                            <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Imagen</h1>
-                            <div class="mx-auto my-2 rounded-lg w-72 overflow-hidden">
-                                <img src="{{ asset('storage/' . $material->image) }}" alt="{{ $material->reference }}"
-                                     class="w-full h-auto rounded-lg">
-                            </div>
-                        </div>
-                        <div class="col-span-1 mb-4">
-                            <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Categoría</h1>
-                            <p class="text-lg text-gray-800 dark:text-white">{{ $material->materialCategory->name }}</p>
-                        </div>
 
                         <div class="col-span-2 mb-4">
-                            <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Referencia</h1>
-                            <p class="text-lg text-gray-800 dark:text-white">{{ $material->reference }}</p>
+                            <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Concepto</h1>
+                            <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->name }}</p>
                         </div>
 
                         <div class="col-span-2 mb-4">
                             <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Descripción</h1>
-                            <p class="text-lg text-gray-800 dark:text-white">{{ $material->description }}</p>
+                            <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->description }}</p>
                         </div>
 
                         <div class="col-span-2 mb-4">
-                            <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Precio Unitario</h1>
-                            <p class="text-lg text-gray-800 dark:text-white">{{ $material->unit_price }}</p>
+                            <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Valor</h1>
+                            <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->amount }}</p>
                         </div>
                     </div>
                 </div>

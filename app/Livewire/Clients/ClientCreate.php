@@ -13,6 +13,7 @@ class ClientCreate extends Component
     use WithFileUploads;
 
     public $openCreate = false;
+    public $isEditing = false;
     public $type;
     public $name;
     public $document;
@@ -20,7 +21,6 @@ class ClientCreate extends Component
     public $email;
     public $address;
     public $phone;
-    public $status;
     public $image;
     public $city;
     public $city_id;
@@ -115,6 +115,7 @@ class ClientCreate extends Component
     {
         return view('livewire.clients.client-create', [
             'filteredCities' => $this->filteredCities,
+            'isEditing' => $this->isEditing,
         ]);
     }
 }

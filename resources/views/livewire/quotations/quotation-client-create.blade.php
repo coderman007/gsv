@@ -117,10 +117,10 @@
 
             <x-slot name="footer">
                 <div class="flex justify-end">
-                    <button type="submit" wire:click="createClient"
+                    <x-info-button wire:click="createClient"
                         class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
                         Crear Cliente
-                    </button>
+                    </x-info-button>
                 </div>
             </x-slot>
         </div>
@@ -128,8 +128,6 @@
 
     @push('js')
         <script>
-            // Notificación de Cliente Almacenado
-            import Swal from "sweetalert2";
 
             Livewire.on('clientStoredNotification', function() {
                 Swal.fire({

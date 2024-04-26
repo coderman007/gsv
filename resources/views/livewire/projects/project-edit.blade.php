@@ -44,10 +44,10 @@
 
                     <!-- Campo para ingresar la descripción del proyecto -->
                     <div class="space-y-2 w-3/4 text-xs">
-                        <label for="description" class="block text-gray-700">Descripción:</label>
-                        <textarea wire:model="description" id="description"
+                        <label for="zone" class="block text-gray-700">Zona:</label>
+                        <textarea wire:model="zone" id="zone"
                                   class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-30 px-4 my-2"></textarea>
-                        <x-input-error for="description"/>
+                        <x-input-error for="zone"/>
                     </div>
 
                     <!-- Campo para ingresar los kilovatios a proporcionar -->

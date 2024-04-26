@@ -3,7 +3,7 @@
     <div class="w-1/2 pr-6">
         <h3 class="text-2xl font-bold text-gray-800 mb-6">Formulario de Cotización</h3>
 
-        <form wire:submit.prevent="createQuotation">
+        <form wire:submit="createQuotation">
             <!-- Selección de cliente -->
             <div class="mb-6">
                 <label for="selectedClientId" class="block font-semibold mb-2">Cliente</label>

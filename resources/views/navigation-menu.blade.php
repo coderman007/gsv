@@ -53,7 +53,7 @@
                             <!-- Sub opciones de Recursos -->
                             <x-dropdown-link class="hover:text-blue-500" href="{{ route('project-categories') }}"
                                 :active="request()->routeIs('project-categories')">
-                                {{ __('Categorías') }}
+                                {{ __('Categorías de APU') }}
                             </x-dropdown-link>
                             <x-dropdown-link class="hover:text-blue-500" href="{{ route('positions') }}"
                                 :active="request()->routeIs('positions')">
@@ -69,6 +69,11 @@
                             <x-dropdown-link class="hover:text-blue-500" href="{{ route('transports') }}"
                                 :active="request()->routeIs('transports')">
                                 {{ __('Transporte') }}
+                            </x-dropdown-link>
+
+                            <x-dropdown-link class="hover:text-blue-500" href="{{ route('additional-costs') }}"
+                                             :active="request()->routeIs('additional-costs')">
+                                {{ __('Adicionales') }}
                             </x-dropdown-link>
                             <x-dropdown-link class="hover:text-blue-500" href="{{ route('irradiances') }}"
                                              :active="request()->routeIs('irradiances')">

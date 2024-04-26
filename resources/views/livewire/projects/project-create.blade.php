@@ -11,14 +11,14 @@
             <h2 class="mt-3 text-2xl text-center">Nuevo APU</h2>
         </x-slot>
         <x-slot name="content">
-            <div class="grid grid-cols-2 gap-4 bg-gray-100 p-2 rounded-lg">
+            <div class="grid grid-cols-3 gap-4 bg-gray-100 p-2 rounded-lg">
                 <!-- Columna izquierda -->
                 <div class="col-span-1 bg-white p-4 rounded-lg">
                     <!-- Título -->
                     <h2 class="text-center text-2xl font-bold mb-4">Formulario</h2>
 
                     <!-- Contenedor de información -->
-                    <div class="grid grid-cols-2 gap-4">
+                    <div>
                         <!-- Columna Izquierda -->
                         <div class="col-span-1">
                             <div class="mb-4">
@@ -37,7 +37,7 @@
                                 @enderror
                             </div>
                             <div class="mb-4">
-                                <label for="kilowatts_to_provide" class="text-lg font-semibold text-gray-600 py-2">Potencia</label>
+                                <label for="kilowatts_to_provide" class="text-lg font-semibold text-gray-600 py-2">Energía a generar (kWh/mes)</label>
                                 <input wire:model="kilowatts_to_provide" type="number" id="kilowatts_to_provide"
                                        name="kilowatts_to_provide"
                                        class="mt-1 p-2 block w-full border-gray-300 rounded-md">
@@ -51,16 +51,16 @@
                             <div class="mb-4">
                                 <label for="name" class="text-lg font-semibold text-gray-600 py-2">Nombre</label>
                                 <input wire:model="name" type="text" id="name" name="name"
-                                       class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                       class="mt-1 p-2 block w-full border-gray-300 rounded-md" />
                                 @error('name')
                                 <span class="text-red-500">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="mb-4">
-                                <label for="description" class="text-lg font-semibold text-gray-600 py-2">Descripción</label>
-                                <textarea wire:model="description" id="description" name="description" rows="1"
-                                          class="mt-1 p-2 block w-full border-gray-300 rounded-md"></textarea>
-                                @error('description')
+                                <label for="zone" class="text-lg font-semibold text-gray-600 py-2">Zona</label>
+                                <input wire:model="zone" id="zone" name="zone" rows="1"
+                                          class="mt-1 p-2 block w-full border-gray-300 rounded-md" />
+                                @error('zone')
                                 <span class="text-red-500">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -71,7 +71,7 @@
                 </div>
 
                 <!-- Columna derecha -->
-                <div class="col-span-1 bg-white p-4 rounded-lg">
+                <div class="col-span-2 bg-white p-4 rounded-lg">
                     <!-- Título -->
                     <h2 class="text-center text-2xl font-bold mb-4">Recursos del Proyecto</h2>
 
@@ -106,6 +106,13 @@
                                 </button>
                                 <div class="text-slate-500 font-bold text-center ">{{ $totalTransportCost }}</div>
                             </div>
+                            <div class="flex flex-col justify-center">
+                                <button wire:click="showAdditionalCostsForm"
+                                        class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full"
+                                        type="button">Adicionales
+                                </button>
+                                <div class="text-yellow-500 font-bold text-center ">{{ $totalAdditionalCost }}</div>
+                            </div>
                         </div>
                     </div>
 
@@ -119,6 +126,8 @@
                             <livewire:projects.tool-selection/>
                         @elseif ($showResource === 'transport')
                             <livewire:projects.transport-selection/>
+                        @elseif ($showResource === 'additionalCosts')
+                            <livewire:projects.additional-cost-selection/>
                         @endif
                     </div>
                 </div>

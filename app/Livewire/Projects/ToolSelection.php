@@ -13,6 +13,8 @@ class ToolSelection extends Component
     public $selectedTools = [];
     public $quantities = [];
     public $requiredDays = [];
+    public $efficiencies = [];
+    public $partialToolCosts = [];
     public $totalToolCost = 0;
     public $formattedTotalToolCost;
 
@@ -20,58 +22,69 @@ class ToolSelection extends Component
         'selectedTools' => 'required|array|min:1',
         'selectedTools.*' => 'exists:tools,id',
         'quantities.*' => 'nullable|numeric|min:0',
-        'requiredDays.*' => 'nullable|numeric|min:0', // Validación para días requeridos
+        'requiredDays.*' => 'nullable|numeric|min:0',
+        'efficiencies.*' => ['nullable', 'regex:/^(\d+(\.\d+)?|(\d+\/\d+))$/'],
     ];
 
     public function updatedSearch(): void
     {
-        $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get();
+        $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')
+            ->get();
     }
 
     public function updatedQuantities($value, $toolId): void
     {
-        // Si el valor no es numérico, establece el valor como null
         if (!is_numeric($value)) {
             $this->quantities[$toolId] = null;
         }
 
-        // Recalcula el costo total para reflejar cualquier cambio
-        $this->calculateTotalToolCost();
+        $this->calculatePartialToolCost();
     }
 
-
-    // Nuevo método para actualizar el costo total al cambiar los días requeridos
-    public function updatedRequiredDays($value, $toolId): void
+    public function updatedEfficiencies($value, $toolId): void
     {
-        // Si el valor no es numérico, establece el valor como null
-        if (!is_numeric($value)) {
-            $this->requiredDays[$toolId] = null;
-        }
-
-        // Recalcula el costo total para reflejar cualquier cambio
-        $this->calculateTotalToolCost();
+        $this->calculatePartialToolCost();
     }
 
-
-    public function calculateTotalToolCost(): void
+    public function calculatePartialToolCost(): void
     {
         $totalCost = 0;
-
         foreach ($this->selectedTools as $toolId) {
-            // Usar valores predeterminados si la cantidad o los días requeridos son nulos
-            $quantity = is_numeric($this->quantities[$toolId] ?? null) ? $this->quantities[$toolId] : 0;
-            $days = is_numeric($this->requiredDays[$toolId] ?? null) ? $this->requiredDays[$toolId] : 0;
+            $quantity = $this->quantities[$toolId] ?? 0;
+            $efficiencyInput = $this->efficiencies[$toolId] ?? "1";
 
-            $tool = Tool::find($toolId);
-            if ($tool) {
-                $totalCost += $quantity * $days * $tool->unit_price_per_day;
+            $efficiency = 1.0; // Valor por defecto
+            $validEfficiency = false;
+
+            if (str_contains($efficiencyInput, '/')) {
+                $parts = explode('/', $efficiencyInput);
+                if (count($parts) == 2) {
+                    $numerator = floatval($parts[0]);
+                    $denominator = floatval($parts[1]);
+                    if ($denominator != 0) {
+                        $efficiency = $numerator / $denominator;
+                        $validEfficiency = true;
+                    }
+                }
+            } else {
+                $validEfficiency = is_numeric($efficiencyInput);
+                if ($validEfficiency) {
+                    $efficiency = floatval($efficiencyInput);
+                }
+            }
+
+            if ($validEfficiency && is_numeric($quantity)) {
+                $tool = Tool::find($toolId);
+                if ($tool) {
+                    $partialCost = $quantity * $efficiency * $tool->unit_price_per_day;
+                    $this->partialToolCosts[$toolId] = $partialCost;
+                    $totalCost += $partialCost;
+                }
             }
         }
-
         $this->totalToolCost = $totalCost;
         $this->formattedTotalToolCost = number_format($totalCost, 2);
     }
-
     public function sendTotalToolCost(): void
     {
         $this->dispatch('totalToolCostUpdated', $this->totalToolCost);
@@ -79,7 +92,7 @@ class ToolSelection extends Component
         $this->dispatch('toolSelectionUpdated', [
             'selectedTools' => $this->selectedTools,
             'toolQuantities' => $this->quantities,
-            'toolRequiredDays' => $this->requiredDays, // Añadir información de días requeridos
+            'toolRequiredDays' => $this->requiredDays,
             'totalToolCost' => $this->totalToolCost,
         ]);
 
@@ -96,4 +109,3 @@ class ToolSelection extends Component
         return view('livewire.projects.tool-selection');
     }
 }
-

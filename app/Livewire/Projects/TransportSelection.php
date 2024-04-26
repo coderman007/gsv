@@ -13,6 +13,8 @@ class TransportSelection extends Component
     public $selectedTransports = [];
     public $quantities = [];
     public $requiredDays = [];
+    public $efficiencies = [];
+
     public $partialCosts = [];
     public $totalTransportCost = 0;
     public $formattedTotalTransportCost;
@@ -22,6 +24,7 @@ class TransportSelection extends Component
         'selectedTransports.*' => 'exists:transports,id',
         'quantities.*' => 'nullable|numeric|min:0',
         'requiredDays.*' => 'nullable|numeric|min:0',
+        'efficiencies.*' => 'nullable|string',
     ];
 
     public function mount(): void
@@ -32,25 +35,43 @@ class TransportSelection extends Component
 
     public function calculatePartialCost($transportId): void
     {
-        $index = in_array($transportId, $this->selectedTransports);
+        if (in_array($transportId, $this->selectedTransports)) {
+            $quantity = $this->quantities[$transportId] ?? 0;
+            $requiredDays = $this->requiredDays[$transportId] ?? 0;
+            $efficiencyInput = $this->efficiencies[$transportId] ?? "1";
 
-        if ($index !== false && isset($this->quantities[$transportId]) && isset($this->requiredDays[$transportId])) {
-            $transport = Transport::find($transportId);
+            $efficiency = 1.0;
+            $validEfficiency = false;
 
-            // Verifica si las cantidades y los días requeridos son numéricos
-            if (is_numeric($this->quantities[$transportId]) && is_numeric($this->requiredDays[$transportId])) {
-                // Calculate daily cost of the transport
-                $dailyCost = $transport->salary_per_hour * 8; // Assuming 8 hours per day
-
-                $this->partialCosts[$transportId] = $this->quantities[$transportId] * $this->requiredDays[$transportId] * $dailyCost;
+            if (str_contains($efficiencyInput, '/')) {
+                $parts = explode('/', $efficiencyInput);
+                if (count($parts) == 2) {
+                    $numerator = floatval($parts[0]);
+                    $denominator = floatval($parts[1]);
+                    if ($denominator != 0) {
+                        $efficiency = $numerator / $denominator;
+                        $validEfficiency = true;
+                    }
+                }
             } else {
-                // Si las cantidades o los días requeridos no son numéricos, establece el costo parcial en cero
-                $this->partialCosts[$transportId] = 0;
+                $validEfficiency = is_numeric($efficiencyInput);
+                if ($validEfficiency) {
+                    $efficiency = floatval($efficiencyInput);
+                }
+            }
+
+            if ($validEfficiency && is_numeric($quantity) && is_numeric($requiredDays)) {
+                $transport = Transport::find($transportId);
+                $dailyCost = $transport->salary_per_hour * 8; // Assuming 8 hours per day
+                $this->partialCosts[$transportId] = $quantity * $requiredDays * $efficiency * $dailyCost;
+            } else {
+                $this->partialCosts[$transportId] = 0; // Default to zero if invalid
             }
         } else {
             $this->partialCosts[$transportId] = 0;
         }
     }
+
 
 
     public function updatedQuantities($value, $transportId): void
@@ -76,6 +97,13 @@ class TransportSelection extends Component
         $this->calculatePartialCost($transportId);
         $this->updateTotalTransportCost();
     }
+
+    public function updatedEfficiencies($value, $transportId): void
+    {
+        $this->calculatePartialCost($transportId);
+        $this->updateTotalTransportCost();
+    }
+
 
     public function updateTotalTransportCost(): void
     {
@@ -104,6 +132,8 @@ class TransportSelection extends Component
     public function render(): View
     {
         $this->transports = Transport::all();
-        return view('livewire.projects.transport-selection');
+        return view('livewire.projects.transport-selection', [
+            'efficiencies' => $this->efficiencies, // Pasamos los datos de eficiencia
+        ]);
     }
 }

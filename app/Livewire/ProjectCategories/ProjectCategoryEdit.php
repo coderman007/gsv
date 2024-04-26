@@ -58,8 +58,7 @@ class ProjectCategoryEdit extends Component
         $this->dispatch('updatedProjectCategory', $this->category);
         $this->dispatch('updatedProjectCategoryNotification');
 
-        // Restablecer los campos y cerrar el formulario
-        $this->reset(['name', 'description', 'status', 'image']);
+        // Cerrar el formulario
         $this->openEdit = false;
     }
 

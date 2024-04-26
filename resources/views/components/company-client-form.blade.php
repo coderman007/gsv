@@ -56,14 +56,17 @@
     </div>
 
     <!-- Estado-->
-    <div class="space-y-2 w-full text-xs">
-        <label class="text-lg font-semibold text-gray-600 py-2">Estado</label>
-        <select wire:model="status"
-            class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"
-            required="required">
-            <option value="Activo">Activo</option>
-            <option value="Inactivo">Inactivo</option>
-        </select>
-        <x-input-error for="status" />
-    </div>
+    <!-- Condicional para mostrar el campo de estado solo cuando sea edición -->
+    @if ($this->isEditing)
+        <div class="space-y-2 w-full text-xs">
+            <label class="text-lg font-semibold text-gray-600 py-2">Estado</label>
+            <select wire:model="status"
+                    class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"
+                    required="required">
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+            </select>
+            <x-input-error for="status" />
+        </div>
+    @endif
 </div>

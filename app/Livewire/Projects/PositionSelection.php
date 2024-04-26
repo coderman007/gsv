@@ -8,11 +8,11 @@ use Livewire\Component;
 
 class PositionSelection extends Component
 {
-    // Posiciones de Trabajo
     public $positions = [];
     public $selectedPositions = [];
     public $positionQuantities = [];
     public $positionRequiredDays = [];
+    public $positionEfficiencies = [];
     public $partialCosts = [];
     public $totalLaborCost = 0;
     public $formattedTotalLaborCost;
@@ -22,8 +22,8 @@ class PositionSelection extends Component
         'selectedPositions.*' => 'exists:positions,id',
         'positionQuantities.*' => 'nullable|numeric|min:0',
         'positionRequiredDays.*' => 'nullable|numeric|min:0',
+        'positionEfficiencies.*' => ['nullable', 'regex:/^(\d+(\.\d+)?|(\d+\/\d+))$/'],
     ];
-
 
     public function mount(): void
     {
@@ -36,15 +36,39 @@ class PositionSelection extends Component
     {
         $index = in_array($positionId, $this->selectedPositions);
 
-        if ($index !== false && isset($this->positionQuantities[$positionId]) && isset($this->positionRequiredDays[$positionId])) {
-            if (is_numeric($this->positionQuantities[$positionId]) && is_numeric($this->positionRequiredDays[$positionId])) {
-                $position = Position::find($positionId);
-                $this->partialCosts[$positionId] = $this->positionQuantities[$positionId] * $this->positionRequiredDays[$positionId] * $position->real_daily_cost;
+        if ($index !== false) {
+            $quantity = $this->positionQuantities[$positionId] ?? 0;
+            $requiredDays = $this->positionRequiredDays[$positionId] ?? 0;
+            $efficiencyInput = $this->positionEfficiencies[$positionId] ?? "1";
+
+            $efficiency = 1.0; // Valor por defecto
+            $validEfficiency = false;
+
+            if (str_contains($efficiencyInput, '/')) {
+                $parts = explode('/', $efficiencyInput);
+
+                if (count($parts) == 2) { // Asegúrate de que haya dos partes
+                    $numerator = floatval($parts[0]);
+                    $denominator = floatval($parts[1]);
+
+                    if ($denominator != 0) { // Verifica que el denominador no sea cero
+                        $efficiency = $numerator / $denominator;
+                        $validEfficiency = true;
+                    }
+                }
             } else {
-                $this->partialCosts[$positionId] = 0;
+                $validEfficiency = is_numeric($efficiencyInput); // Verifica si es numérico
+                if ($validEfficiency) {
+                    $efficiency = floatval($efficiencyInput);
+                }
             }
-        } else {
-            $this->partialCosts[$positionId] = 0;
+
+            if ($validEfficiency && is_numeric($quantity) && is_numeric($requiredDays)) {
+                $position = Position::find($positionId);
+                $this->partialCosts[$positionId] = $quantity * $requiredDays * $efficiency * $position->real_daily_cost;
+            } else {
+                $this->partialCosts[$positionId] = 0; // Valor por defecto cuando hay entrada no válida
+            }
         }
     }
 
@@ -69,6 +93,11 @@ class PositionSelection extends Component
         $this->updateTotalLaborCost();
     }
 
+    public function updatedPositionEfficiencies($value, $positionId): void
+    {
+        $this->calculatePartialCost($positionId);
+        $this->updateTotalLaborCost();
+    }
 
     public function updateTotalLaborCost(): void
     {
@@ -76,7 +105,6 @@ class PositionSelection extends Component
         $this->formattedTotalLaborCost = number_format($this->totalLaborCost, 2);
     }
 
-    // Agregar un método para enviar el valor total de la mano de obra
     public function sendTotalLaborCost(): void
     {
         $this->dispatch('totalLaborCostUpdated', $this->totalLaborCost);
@@ -85,10 +113,10 @@ class PositionSelection extends Component
             'selectedPositions' => $this->selectedPositions,
             'positionQuantities' => $this->positionQuantities,
             'positionRequiredDays' => $this->positionRequiredDays,
+            'positionEfficiencies' => $this->positionEfficiencies,
             'totalLaborCost' => $this->totalLaborCost,
         ]);
 
-        // Emitir un evento adicional para ocultar el formulario de recursos
         if ($this->totalLaborCost > 0) {
             $this->dispatch('hideResourceForm');
         }

@@ -6,7 +6,6 @@ use App\Livewire\Clients\ClientCreate;
 use App\Livewire\Clients\ClientList;
 use App\Livewire\Layouts\LayoutList;
 use App\Livewire\ProjectCategories\ProjectCategoryList;
-use App\Livewire\ProjectTypes\ProjectTypeList;
 use App\Livewire\Projects\ProjectList;
 use App\Livewire\Quotations\QuotationCreate;
 use App\Livewire\Quotations\QuotationList;
@@ -14,6 +13,7 @@ use App\Livewire\Resources\Positions\PositionList;
 use App\Livewire\Resources\Transports\TransportList;
 use App\Livewire\Resources\Materials\MaterialList;
 use App\Livewire\Resources\Tools\ToolList;
+use App\Livewire\Resources\AdditionalCosts\AdditionalCostList;
 use App\Livewire\Users\UserList;
 use App\Livewire\Resources\Irradiances\IrradianceEdit;
 
@@ -48,9 +48,10 @@ Route::middleware([
     Route::get('quotations/create', QuotationCreate::class)->name('quotation-create');
     // Route::get('resources', ResourceList::class)->name('resources');
     Route::get('positions', PositionList::class)->name('positions');
-    Route::get('transports', TransportList::class)->name('transports');
     Route::get('materials', MaterialList::class)->name('materials');
     Route::get('tools', ToolList::class)->name('tools');
+    Route::get('transports', TransportList::class)->name('transports');
+    Route::get('additional-costs', AdditionalCostList::class)->name('additional-costs');
     Route::get('layouts', LayoutList::class)->name('layouts');
     Route::get('irradiances', IrradianceEdit::class)->name('irradiances');
 });

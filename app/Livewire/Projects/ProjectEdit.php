@@ -10,12 +10,12 @@ use Livewire\Component;
 class ProjectEdit extends Component
 {
     public $openEdit = false;
-    public $project, $categories, $selectedCategory, $name, $description, $kilowattsToProvide, $status;
+    public $project, $categories, $selectedCategory, $name, $zone, $kilowattsToProvide, $status;
 
     protected $rules = [
         'selectedCategory' => 'required|exists:project_categories,id',
         'name' => 'required|string|max:255',
-        'description' => 'required|string|max:255',
+        'zone' => 'required|string|max:255',
         'kilowattsToProvide' => 'required|numeric|min:0',
         'status' => 'required|string|max:255',
     ];
@@ -26,7 +26,7 @@ class ProjectEdit extends Component
         $this->categories = ProjectCategory::all();
         $this->selectedCategory = $project->project_category_id;
         $this->name = $project->name;
-        $this->description = $project->description;
+        $this->zone = $project->zone;
         $this->kilowattsToProvide = $project->kilowatts_to_provide;
         $this->status = $project->status;
     }
@@ -38,7 +38,7 @@ class ProjectEdit extends Component
         $this->project->update([
             'project_category_id' => $this->selectedCategory,
             'name' => $this->name,
-            'description' => $this->description,
+            'zone' => $this->zone,
             'kilowatts_to_provide' => $this->kilowattsToProvide,
             'status' => $this->status,
         ]);

@@ -12,13 +12,17 @@ class MaterialSelection extends Component
     public $materials = [];
     public $selectedMaterials = [];
     public $quantities = [];
+    public $efficiencies = [];
+    public $partialMaterialCosts = [];
     public $totalMaterialCost = 0;
     public $formattedTotalMaterialCost;
+
 
     protected $rules = [
         'selectedMaterials' => 'required|array|min:1',
         'selectedMaterials.*' => 'exists:materials,id',
         'quantities.*' => 'nullable|numeric|min:0',
+        'efficiencies.*' => ['nullable', 'regex:/^(\d+(\.\d+)?|(\d+\/\d+))$/'],
     ];
 
     public function updatedSearch(): void
@@ -30,23 +34,50 @@ class MaterialSelection extends Component
 
     public function updatedQuantities($value, $materialId): void
     {
-        // Si el valor no es numérico, establece el valor como null
         if (!is_numeric($value)) {
             $this->quantities[$materialId] = null;
         }
 
-        $this->calculateTotalMaterialCost();
+        $this->calculatePartialMaterialCost();
     }
 
-    public function calculateTotalMaterialCost(): void
+    public function updatedEfficiencies($value, $materialId): void
+    {
+        $this->calculatePartialMaterialCost();
+    }
+    public function calculatePartialMaterialCost(): void
     {
         $totalCost = 0;
         foreach ($this->selectedMaterials as $materialId) {
             $quantity = $this->quantities[$materialId] ?? 0;
-            if (is_numeric($quantity)) {
+            $efficiencyInput = $this->efficiencies[$materialId] ?? "1";
+
+            $efficiency = 1.0; // Valor por defecto
+            $validEfficiency = false;
+
+            if (str_contains($efficiencyInput, '/')) {
+                $parts = explode('/', $efficiencyInput);
+                if (count($parts) == 2) {
+                    $numerator = floatval($parts[0]);
+                    $denominator = floatval($parts[1]);
+                    if ($denominator != 0) {
+                        $efficiency = $numerator / $denominator;
+                        $validEfficiency = true;
+                    }
+                }
+            } else {
+                $validEfficiency = is_numeric($efficiencyInput);
+                if ($validEfficiency) {
+                    $efficiency = floatval($efficiencyInput);
+                }
+            }
+
+            if ($validEfficiency && is_numeric($quantity)) {
                 $material = Material::find($materialId);
                 if ($material) {
-                    $totalCost += $quantity * $material->unit_price;
+                    $partialCost = $quantity * $efficiency * $material->unit_price;
+                    $this->partialMaterialCosts[$materialId] = $partialCost;
+                    $totalCost += $partialCost;
                 }
             }
         }

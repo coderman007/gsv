@@ -27,6 +27,7 @@ class Quotation extends Model
         'discount',
         'subtotal',
         'total_quotation_amount',
+        'status'
     ];
 
     protected array $dates = [

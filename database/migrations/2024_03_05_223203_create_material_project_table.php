@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('material_id');
             $table->integer('quantity')->default(0)->nullable(false);
+            $table->decimal('efficiency', 5, 2)->default(1.0)->nullable(false);
             $table->decimal('total_cost', 10, 2)->default(0)->nullable(false);
             $table->timestamps();
 

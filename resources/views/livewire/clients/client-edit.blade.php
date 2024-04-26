@@ -19,7 +19,7 @@
             </x-slot>
 
             <x-slot name="content">
-                <form wire:submit.prevent="updateClient" enctype="multipart/form-data">
+                <form wire:submit="updateClient" enctype="multipart/form-data">
                     <div class="my-5">
                         <div class="flex justify-between my-6">
                             <!-- Tipo de Cliente -->

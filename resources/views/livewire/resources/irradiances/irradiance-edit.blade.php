@@ -1,6 +1,6 @@
 <div class="container mx-auto mt-6 border border-gray-300 p-6 bg-gray-100 rounded-lg shadow-md">
 
-    <h2 class="text-2xl font-bold text-gray-700 mb-6">Gestor de nivel de irradiancia de municipios</h2>
+    <h2 class="text-2xl font-bold text-gray-700 mb-6">Gestor de nivel de irradiancia</h2>
 
     <div class="flex flex-row mb-4">
         <div class="w-full mr-2">
@@ -49,7 +49,7 @@
                 Swal.fire({
                     icon: 'success',
                     title: '¡Irradiancia Actualizada!',
-                    html: `La irradiancia del municipio de <span style="color: blue; font-weight: bold;">${cityName}</span> se ha actualizado a <span style="color: green; font-weight: bold;">${updatedIrradiance}</span>!`
+                    html: `¡La irradiancia del municipio de <span style="color: blue; font-weight: bold;">${cityName}</span> se ha actualizado a <span style="color: green; font-weight: bold;">${updatedIrradiance}</span>!`
                 });
             });
 

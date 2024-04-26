@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('position_project', function (Blueprint $table) {
             $table->id();
@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id');
             $table->integer('quantity')->default(0)->nullable(false);
             $table->decimal('required_days', 5, 2)->default(0)->nullable(false);
+            $table->decimal('efficiency', 5, 2)->default(1.0)->nullable(false);
             $table->decimal('total_cost', 10, 2)->default(0)->nullable(false);
             $table->timestamps();
 
@@ -28,7 +29,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('position_project');
     }

@@ -20,11 +20,7 @@ class MaterialCategorySeeder extends Seeder
                 ['name' => 'Estructura'],
                 ['name' => 'Paneles'],
                 ['name' => 'Inversores'],
-                ['name' => 'Tableros'],
-                ['name' => 'Ductos'],
-                ['name' => 'Protección'],
-                ['name' => 'Accesorios'],
-                ['name' => 'Otros'],
+                ['name' => 'Material Eléctrico'],
             ];
 
             // Insert data into the material_categories table

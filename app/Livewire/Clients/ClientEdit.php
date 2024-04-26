@@ -12,6 +12,7 @@ class ClientEdit extends Component
 {
     use WithFileUploads;
 
+    public $isEditing = true;
     public $openEdit = false;
     public $client;
     public $cities;
@@ -27,6 +28,7 @@ class ClientEdit extends Component
     public $address;
     public $phone;
     public $image;
+    public $status;
 
     public function mount(Client $client): void
     {
@@ -41,6 +43,7 @@ class ClientEdit extends Component
         $this->email = $client->email;
         $this->address = $client->address;
         $this->phone = $client->phone;
+        $this->status = $client->status;
     }
 
     public function updateClient():void
@@ -55,6 +58,7 @@ class ClientEdit extends Component
             'address' => 'nullable|string',
             'phone' => 'nullable|string',
             'image'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'status' => 'nullable|string',
         ]);
 
         try {
@@ -67,6 +71,7 @@ class ClientEdit extends Component
                 'email' => $this->email,
                 'address' => $this->address,
                 'phone' => $this->phone,
+                'status' => $this->status,
             ];
 
             $this->client->update($clientData);
@@ -111,6 +116,6 @@ class ClientEdit extends Component
 
     public function render():View
     {
-        return view('livewire.clients.client-edit');
+        return view('livewire.clients.client-edit', ['isEditing' => $this->isEditing,]);
     }
 }

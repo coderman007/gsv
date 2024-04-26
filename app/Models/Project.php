@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property mixed $zone
+ */
 class Project extends Model
 {
     use HasFactory;
@@ -15,8 +18,13 @@ class Project extends Model
     protected $fillable = [
         'project_category_id',
         'name',
-        'description',
+        'zone',
         'kilowatts_to_provide',
+        'internal_commissions',
+        'external_commissions',
+        'margin',
+        'discount',
+        'total',
         'status',
     ];
 
@@ -48,6 +56,20 @@ class Project extends Model
     {
         return $this->belongsToMany(Transport::class)->withPivot('required_days', 'quantity', 'total_cost')->withTimestamps();
     }
+
+    public function additionalCosts(): BelongsToMany
+    {
+        return $this->belongsToMany(AdditionalCost::class, 'additional_cost_project')
+            ->withPivot('quantity', 'total_cost')
+            ->withTimestamps();
+    }
+
+    public function totalAdditionalCost()
+    {
+        // Retornar una relación que calcule el costo total de los costos adicionales asociados
+        return $this->additionalCosts()->sum('total_cost');
+    }
+
 
     public function totalLaborCost()
     {
