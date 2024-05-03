@@ -84,14 +84,14 @@ class PositionSeeder extends Seeder
         ];
 
         foreach ($positionsData as &$positionData) {
-            // Calcula el sueldo diario 
+            // Calcula el sueldo diario
             $positionData['real_daily_cost'] = $positionData['basic'] * $positionData['benefit_factor'] * $positionData['working_hours'] / $positionData['monthly_work_hours'];
 
-            // Calcula el costo mensual real 
+            // Calcula el costo mensual real
             $positionData['real_monthly_cost'] = $positionData['real_daily_cost'] / $positionData['working_hours'] * $positionData['monthly_work_hours'];
 
             // Crea el registro en la base de datos
-            Position::create($positionData);
+            (new Position)->create($positionData);
         }
     }
 }

@@ -5,10 +5,8 @@ namespace App\Livewire\Quotations;
 use App\Models\Client;
 use App\Models\Project;
 use App\Models\Quotation;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Component;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
 class QuotationCreate extends Component
@@ -50,9 +48,8 @@ class QuotationCreate extends Component
         'commissions' => 'nullable|numeric|min:0',
         'quotation_date' => 'required|date',
         'validity_period' => 'required|integer|min:1',
-        'margin' => 'nullable|numeric|min:0',
+
         'subtotal' => 'required|numeric|min:0',
-        'discount' => 'nullable|numeric|min:0',
         'total_quotation_amount' => 'required|numeric|min:0',
     ];
 

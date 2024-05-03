@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Resources\Transports;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
+use LaravelIdea\Helper\App\Models\_IH_Transport_C;
 use Livewire\Component;
-use App\Models\Transport;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
+use App\Models\Transport;
 use Livewire\WithPagination;
 
 class TransportList extends Component
@@ -14,15 +17,15 @@ class TransportList extends Component
 
     public $search = '';
     public $sortBy = 'id';
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
     public $perSearch = 10;
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function order($sort)
+    public function order($sort): void
     {
         if ($this->sortBy == $sort) {
             $this->sortDirection = ($this->sortDirection == "desc") ? "asc" : "desc";
@@ -30,12 +33,10 @@ class TransportList extends Component
             $this->sortBy = $sort;
             $this->sortDirection = "asc";
         }
-
-        $this->resetPage();
     }
 
     #[Computed]
-    public function transports()
+    public function transports(): array|LengthAwarePaginator|_IH_Transport_C
     {
         return Transport::where('vehicle_type', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
@@ -43,23 +44,27 @@ class TransportList extends Component
     }
 
     #[On('createdTransport')]
-    public function createdTransport($transport = null)
+    public function createdTransport($toolData = null)
+    {
+    }
+
+    #[On('notification')]
+    public function notify($message = null)
     {
     }
 
     #[On('updatedTransport')]
-    public function updatedTransport($transport = null)
+    public function updatedTransport($tool = null)
     {
     }
 
     #[On('deletedTransport')]
-    public function deletedTransport($transport = null)
+    public function deletedTransport($tool = null)
     {
     }
 
-    public function render()
+    public function render(): View
     {
-        $transports = $this->transports();
-        return view('livewire.resources.transports.transport-list', compact('transports'));
+        return view('livewire.resources.transports.transport-list');
     }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Projects;
 
+use App\Helpers\DataTypeConverter;
 use App\Models\Transport;
 use Illuminate\View\View;
 use Livewire\Component;
+
 
 class TransportSelection extends Component
 {
@@ -14,10 +16,8 @@ class TransportSelection extends Component
     public $quantities = [];
     public $requiredDays = [];
     public $efficiencies = [];
-
     public $partialCosts = [];
     public $totalTransportCost = 0;
-    public $formattedTotalTransportCost;
 
     protected $rules = [
         'selectedTransports' => 'required|array|min:1',
@@ -30,7 +30,6 @@ class TransportSelection extends Component
     public function mount(): void
     {
         $this->updateTotalTransportCost();
-        $this->formattedTotalTransportCost = number_format($this->totalTransportCost, 2);
     }
 
     public function calculatePartialCost($transportId): void
@@ -40,29 +39,11 @@ class TransportSelection extends Component
             $requiredDays = $this->requiredDays[$transportId] ?? 0;
             $efficiencyInput = $this->efficiencies[$transportId] ?? "1";
 
-            $efficiency = 1.0;
-            $validEfficiency = false;
+            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
-            if (str_contains($efficiencyInput, '/')) {
-                $parts = explode('/', $efficiencyInput);
-                if (count($parts) == 2) {
-                    $numerator = floatval($parts[0]);
-                    $denominator = floatval($parts[1]);
-                    if ($denominator != 0) {
-                        $efficiency = $numerator / $denominator;
-                        $validEfficiency = true;
-                    }
-                }
-            } else {
-                $validEfficiency = is_numeric($efficiencyInput);
-                if ($validEfficiency) {
-                    $efficiency = floatval($efficiencyInput);
-                }
-            }
-
-            if ($validEfficiency && is_numeric($quantity) && is_numeric($requiredDays)) {
+            if (is_numeric($quantity) && is_numeric($requiredDays) && $efficiency !== null) {
                 $transport = Transport::find($transportId);
-                $dailyCost = $transport->salary_per_hour * 8; // Assuming 8 hours per day
+                $dailyCost = $transport->cost_per_day;
                 $this->partialCosts[$transportId] = $quantity * $requiredDays * $efficiency * $dailyCost;
             } else {
                 $this->partialCosts[$transportId] = 0; // Default to zero if invalid
@@ -71,8 +52,6 @@ class TransportSelection extends Component
             $this->partialCosts[$transportId] = 0;
         }
     }
-
-
 
     public function updatedQuantities($value, $transportId): void
     {
@@ -88,7 +67,6 @@ class TransportSelection extends Component
 
     public function updatedRequiredDays($value, $transportId): void
     {
-        // Si el valor no es numérico, establece el valor como null
         if (!is_numeric($value)) {
             $this->requiredDays[$transportId] = null;
         }
@@ -100,15 +78,25 @@ class TransportSelection extends Component
 
     public function updatedEfficiencies($value, $transportId): void
     {
+        // Convierte el valor a float usando DataTypeConverter
+        $efficiency = DataTypeConverter::convertToFloat($value);
+
+        if ($efficiency === null) {
+            // Emitir un mensaje de error si el valor es inválido
+            $this->addError('efficiency', 'El valor de eficiencia es inválido.');
+            return; // No sigas con el cálculo si el valor es inválido
+        }
+
+        // Actualizar el array de eficiencias con el nuevo valor
+        $this->efficiencies[$transportId] = $efficiency;
+        // Recalcular el costo parcial y total para reflejar cualquier cambio
         $this->calculatePartialCost($transportId);
         $this->updateTotalTransportCost();
     }
 
-
     public function updateTotalTransportCost(): void
     {
         $this->totalTransportCost = array_sum($this->partialCosts);
-        $this->formattedTotalTransportCost = number_format($this->totalTransportCost, 2);
     }
 
     // Agregar un método para enviar el valor total del transporte
@@ -120,10 +108,10 @@ class TransportSelection extends Component
             'selectedTransports' => $this->selectedTransports,
             'transportQuantities' => $this->quantities,
             'transportRequiredDays' => $this->requiredDays,
+            'transportEfficiencies' => $this->efficiencies,
             'totalTransportCost' => $this->totalTransportCost,
         ]);
 
-        // Emitir un evento adicional si el costo total del transporte es mayor que 0
         if ($this->totalTransportCost > 0) {
             $this->dispatch('hideResourceForm');
         }
@@ -132,8 +120,6 @@ class TransportSelection extends Component
     public function render(): View
     {
         $this->transports = Transport::all();
-        return view('livewire.projects.transport-selection', [
-            'efficiencies' => $this->efficiencies, // Pasamos los datos de eficiencia
-        ]);
+        return view('livewire.projects.transport-selection');
     }
 }

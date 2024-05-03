@@ -13,16 +13,14 @@ return new class extends Migration
     {
         Schema::create('transports', function (Blueprint $table) {
             $table->id();
-            $table->string('vehicle_type');
-            $table->integer('annual_mileage');
-            $table->decimal('average_speed', 5, 2);
-            $table->decimal('commercial_value', 15, 2);
-            $table->decimal('depreciation_rate', 5, 2);
-            $table->decimal('annual_maintenance_cost', 15, 2);
-            $table->decimal('cost_per_km_conventional', 10, 2);
-            $table->decimal('cost_per_km_fuel', 10, 2);
-            $table->decimal('salary_per_month', 15, 2);
-            $table->decimal('salary_per_hour', 10, 2);
+            // Campo para el tipo de vehículo
+            $table->enum('vehicle_type', ['motocicleta', 'automóvil', 'camión', 'autobús', 'van', 'otro']);
+            // Campo para el costo de la gasolina por kilómetro
+            $table->decimal('gasoline_cost_per_km');
+            // Campo para el costo diario de uso
+            $table->decimal('cost_per_day', 10);
+            // Campo para el valor de peajes (por defecto cero para motocicletas)
+            $table->decimal('toll_cost')->default(0);
             $table->timestamps();
         });
     }

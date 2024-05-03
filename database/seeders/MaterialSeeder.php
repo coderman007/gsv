@@ -493,7 +493,7 @@ class MaterialSeeder extends Seeder
 
 
         foreach ($materialsData as $materialData) {
-            Material::create($materialData);
+            (new Material)->create($materialData);
         }
     }
 }

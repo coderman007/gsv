@@ -49,7 +49,6 @@ class ProjectList extends Component
         }
 
         $projects = $query->where('id', 'like', '%' . $this->search . '%')
-            ->orWhere('name', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);
 
@@ -66,7 +65,6 @@ class ProjectList extends Component
     {
         return
             Project::where('id', 'like', '%' . $this->search . '%')
-                ->orWhere('name', 'like', '%' . $this->search . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage);
     }

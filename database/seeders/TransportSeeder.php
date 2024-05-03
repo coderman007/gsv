@@ -7,37 +7,31 @@ use Illuminate\Database\Seeder;
 
 class TransportSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $transportsData = [
             [
-                'vehicle_type' => 'Carro',
-                'annual_mileage' => 20000,
-                'average_speed' => 60.00,
-                'commercial_value' => 45000000.00,
-                'depreciation_rate' => 8.00,
-                'annual_maintenance_cost' => 11832200.00,
-                'cost_per_km_conventional' => 592.00,
-                'cost_per_km_fuel' => 325.00,
-                'salary_per_month' => 1300000.00,
-                'salary_per_hour' => 6701.00,
+                'vehicle_type' => 'camión',
+                'gasoline_cost_per_km' => 525.00,
+                'toll_cost' => 9701.00,
+                'cost_per_day' => 330000.00,
             ],
             [
-                'vehicle_type' => 'Moto',
-                'annual_mileage' => 15000,
-                'average_speed' => 60.00,
-                'commercial_value' => 8000000.00,
-                'depreciation_rate' => 8.00,
-                'annual_maintenance_cost' => 3970000.00,
-                'cost_per_km_conventional' => 265.00,
-                'cost_per_km_fuel' => 140.00,
-                'salary_per_month' => 1160000.00,
-                'salary_per_hour' => 5979.00,
+                'vehicle_type' => 'automóvil',
+                'gasoline_cost_per_km' => 425.00,
+                'toll_cost' => 6701.00,
+                'cost_per_day' => 250000.00,
+            ],
+            [
+                'vehicle_type' => 'motocicleta',
+                'gasoline_cost_per_km' => 225.00,
+                'cost_per_day' => 130000.00,
+
             ],
         ];
 
         foreach ($transportsData as $transportData) {
-            Transport::insert($transportData);
+            (new Transport)->create($transportData);
         }
     }
 }

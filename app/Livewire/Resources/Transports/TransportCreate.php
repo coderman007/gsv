@@ -2,47 +2,46 @@
 
 namespace App\Livewire\Resources\Transports;
 
-use Livewire\Component;
 use App\Models\Transport;
+use Illuminate\View\View;
+use Livewire\Component;
 
 class TransportCreate extends Component
 {
+
+    public $openCreate = false;
     public $vehicle_type;
-    public $annual_mileage;
-    public $average_speed;
-    public $commercial_value;
-    public $depreciation_rate;
-    public $annual_maintenance_cost;
-    public $cost_per_km_conventional;
-    public $cost_per_km_fuel;
-    public $salary_per_month;
-    public $salary_per_hour;
+    public $gasoline_cost_per_km;
+    public $cost_per_day;
+    public $toll_cost;
+
 
     protected $rules = [
-        'vehicle_type' => 'required|string|max:255',
-        'annual_mileage' => 'required|integer|min:0',
-        'average_speed' => 'required|numeric|min:0',
-        'commercial_value' => 'required|numeric|min:0',
-        'depreciation_rate' => 'required|numeric|min:0|max:100',
-        'annual_maintenance_cost' => 'required|numeric|min:0',
-        'cost_per_km_conventional' => 'required|numeric|min:0',
-        'cost_per_km_fuel' => 'required|numeric|min:0',
-        'salary_per_month' => 'required|numeric|min:0',
-        'salary_per_hour' => 'required|numeric|min:0',
+        'vehicle_type' => 'required|in:motocicleta,automóvil,camión,autobús,van,otro',
+        'gasoline_cost_per_km' => 'required|numeric|min:0',
+        'cost_per_day' => 'required|numeric|min:0',
+        'toll_cost' => 'required|numeric|min:0',
     ];
 
-    public function createTransport()
+    public function createTransport(): void
     {
-        $validatedData = $this->validate();
+        $this->validate();
 
-        Transport::create($validatedData);
+        $transport = Transport::create([
+            'vehicle_type' => $this->vehicle_type,
+            'gasoline_cost_per_km' => $this->gasoline_cost_per_km,
+            'cost_per_day' => $this->cost_per_day,
+            'toll_cost' => $this->toll_cost ?? 0,
+        ]);
 
-        $this->reset();
+        $this->openCreate = false;
 
-        $this->emit('createdTransportNotification');
+        // Emitir eventos
+        $this->dispatch('createdTransport', $transport);
+        $this->dispatch('createdTransportNotification');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.resources.transports.transport-create');
     }

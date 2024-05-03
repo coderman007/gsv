@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->foreignId('additional_cost_id')->constrained()->onDelete('cascade');
-            $table->decimal('quantity'); // Cantidad para el costo adicional
-            $table->decimal('total_cost'); // Costo total asociado
+            $table->bigInteger('quantity')->default(0)->nullable(false);
+            $table->decimal('total_cost', 20)->default(0)->nullable(false);
             $table->timestamps();
         });
 

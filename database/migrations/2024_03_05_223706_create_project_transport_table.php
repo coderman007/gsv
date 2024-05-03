@@ -16,9 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('transport_id');
             $table->integer('quantity')->default(0)->nullable(false);
-            $table->decimal('required_days', 5, 2)->default(0)->nullable(false);
-            $table->decimal('efficiency', 5, 2)->default(1.0)->nullable(false);
-            $table->decimal('total_cost', 10, 2)->default(0)->nullable(false);
+            $table->integer('required_days')->default(0)->nullable(false);
+            $table->decimal('efficiency')->default(1.0)->nullable(false);
+            $table->decimal('total_cost', 20)->default(0)->nullable(false);
             $table->timestamps();
 
             $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();

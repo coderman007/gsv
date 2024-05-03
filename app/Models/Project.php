@@ -8,16 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @property mixed $zone
- */
 class Project extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'project_category_id',
-        'name',
         'zone',
         'kilowatts_to_provide',
         'internal_commissions',
@@ -25,36 +21,30 @@ class Project extends Model
         'margin',
         'discount',
         'total',
+        'sale_value',
         'status',
     ];
 
     protected $attributes = [
         'status' => 'Activo'
     ];
+    protected $casts = [
+        'internal_commissions' => 'decimal:2',
+        'external_commissions' => 'decimal:2',
+        'margin' => 'decimal:2',
+        'discount' => 'decimal:2',
+        'total' => 'decimal:2',
+        'sale_value' => 'decimal:2',
+        'kilowatts_to_provide' => 'decimal:2',
+    ];
+    protected array $dates = [
+        'created_at',
+        'updated_at',
+    ];
 
     public function projectCategory(): BelongsTo
     {
         return $this->belongsTo(ProjectCategory::class);
-    }
-
-    public function positions(): BelongsToMany
-    {
-        return $this->belongsToMany(Position::class)->withPivot('required_days', 'total_cost')->withTimestamps();
-    }
-
-    public function materials(): BelongsToMany
-    {
-        return $this->belongsToMany(Material::class)->withPivot('quantity', 'total_cost')->withTimestamps();
-    }
-
-    public function tools(): BelongsToMany
-    {
-        return $this->belongsToMany(Tool::class)->withPivot('required_days', 'quantity', 'total_cost')->withTimestamps();
-    }
-
-    public function transports(): BelongsToMany
-    {
-        return $this->belongsToMany(Transport::class)->withPivot('required_days', 'quantity', 'total_cost')->withTimestamps();
     }
 
     public function additionalCosts(): BelongsToMany
@@ -64,35 +54,32 @@ class Project extends Model
             ->withTimestamps();
     }
 
-    public function totalAdditionalCost()
+    public function materials(): BelongsToMany
     {
-        // Retornar una relación que calcule el costo total de los costos adicionales asociados
-        return $this->additionalCosts()->sum('total_cost');
+        return $this->belongsToMany(Material::class, 'material_project')
+            ->withPivot('quantity', 'total_cost')
+            ->withTimestamps();
     }
 
-
-    public function totalLaborCost()
+    public function positions(): BelongsToMany
     {
-        // Retornar una relación que calcule el costo total de las posiciones asociadas
-        return $this->positions()->sum('total_cost');
+        return $this->belongsToMany(Position::class, 'position_project')
+            ->withPivot('quantity', 'required_days', 'total_cost')
+            ->withTimestamps();
     }
 
-    public function totalMaterialCost()
+    public function tools(): BelongsToMany
     {
-        // Retornar una relación que calcule el costo total de los materiales asociados
-        return $this->materials()->sum('total_cost');
+        return $this->belongsToMany(Tool::class, 'project_tool')
+            ->withPivot('quantity', 'required_days', 'total_cost')
+            ->withTimestamps();
     }
 
-    public function totalToolCost()
+    public function transports(): BelongsToMany
     {
-        // Retornar una relación que calcule el costo total de las herramientas asociadas
-        return $this->tools()->sum('total_cost');
-    }
-
-    public function totalTransportCost()
-    {
-        // Retornar una relación que calcule el costo total de los transportes asociados
-        return $this->transports()->sum('total_cost');
+        return $this->belongsToMany(Transport::class, 'project_transport')
+            ->withPivot('quantity', 'required_days', 'total_cost')
+            ->withTimestamps();
     }
 
     public function quotations(): HasMany

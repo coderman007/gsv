@@ -51,7 +51,7 @@ class AdditionalCostSelection extends Component
             }
         }
         $this->totalAdditionalCost = $totalCost;
-        $this->formattedTotalAdditionalCost = number_format($totalCost, 2);
+        $this->formattedTotalAdditionalCost = $totalCost;
     }
 
     public function sendTotalAdditionalCost(): void

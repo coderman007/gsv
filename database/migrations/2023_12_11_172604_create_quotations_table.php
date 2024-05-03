@@ -18,17 +18,13 @@ return new class extends Migration
             $table->date('quotation_date');
             $table->unsignedSmallInteger('validity_period');
             $table->enum('transformer', ['Trifásico', 'Monofásico']);
-            $table->decimal('average_energy_consumption', 5, 2);
-            $table->decimal('solar_radiation_level', 5, 2);
-            $table->decimal('roof_dimension', 10, 2);
-            $table->decimal('internal_commissions', 10, 2)->nullable();
-            $table->decimal('external_commissions', 10, 2)->nullable();
-            $table->decimal('margin', 10, 2)->nullable();
-            $table->decimal('discount', 10, 2)->nullable();
+            $table->decimal('average_energy_consumption', 8, 2);
+            $table->decimal('solar_radiation_level', 8, 2);
+            $table->decimal('roof_dimension', 8, 2);
             $table->decimal('total_cost_kilowatt');
-            $table->decimal('subtotal', 12, 2);
-            $table->decimal('total_quotation_amount', 12, 2);
-            $table->enum('status', ['Activa', 'Expirada', 'Aceptada'])->default('Activa');
+            $table->decimal('subtotal', 20, 2);
+            $table->decimal('total_quotation_amount', 20, 2);
+            $table->enum('status', ['Generada', 'Ganada', 'Perdida'])->default('Generada');
             $table->timestamps();
 
             $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();

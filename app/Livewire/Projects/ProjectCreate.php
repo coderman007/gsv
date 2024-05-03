@@ -14,9 +14,14 @@ class ProjectCreate extends Component
     public $categories;
     public $selectedCategory;
     public $project;
-    public $name;
     public $zone;
     public $kilowatts_to_provide;
+    public $required_area = 0;
+    public $internal_commissions = 0;
+    public $external_commissions = 0;
+    public $margin = 0;
+    public $discount = 0;
+    public $totalProjectCost = 0;
     public $showResource = '';
 
     //Resources properties
@@ -32,20 +37,29 @@ class ProjectCreate extends Component
     public $selectedAdditionalCosts;
     public $selectedPositionQuantity;
     public $selectedPositionRequiredDays;
+    public $selectedPositionEfficiencies;
     public $selectedMaterialQuantity;
+    public $selectedMaterialEfficiencies;
     public $selectedToolQuantity;
     public $selectedToolRequiredDays;
+    public $selectedToolEfficiencies;
+
     public $selectedTransportQuantity;
     public $selectedTransportRequiredDays;
+    public $selectedTransportEfficiencies;
     public $selectedAdditionalCostQuantity;
 
 
     // Validation rules
     protected $rules = [
         'selectedCategory' => 'required|exists:project_categories,id',
-        'name' => 'required|string|max:255',
         'zone' => 'required|string',
         'kilowatts_to_provide' => 'required|numeric|min:0',
+        'required_area' => 'required|numeric|min:0',
+        'internal_commissions' => 'numeric|between:0,1',
+        'external_commissions' => 'numeric|between:0,1',
+        'margin' => 'numeric|between:0,1',
+        'discount' => 'numeric|between:0,1',
     ];
 
     public function mount(): void
@@ -69,17 +83,98 @@ class ProjectCreate extends Component
 
     }
 
+    public function updated($name, $value): void
+    {
+        if (in_array($name, [
+            'internal_commissions',
+            'external_commissions',
+            'margin',
+            'discount',
+            'totalLaborCost',
+            'totalMaterialCost',
+            'totalToolCost',
+            'totalTransportCost',
+            'totalAdditionalCost'
+        ])) {
+            $this->calculateTotalProjectCost();
+        }
+    }
+
+
+    // Método para calcular el costo total del proyecto, incluyendo políticas comerciales
+    public function calculateTotalProjectCost(): void
+    {
+        // Calcular el costo total de los recursos
+        $totalResourceCost = $this->totalLaborCost + $this->totalMaterialCost +
+            $this->totalToolCost + $this->totalTransportCost +
+            $this->totalAdditionalCost;
+
+        // Aplicar políticas comerciales
+        $internalCommissions = $this->internal_commissions ?? 0;
+        $externalCommissions = $this->external_commissions ?? 0;
+        $margin = $this->margin ?? 0;
+        $discount = $this->discount ?? 0;
+
+        // Calcular el costo total del proyecto, incluyendo políticas comerciales
+        $this->totalProjectCost = $totalResourceCost * (1 + $internalCommissions + $externalCommissions) * (1 + $margin) * (1 - $discount);
+    }
+
+    // Actualizar área necesaria cuando se modifica la potencia
+    public function updatedKilowattsToProvide($value): void
+    {
+        // Verificar que el valor es numérico y mayor o igual a cero
+        if (is_numeric($value) && $value >= 0) {
+            // Calcular el área necesaria si el valor es válido
+            $this->required_area = number_format(($value / 0.55) * 2.6 * 1.1, 2);
+
+            // Limpiar el error si existe
+            $this->resetErrorBag('kilowatts_to_provide'); // Elimina el mensaje de error
+        } else {
+            // Si el valor no es válido, restablece el área necesaria y emite un error de validación
+            $this->required_area = null;
+
+            // Generar un mensaje de error
+            $this->addError('kilowatts_to_provide', 'Debe ingresar un número válido de kilovatios.');
+        }
+    }
+
+
     // Method to save the project
     public function saveProject(): void
     {
         $this->validate();
 
-        // Create a new project in the database
+        // Obtener valores para las políticas comerciales
+        $internalCommissions = $this->internal_commissions ?? 0;  // Si no se proporciona, usa el valor por defecto
+        $externalCommissions = $this->external_commissions ?? 0;
+        $margin = $this->margin ?? 0;
+        $discount = $this->discount ?? 0;
+
+        // Calcular el costo total del proyecto
+        $totalCost = $this->totalLaborCost + $this->totalMaterialCost +
+            $this->totalToolCost + $this->totalTransportCost +
+            $this->totalAdditionalCost;
+
+
+
+        // Calcular el valor de venta usando las políticas comerciales
+        $saleValue = $totalCost / ((1 - $internalCommissions -
+                    $externalCommissions - $margin) *
+                (1 - $discount));
+
+
+        // Crear el proyecto con el valor de venta calculado
         $project = Project::create([
             'project_category_id' => $this->selectedCategory,
-            'name' => $this->name,
             'zone' => $this->zone,
             'kilowatts_to_provide' => $this->kilowatts_to_provide,
+            'required_area' => $this->required_area,
+            'internal_commissions' => $internalCommissions,
+            'external_commissions' => $externalCommissions,
+            'margin' => $margin,
+            'discount' => $discount,
+            'total_cost' => $totalCost,
+            'sale_value' => $saleValue,
         ]);
 
         // Associate positions and update costs in the 'position_project' pivot table
@@ -87,6 +182,7 @@ class ProjectCreate extends Component
             $project->positions()->attach($positionId, [
                 'quantity' => $this->selectedPositionQuantity[$positionId],
                 'required_days' => $this->selectedPositionRequiredDays[$positionId],
+                'efficiency' => $this->selectedPositionEfficiencies[$positionId],
                 'total_cost' => $this->totalLaborCost,
             ]);
         }
@@ -104,6 +200,7 @@ class ProjectCreate extends Component
             $project->tools()->attach($toolId, [
                 'quantity' => $this->selectedToolQuantity[$toolId],
                 'required_days' => $this->selectedToolRequiredDays[$toolId],
+                'efficiency' => $this->selectedToolEfficiencies[$toolId],
                 'total_cost' => $this->totalToolCost,
             ]);
         }
@@ -113,6 +210,7 @@ class ProjectCreate extends Component
             $project->transports()->attach($transportId, [
                 'quantity' => $this->selectedTransportQuantity[$transportId],
                 'required_days' => $this->selectedTransportRequiredDays[$transportId],
+                'efficiency' => $this->selectedTransportEfficiencies[$transportId],
                 'total_cost' => $this->totalTransportCost,
             ]);
         }
@@ -120,10 +218,13 @@ class ProjectCreate extends Component
         // Associate additional costs and update costs in the 'additional_cost_project' pivot table
         foreach ($this->selectedAdditionalCosts as $additionalCostId) {
             $project->additionalCosts()->attach($additionalCostId, [
-                'quantity' => $this->selectedTransportQuantity[$additionalCostId],
+                'quantity' => $this->selectedAdditionalCostQuantity[$additionalCostId],
                 'total_cost' => $this->totalAdditionalCost,
             ]);
         }
+
+        // Calcular el costo total del proyecto después de guardar
+        $this->calculateTotalProjectCost();
 
         // Redirect or show success message
         $this->openCreate = false;
@@ -166,8 +267,9 @@ class ProjectCreate extends Component
     {
         // Update relevant properties with received data
         $this->selectedPositions = $data['selectedPositions'];
-        $this->selectedPositionQuantity = $data['positionQuantities'];
-        $this->selectedPositionRequiredDays = $data['positionRequiredDays'];
+        $this->selectedPositionQuantity = $data['quantities'];
+        $this->selectedPositionRequiredDays = $data['requiredDays'];
+        $this->selectedPositionEfficiencies = $data['efficiencies'];
         $this->totalLaborCost = $data['totalLaborCost'];
 
         // Update the 'position_project' pivot table if the project already exists
@@ -182,6 +284,7 @@ class ProjectCreate extends Component
                 ]);
             }
         }
+        $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
     #[On('materialSelectionUpdated')]
@@ -203,6 +306,7 @@ class ProjectCreate extends Component
                 ]);
             }
         }
+        $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
     #[On('toolSelectionUpdated')]
@@ -211,6 +315,7 @@ class ProjectCreate extends Component
         $this->selectedTools = $data['selectedTools'];
         $this->selectedToolQuantity = $data['toolQuantities'];
         $this->selectedToolRequiredDays = $data['toolRequiredDays']; // Actualizar días requeridos
+        $this->selectedToolEfficiencies = $data['toolEfficiencies'];
         $this->totalToolCost = $data['totalToolCost'];
 
         if ($this->project) {
@@ -218,10 +323,12 @@ class ProjectCreate extends Component
                 $this->project->tools()->updateExistingPivot($toolId, [
                     'quantity' => $this->selectedToolQuantity[$toolId],
                     'required_days' => $this->selectedToolRequiredDays[$toolId], // Guardar días requeridos
+                    'efficiency' => $this->selectedToolEfficiencies[$toolId],
                     'total_cost' => $this->totalToolCost,
                 ]);
             }
         }
+        $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
     #[On('transportSelectionUpdated')]
@@ -231,6 +338,7 @@ class ProjectCreate extends Component
         $this->selectedTransports = $data['selectedTransports'];
         $this->selectedTransportQuantity = $data['transportQuantities'];
         $this->selectedTransportRequiredDays = $data['transportRequiredDays'];
+        $this->selectedTransportEfficiencies = $data['transportEfficiencies'];
         $this->totalTransportCost = $data['totalTransportCost'];
 
         // Actualizar los costos totales de transporte en la tabla pivot 'project_transport' si el proyecto ya existe
@@ -239,9 +347,11 @@ class ProjectCreate extends Component
                 $this->project->transports()->updateExistingPivot($transportId, [
                     'quantity' => $this->selectedTransportQuantity[$transportId],
                     'required_days' => $this->selectedTransportRequiredDays[$transportId],
+                    'efficiency' => $this->selectedTransportEfficiencies[$transportId],
                     'total_cost' => $this->totalTransportCost,
                 ]);
             }
+            $this->calculateTotalProjectCost(); // Recalcular el costo total
         }
     }
 
@@ -264,6 +374,7 @@ class ProjectCreate extends Component
                 ]);
             }
         }
+        $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
 
@@ -275,7 +386,10 @@ class ProjectCreate extends Component
 
     public function render(): View
     {
-        return view('livewire.projects.project-create');
+        // Renderizar la vista con el costo total del proyecto
+        return view('livewire.projects.project-create', [
+            'totalProjectCost' => $this->totalProjectCost,
+        ]);
     }
 }
 

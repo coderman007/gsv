@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Projects;
 
+use App\Helpers\DataTypeConverter;
 use App\Models\Position;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -10,9 +11,9 @@ class PositionSelection extends Component
 {
     public $positions = [];
     public $selectedPositions = [];
-    public $positionQuantities = [];
-    public $positionRequiredDays = [];
-    public $positionEfficiencies = [];
+    public $quantities = [];
+    public $requiredDays = [];
+    public $efficiencies = [];
     public $partialCosts = [];
     public $totalLaborCost = 0;
     public $formattedTotalLaborCost;
@@ -20,81 +21,72 @@ class PositionSelection extends Component
     protected $rules = [
         'selectedPositions' => 'required|array|min:1',
         'selectedPositions.*' => 'exists:positions,id',
-        'positionQuantities.*' => 'nullable|numeric|min:0',
-        'positionRequiredDays.*' => 'nullable|numeric|min:0',
-        'positionEfficiencies.*' => ['nullable', 'regex:/^(\d+(\.\d+)?|(\d+\/\d+))$/'],
+        'quantities.*' => 'nullable|numeric|min:0',
+        'requiredDays.*' => 'nullable|numeric|min:0',
+        'efficiencies.*' => 'nullable|string',
     ];
 
     public function mount(): void
     {
-        $this->positions = Position::all();
         $this->updateTotalLaborCost();
-        $this->formattedTotalLaborCost = number_format($this->totalLaborCost, 2);
     }
 
     public function calculatePartialCost($positionId): void
     {
-        $index = in_array($positionId, $this->selectedPositions);
+        if (in_array($positionId, $this->selectedPositions)) {
+            $quantity = $this->quantities[$positionId] ?? 0;
+            $requiredDays = $this->requiredDays[$positionId] ?? 0;
+            $efficiencyInput = $this->efficiencies[$positionId] ?? "1";
 
-        if ($index !== false) {
-            $quantity = $this->positionQuantities[$positionId] ?? 0;
-            $requiredDays = $this->positionRequiredDays[$positionId] ?? 0;
-            $efficiencyInput = $this->positionEfficiencies[$positionId] ?? "1";
+            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
-            $efficiency = 1.0; // Valor por defecto
-            $validEfficiency = false;
-
-            if (str_contains($efficiencyInput, '/')) {
-                $parts = explode('/', $efficiencyInput);
-
-                if (count($parts) == 2) { // Asegúrate de que haya dos partes
-                    $numerator = floatval($parts[0]);
-                    $denominator = floatval($parts[1]);
-
-                    if ($denominator != 0) { // Verifica que el denominador no sea cero
-                        $efficiency = $numerator / $denominator;
-                        $validEfficiency = true;
-                    }
-                }
-            } else {
-                $validEfficiency = is_numeric($efficiencyInput); // Verifica si es numérico
-                if ($validEfficiency) {
-                    $efficiency = floatval($efficiencyInput);
-                }
-            }
-
-            if ($validEfficiency && is_numeric($quantity) && is_numeric($requiredDays)) {
+            if (is_numeric($quantity) && is_numeric($requiredDays) && $efficiency !== null) {
                 $position = Position::find($positionId);
-                $this->partialCosts[$positionId] = $quantity * $requiredDays * $efficiency * $position->real_daily_cost;
+                $dailyCost = $position->real_daily_cost;
+
+                $this->partialCosts[$positionId] = $quantity * $requiredDays * $efficiency * $dailyCost;
             } else {
-                $this->partialCosts[$positionId] = 0; // Valor por defecto cuando hay entrada no válida
+                $this->partialCosts[$positionId] = 0;
             }
+        } else {
+            $this->partialCosts[$positionId] = 0;
         }
     }
 
-
-    public function updatedPositionQuantities($value, $positionId): void
+    public function updatedQuantities($value, $positionId): void
     {
         if (!is_numeric($value)) {
-            $this->positionQuantities[$positionId] = null;
+            $this->quantities[$positionId] = null;
         }
 
         $this->calculatePartialCost($positionId);
         $this->updateTotalLaborCost();
     }
 
-    public function updatedPositionRequiredDays($value, $positionId): void
+    public function updatedRequiredDays($value, $positionId): void
     {
         if (!is_numeric($value)) {
-            $this->positionRequiredDays[$positionId] = null;
+            $this->requiredDays[$positionId] = null;
         }
 
         $this->calculatePartialCost($positionId);
         $this->updateTotalLaborCost();
     }
 
-    public function updatedPositionEfficiencies($value, $positionId): void
+    public function updatedEfficiencies($value, $positionId): void
     {
+        // Convierte el valor a float usando DataTypeConverter
+        $efficiency = DataTypeConverter::convertToFloat($value);
+
+        if ($efficiency === null) {
+            // Emitir un mensaje de error si el valor es inválido
+            $this->addError('efficiency', 'El valor de eficiencia es inválido.');
+            return; // No sigas con el cálculo si el valor es inválido
+        }
+
+        // Actualizar el array de eficiencias con el nuevo valor
+        $this->efficiencies[$positionId] = $efficiency;
+        // Recalcular el costo parcial y total para reflejar cualquier cambio
         $this->calculatePartialCost($positionId);
         $this->updateTotalLaborCost();
     }
@@ -102,7 +94,6 @@ class PositionSelection extends Component
     public function updateTotalLaborCost(): void
     {
         $this->totalLaborCost = array_sum($this->partialCosts);
-        $this->formattedTotalLaborCost = number_format($this->totalLaborCost, 2);
     }
 
     public function sendTotalLaborCost(): void
@@ -111,9 +102,9 @@ class PositionSelection extends Component
 
         $this->dispatch('positionSelectionUpdated', [
             'selectedPositions' => $this->selectedPositions,
-            'positionQuantities' => $this->positionQuantities,
-            'positionRequiredDays' => $this->positionRequiredDays,
-            'positionEfficiencies' => $this->positionEfficiencies,
+            'quantities' => $this->quantities,
+            'requiredDays' => $this->requiredDays,
+            'efficiencies' => $this->efficiencies,
             'totalLaborCost' => $this->totalLaborCost,
         ]);
 
@@ -124,6 +115,7 @@ class PositionSelection extends Component
 
     public function render(): View
     {
+        $this->positions = Position::all();
         return view('livewire.projects.position-selection');
     }
 }

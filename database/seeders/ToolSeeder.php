@@ -136,7 +136,7 @@ class ToolSeeder extends Seeder
         ];
 
         foreach ($toolsData as $toolData) {
-            Tool::insert($toolData);
+            (new Tool)->create($toolData);
         }
     }
 }

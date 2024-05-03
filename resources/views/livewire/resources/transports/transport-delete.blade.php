@@ -1,14 +1,18 @@
 <div class="relative inline-block text-center cursor-pointer group">
     <a href="#" wire:click="$set('openDelete', true)">
-        <i class="p-1 text-red-400 rounded hover:text-white hover:bg-red-400 fa-solid fa-trash"></i>
         <div
-            class="absolute z-10 px-2 py-2 mb-2 text-center text-white bg-gray-700 rounded-lg opacity-0 pointer-events-none text-md group-hover:opacity-80 bottom-full -left-3">
+            class="flex items-center justify-center p-2 text-gray-200 rounded-md bg-gradient-to-br from-red-300 to-red-500 hover:from-red-500 hover:to-gray-700 hover:text-white transition duration-300 ease-in-out">
+            <i class="fas fa-trash"></i>
+        </div>
+        <div
+            class="absolute z-10 px-3 py-2 text-center text-white bg-gray-800 rounded-lg opacity-0 pointer-events-none text-md group-hover:opacity-80 bottom-full -left-3">
             Eliminar
-            <svg class="absolute left-0 w-full h-2 text-black top-full" x="0px" y="0px" viewBox="0 0 255 255"
-                xml:space="preserve">
-            </svg>
+            <svg class="absolute left-0 w-full h-2 text-black top-full" x="0px" y="0px"
+                 viewBox="0 0 255 255" xml:space="preserve">
+                                            </svg>
         </div>
     </a>
+
 
     {{-- Modal de Confirmación de Eliminación de transporte. --}}
     @if ($openDelete)

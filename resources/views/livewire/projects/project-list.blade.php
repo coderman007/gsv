@@ -65,20 +65,6 @@
                         @endif
                     </th>
 
-
-                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('name')">
-                        Nombre
-                        @if ($sortBy == 'name')
-                            @if ($sortDirection == 'asc')
-                                <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
-                            @else
-                                <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
-                            @endif
-                        @else
-                            <i class="ml-2 fa-solid fa-sort"></i>
-                        @endif
-                    </th>
-
                     <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('kilowatts_to_provide')">
                         potencia
                         @if ($sortBy == 'kilowatts_to_provide')
@@ -115,9 +101,6 @@
                         </th>
 
                         <td class="px-6 py-4 dark:text-lg">{{ $project->projectCategory->name }}</td>
-
-
-                        <td class="px-6 py-4 dark:text-lg">{{ $project->name }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->kilowatts_to_provide . " Kwh" }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->zone }}</td>
                         <td

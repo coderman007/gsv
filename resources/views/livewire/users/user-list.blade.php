@@ -177,7 +177,7 @@
     @else
     <!-- Mensaje de no hay usuarios -->
     <h1 class="my-64 text-5xl text-center dark:text-gray-200">
-        <div>¡Ups!</div><br> <span class="mt-4"> No se encontraron coincidencias en la búsqueda. </span>
+        <span class="mt-4"> No hay registros. </span>
     </h1>
     <div class="flex justify-center w-full h-auto">
         <button

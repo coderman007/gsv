@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tools', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('unit_price_per_day', 10, 2);
+            $table->decimal('unit_price_per_day', 20);
             $table->string('image')->nullable();
             $table->timestamps();
         });

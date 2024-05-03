@@ -88,7 +88,6 @@ class MaterialSelection extends Component
     public function sendTotalMaterialCost(): void
     {
         $this->dispatch('totalMaterialCostUpdated', $this->totalMaterialCost);
-
         $this->dispatch('materialSelectionUpdated', [
             'selectedMaterials' => $this->selectedMaterials,
             'materialQuantities' => $this->quantities,

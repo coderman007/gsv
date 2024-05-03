@@ -134,8 +134,7 @@
         </div>
         <!-- Mensaje de no hay Cotizaciones -->
         <h1 class="my-48 text-5xl text-center dark:text-gray-200">
-            <div>¡Ups!</div>
-            <br> <span class="mt-4"> Aún no hay registros de cotizaciones. </span>
+            <span class="mt-4"> No hay registros. </span>
         </h1>
         <div class="flex justify-center w-full h-auto">
             <button

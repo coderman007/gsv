@@ -18,7 +18,7 @@
                         <div class="mb-2">
                             <label for="quantity{{ $position->id }}"
                                    class="block text-sm font-medium text-gray-700">Cantidad</label>
-                            <input wire:model.live="positionQuantities.{{ $position->id }}" type="number"
+                            <input wire:model.live="quantities.{{ $position->id }}" type="number"
                                    id="quantity{{ $position->id }}" name="quantity{{ $position->id }}"
                                    class="mt-1 p-2 block w-full border-teal-300 rounded-md focus:ring-teal-500 focus:border-teal-500">
 
@@ -34,7 +34,7 @@
                         <div class="mb-2">
                             <label for="requiredDays{{ $position->id }}"
                                    class="block text-sm font-medium text-gray-700">Días</label>
-                            <input wire:model.live="positionRequiredDays.{{ $position->id }}" type="number"
+                            <input wire:model.live="requiredDays.{{ $position->id }}" type="number"
                                    id="requiredDays{{ $position->id }}" name="requiredDays{{ $position->id }}"
                                    class="mt-1 p-2 block w-full border-teal-300 rounded-md focus:ring-teal-500 focus:border-teal-500">
 
@@ -51,7 +51,7 @@
                         <div class="mb-2">
                             <label for="efficiency{{ $position->id }}"
                                    class="block text-sm font-medium text-gray-700">Rendimiento</label>
-                            <input wire:model.live="positionEfficiencies.{{ $position->id }}" type="text"
+                            <input wire:model.live="efficiencies.{{ $position->id }}" type="text"
                                    id="efficiency{{ $position->id }}" name="efficiency{{ $position->id }}"
                                    class="mt-1 p-2 block w-full border-teal-300 rounded-md focus:ring-teal-500 focus:border-teal-500">
 
@@ -81,20 +81,20 @@
             @enderror
         </div>
 
-        <!-- Columna 5: Costo Total de Mano de Obra -->
+        <!-- Costo total de mano de obra -->
         <div class="col-span-2 flex items-center">
-            <!-- Cambié 'col-span-1' a 'col-span-2' para ocupar dos columnas y añadí la clase 'flex items-center' -->
             <label for="totalLaborCost" class="block text-lg font-medium mr-4 text-gray-700">Total Mano de Obra</label>
             <div class="relative rounded-md shadow-sm flex-1">
-                <input type="text" readonly wire:model="formattedTotalLaborCost" id="totalLaborCost"
+                <!-- Formatear con number_format para mostrar solo en la vista -->
+                <input type="text" readonly value="{{ number_format($totalLaborCost, 2) }}" id="totalLaborCost"
                        class="text-right mt-1 p-2 pl-10 block w-full border-teal-500 rounded-md bg-teal-100 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-md">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-<span class="text-gray-500 sm:text-sm"><i
-        class="fas fa-coins ml-1 text-yellow-500 mr-2"></i>COP</span>
+                <span class="text-gray-500 sm:text-sm">
+                    <i class="fas fa-coins ml-1 text-yellow-500 mr-2"></i>COP
+                </span>
                 </div>
             </div>
 
-            <!-- Cambié 'col-span-1' a 'col-span-2' para ocupar dos columnas y añadí la clase 'flex items-center' -->
             <div class="ml-4">
                 <button wire:click="sendTotalLaborCost" type="button"
                         class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-full">
@@ -104,4 +104,3 @@
         </div>
     </label>
 </div>
-
