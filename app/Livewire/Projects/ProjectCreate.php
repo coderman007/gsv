@@ -27,6 +27,8 @@ class ProjectCreate extends Component
     //Resources properties
     public $totalLaborCost = 0;
     public $totalMaterialCost = 0;
+    public $handToolCost = 0;
+    public $extraHandToolCost = 0;  // 5% del costo de mano de obra
     public $totalToolCost = 0;
     public $totalTransportCost = 0;
     public $totalAdditionalCost = 0;
@@ -99,14 +101,22 @@ class ProjectCreate extends Component
             $this->calculateTotalProjectCost();
         }
     }
-
+    public function calculateHandToolCost(): void
+    {
+        $this->extraHandToolCost = $this->totalLaborCost * 0.05;  // 5% del costo de la mano de obra
+        $this->handToolCost = $this->extraHandToolCost;  // Puedes incluir más cálculos si es necesario
+    }
 
     // Método para calcular el costo total del proyecto, incluyendo políticas comerciales
     public function calculateTotalProjectCost(): void
     {
-        // Calcular el costo total de los recursos
+        // Calcular el costo de la herramienta de mano
+        $this->calculateHandToolCost();
+
+        // Calcular el costo total de los recursos incluyendo la herramienta de mano
         $totalResourceCost = $this->totalLaborCost + $this->totalMaterialCost +
-            $this->totalToolCost + $this->totalTransportCost +
+            $this->totalToolCost + $this->handToolCost +  // Incluir el costo de la herramienta de mano
+            $this->totalTransportCost +
             $this->totalAdditionalCost;
 
         // Aplicar políticas comerciales
@@ -138,11 +148,20 @@ class ProjectCreate extends Component
         }
     }
 
+    public function calculateStandardToolCost(): float
+    {
+        // Obtiene el costo total de la mano de obra
+        return $this->totalLaborCost * 0.05;
+    }
+
 
     // Method to save the project
     public function saveProject(): void
     {
         $this->validate();
+
+        // Definir el valor del costo estándar de herramientas
+        $standardToolCost = $this->calculateStandardToolCost();  // Método para calcular este valor
 
         // Obtener valores para las políticas comerciales
         $internalCommissions = $this->internal_commissions ?? 0;  // Si no se proporciona, usa el valor por defecto
@@ -168,6 +187,7 @@ class ProjectCreate extends Component
             'project_category_id' => $this->selectedCategory,
             'zone' => $this->zone,
             'kilowatts_to_provide' => $this->kilowatts_to_provide,
+            'standard_tool_cost' => $standardToolCost,
             'required_area' => $this->required_area,
             'internal_commissions' => $internalCommissions,
             'external_commissions' => $externalCommissions,

@@ -1,12 +1,8 @@
 <div>
     <!-- Botón para abrir el modal -->
-    <x-info-button wire:click="$set('openCreate', true)">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-             stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
+    <x-button-create wire:click="$set('openCreate', true)">
         Nuevo APU
-    </x-info-button>
+    </x-button-create>
 
     <!-- Modal para crear un proyecto -->
     <x-dialog-modal maxWidth="7xl" wire:model.live="openCreate">
@@ -139,35 +135,35 @@
                                     class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Mano de obra
                             </button>
-                            <div class="text-teal-500 font-bold text-center ">{{ $totalLaborCost }}</div>
+                            <div class="text-teal-500 font-bold text-center ">{{ number_format($totalLaborCost, 2) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showMaterialsForm"
                                     class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Materiales
                             </button>
-                            <div class="text-indigo-500 font-bold text-center ">{{ $totalMaterialCost }}</div>
+                            <div class="text-indigo-500 font-bold text-center ">{{ number_format($totalMaterialCost, 2) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showToolsForm"
                                     class="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Herramientas
                             </button>
-                            <div class="text-sky-500 font-bold text-center ">{{ $totalToolCost }}</div>
+                            <div class="text-sky-500 font-bold text-center ">{{ number_format($totalToolCost, 2) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showTransportForm"
                                     class="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Transporte
                             </button>
-                            <div class="text-slate-500 font-bold text-center ">{{ $totalTransportCost }}</div>
+                            <div class="text-slate-500 font-bold text-center ">{{ number_format($totalTransportCost, 2) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showAdditionalCostsForm"
                                     class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Adicionales
                             </button>
-                            <div class="text-yellow-500 font-bold text-center">{{ $totalAdditionalCost }}</div>
+                            <div class="text-yellow-500 font-bold text-center">{{ number_format($totalAdditionalCost, 2) }}</div>
                         </div>
                     </div>
 
@@ -191,16 +187,16 @@
 
         </x-slot>
         <x-slot name="footer">
-            <div class="mx-auto">
-                <x-secondary-button wire:click="$set('openCreate', false)"
-                                    class="mr-4 text-gray-500 border border-gray-500 shadow-lg hover:bg-gray-400 hover:shadow-gray-400">
+            <div class="mt-4 text-center flex justify-center space-x-2">
+                <!-- Botón para cancelar/ cerrar el modal -->
+                <x-button-exit wire:click="$set('openCreate', false)">
                     Cancelar
-                </x-secondary-button>
-                <x-secondary-button
-                    class="text-blue-500 border border-blue-500 shadow-lg hover:bg-blue-400 hover:shadow-blue-400 disabled:opacity-50 disabled:bg-blue-600 disabled:text-white"
-                    wire:click="saveProject" wire:loading.attr="disabled" wire:target="saveProject">
-                    Agregar
-                </x-secondary-button>
+                </x-button-exit>
+
+                <!-- Botón para agregar un nuevo proyecto -->
+                <x-button-create wire:click="saveProject" wire:loading.attr="disabled" wire:target="saveProject">
+                    Crear
+                </x-button-create>
             </div>
         </x-slot>
     </x-dialog-modal>

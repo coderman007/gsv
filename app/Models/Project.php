@@ -18,6 +18,7 @@ class Project extends Model
         'kilowatts_to_provide',
         'internal_commissions',
         'external_commissions',
+        'standard_tool_cost',
         'margin',
         'discount',
         'total',
@@ -36,6 +37,7 @@ class Project extends Model
         'total' => 'decimal:2',
         'sale_value' => 'decimal:2',
         'kilowatts_to_provide' => 'decimal:2',
+        'standard_tool_cost' => 'decimal:2',
     ];
     protected array $dates = [
         'created_at',

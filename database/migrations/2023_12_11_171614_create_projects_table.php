@@ -23,7 +23,7 @@ return new class extends Migration
                 'Zona de la Amazonía'
             ])->default('Zona Andina');
             $table->double('kilowatts_to_provide')->default(0);
-
+            $table->decimal('standard_tool_cost', 20)->default(0);
             // Nuevos campos para las comisiones, margen, descuento, y costo total
             $table->decimal('internal_commissions', 5)->nullable();
             $table->decimal('external_commissions', 5)->nullable();

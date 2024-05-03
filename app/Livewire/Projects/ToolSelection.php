@@ -16,6 +16,7 @@ class ToolSelection extends Component
     public $requiredDays = [];
     public $efficiencies = [];
     public $partialCosts = [];
+    public $extraHandToolCost = 0;
     public $totalToolCost = 0;
 
     protected $rules = [
@@ -38,6 +39,7 @@ class ToolSelection extends Component
 
     public function calculatePartialCost($toolId): void
     {
+        // Implementar la lógica para el cálculo de costo de herramientas
         if (in_array($toolId, $this->selectedTools)) {
             $quantity = $this->quantities[$toolId] ?? 0;
             $requiredDays = $this->requiredDays[$toolId] ?? 0;
@@ -48,15 +50,21 @@ class ToolSelection extends Component
             if (is_numeric($quantity) && is_numeric($requiredDays) && $efficiency !== null) {
                 $tool = Tool::find($toolId);
                 $dailyCost = $tool->unit_price_per_day;
-                $this->partialCosts[$toolId] = $quantity * $requiredDays * $efficiency * $dailyCost;
+
+                // Costo especializado calculado como la suma del costo de herramienta y el costo adicional
+                $specializedToolCost = $quantity * $requiredDays * $efficiency * $dailyCost;
+
+                // Suma el costo de la herramienta de mano al costo especializado
+                $totalToolCost = $specializedToolCost + $this->extraHandToolCost;
+
+                $this->partialCosts[$toolId] = $totalToolCost;
             } else {
-                $this->partialCosts[$toolId] = 0; // Default to zero if invalid
+                $this->partialCosts[$toolId] = 0;  // Defecto a cero si inválido
             }
         } else {
             $this->partialCosts[$toolId] = 0;
         }
     }
-
 
     public function updatedQuantities($value, $toolId): void
     {
