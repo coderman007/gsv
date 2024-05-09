@@ -2,7 +2,7 @@
     <label class="text-lg font-semibold text-gray-600 py-2">
         <h3 class="mb-2">Transporte</h3>
         <!-- Selección de Transportes y Configuración -->
-        <div class="mb-4 grid grid-cols-6 gap-4">
+        <div class="mb-4 grid grid-cols-7 gap-4">
             @foreach ($transports as $transport)
                 <!-- Columna 1: Checkbox -->
                 <div class="flex items-center col-span-2">
@@ -51,11 +51,11 @@
                         <div class="mb-2">
                             <label for="efficiency{{ $transport->id }}"
                                    class="block text-sm font-medium text-gray-700">Rendimiento</label>
-                            <input wire:model.live="efficiencies.{{ $transport->id }}" type="text"
+                            <input wire:model.live="efficiencyInputs.{{ $transport->id }}" type="text"
                                    id="efficiency{{ $transport->id }}" name="efficiency{{ $transport->id }}"
                                    class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
 
-                            @error('efficiencies.' . $loop->index)
+                            @error("efficiencyInputs.{{ $transport->id }}")
                             <span class="text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
@@ -64,7 +64,7 @@
 
 
                 <!-- Columna 5: Costo Parcial -->
-                <div class="col-span-1">
+                <div class="col-span-2">
                     @if (in_array($transport->id, $selectedTransports))
                         <div class="mb-2">
                             <label for="partialCost{{ $loop->index }}"

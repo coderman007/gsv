@@ -52,35 +52,35 @@ class Project extends Model
     public function additionalCosts(): BelongsToMany
     {
         return $this->belongsToMany(AdditionalCost::class, 'additional_cost_project')
-            ->withPivot('quantity', 'total_cost')
+            ->withPivot('quantity', 'efficiency', 'total_cost')
             ->withTimestamps();
     }
 
     public function materials(): BelongsToMany
     {
         return $this->belongsToMany(Material::class, 'material_project')
-            ->withPivot('quantity', 'total_cost')
+            ->withPivot('quantity', 'efficiency', 'total_cost')
             ->withTimestamps();
     }
 
     public function positions(): BelongsToMany
     {
         return $this->belongsToMany(Position::class, 'position_project')
-            ->withPivot('quantity', 'required_days', 'total_cost')
+            ->withPivot('quantity', 'required_days', 'efficiency', 'total_cost')
             ->withTimestamps();
     }
 
     public function tools(): BelongsToMany
     {
         return $this->belongsToMany(Tool::class, 'project_tool')
-            ->withPivot('quantity', 'required_days', 'total_cost')
+            ->withPivot('quantity', 'required_days', 'efficiency', 'total_cost')
             ->withTimestamps();
     }
 
     public function transports(): BelongsToMany
     {
         return $this->belongsToMany(Transport::class, 'project_transport')
-            ->withPivot('quantity', 'required_days', 'total_cost')
+            ->withPivot('quantity', 'required_days', 'efficiency', 'total_cost')
             ->withTimestamps();
     }
 

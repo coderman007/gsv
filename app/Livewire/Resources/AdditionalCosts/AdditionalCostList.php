@@ -40,7 +40,7 @@ class AdditionalCostList extends Component
     {
         return AdditionalCost::where('name', 'like', '%' . $this->search . '%')
             ->orWhere('description', 'like', '%' . $this->search . '%')
-            ->orWhere('amount', 'like', '%' . $this->search . '%')
+            ->orWhere('unit_price', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
     }

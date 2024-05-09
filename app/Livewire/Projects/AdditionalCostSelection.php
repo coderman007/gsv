@@ -12,13 +12,15 @@ class AdditionalCostSelection extends Component
     public $additionalCosts = [];
     public $selectedAdditionalCosts = [];
     public $quantities = [];
+    public $efficiencies = [];
+    public $partialCosts = [];
     public $totalAdditionalCost = 0;
-    public $formattedTotalAdditionalCost;
 
     protected $rules = [
         'selectedAdditionalCosts' => 'required|array|min:1',
         'selectedAdditionalCosts.*' => 'exists:additional_costs,id',
         'quantities.*' => 'nullable|numeric|min:0',
+        'efficiencies.*' => ['nullable', 'regex:/^(\d+(\.\d+)?|(\d+\/\d+))$/'],
     ];
 
     public function updatedSearch(): void
@@ -28,36 +30,62 @@ class AdditionalCostSelection extends Component
             ->get();
     }
 
-    public function updatedQuantities($value, $additionalCostId): void
+    public function updatedQuantities($value, $costId): void
     {
-        // Si el valor no es numérico, establece el valor como null
         if (!is_numeric($value)) {
-            $this->quantities[$additionalCostId] = null;
+            $this->quantities[$costId] = null;
         }
 
-        $this->calculateTotalAdditionalCost();
+        $this->calculatePartialCosts();
     }
 
-    public function calculateTotalAdditionalCost(): void
+    public function updatedEfficiencies($value, $costId): void
     {
-        $totalCost = 0;
-        foreach ($this->selectedAdditionalCosts as $additionalCostId) {
-            $quantity = $this->quantities[$additionalCostId] ?? 0;
-            if (is_numeric($quantity)) {
-                $additionalCost = AdditionalCost::find($additionalCostId);
+        $this->calculatePartialCosts();
+    }
+
+    public function calculatePartialCosts(): void
+    {
+        $totalAdditionalCost = 0;
+        foreach ($this->selectedAdditionalCosts as $costId) {
+            $quantity = $this->quantities[$costId] ?? 0;
+            $efficiencyInput = $this->efficiencies[$costId] ?? "1";
+
+            $efficiency = 1.0; // Valor por defecto
+            $validEfficiency = false;
+
+            if (str_contains($efficiencyInput, '/')) {
+                $parts = explode('/', $efficiencyInput);
+                if (count($parts) == 2) {
+                    $numerator = floatval($parts[0]);
+                    $denominator = floatval($parts[1]);
+                    if ($denominator != 0) {
+                        $efficiency = $numerator / $denominator;
+                        $validEfficiency = true;
+                    }
+                }
+            } else {
+                $validEfficiency = is_numeric($efficiencyInput);
+                if ($validEfficiency) {
+                    $efficiency = floatval($efficiencyInput);
+                }
+            }
+
+            if ($validEfficiency && is_numeric($quantity)) {
+                $additionalCost = AdditionalCost::find($costId);
                 if ($additionalCost) {
-                    $totalCost += $quantity * $additionalCost->amount;
+                    $partialCost = $quantity * $efficiency * $additionalCost->unit_price;
+                    $this->partialCosts[$costId] = $partialCost;
+                    $totalAdditionalCost += $partialCost;
                 }
             }
         }
-        $this->totalAdditionalCost = $totalCost;
-        $this->formattedTotalAdditionalCost = $totalCost;
+        $this->totalAdditionalCost = $totalAdditionalCost;
     }
 
-    public function sendTotalAdditionalCost(): void
+    public function sendTotalCost(): void
     {
         $this->dispatch('totalAdditionalCostUpdated', $this->totalAdditionalCost);
-
         $this->dispatch('additionalCostSelectionUpdated', [
             'selectedAdditionalCosts' => $this->selectedAdditionalCosts,
             'additionalCostQuantities' => $this->quantities,
@@ -65,7 +93,7 @@ class AdditionalCostSelection extends Component
         ]);
 
         if ($this->totalAdditionalCost > 0) {
-            $this->dispatch('hideResourceForm');
+            $this->dispatch('hideAdditionalCostForm');
         }
     }
 

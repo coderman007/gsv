@@ -65,6 +65,9 @@ class ProjectList extends Component
     {
         return
             Project::where('id', 'like', '%' . $this->search . '%')
+                ->orWhere('kilowatts_to_provide', 'like', '%' . $this->search . '%')
+                ->orWhere('zone', 'like', '%' . $this->search . '%')
+                ->orWhere('status', 'like', '%' . $this->search . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage);
     }

@@ -126,7 +126,7 @@ class ProjectCreate extends Component
         $discount = $this->discount ?? 0;
 
         // Calcular el costo total del proyecto, incluyendo políticas comerciales
-        $this->totalProjectCost = $totalResourceCost * (1 + $internalCommissions + $externalCommissions) * (1 + $margin) * (1 - $discount);
+        $this->totalProjectCost = $totalResourceCost / ((1 - $internalCommissions - $externalCommissions - $margin) * (1 - $discount));
     }
 
     // Actualizar área necesaria cuando se modifica la potencia

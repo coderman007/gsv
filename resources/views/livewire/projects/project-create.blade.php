@@ -1,8 +1,11 @@
 <div>
-    <!-- Botón para abrir el modal -->
-    <x-button-create wire:click="$set('openCreate', true)">
-        Nuevo APU
-    </x-button-create>
+    <button wire:click="$set('openCreate', true)"
+            class="rounded-md px-3.5 py-2 m-1 overflow-hidden relative group cursor-pointer border-2 font-medium border-gray-500 hover:border-blue-500 text-white">
+        <span
+            class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
+        <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease"><i
+                class="fa fa-solid fa-plus text-xl"></i> Nuevo APU </span>
+    </button>
 
     <!-- Modal para crear un proyecto -->
     <x-dialog-modal maxWidth="7xl" wire:model.live="openCreate">
@@ -42,7 +45,7 @@
 
                         <div class="col-span-1">
                             <label for="kilowatts_to_provide" class="text-md font-semibold text-gray-600 py-2">Potencia
-                                (kWh/mes)
+                                (kWp)
                             </label>
                             <input wire:model.live="kilowatts_to_provide" type="number" id="kilowatts_to_provide"
                                    name="kilowatts_to_provide"
@@ -55,7 +58,7 @@
                             <label for="required_area" class="text-md font-semibold text-gray-600 py-2">Área Mínima
                                 Necesaria
                                 (m²)</label>
-                            <input wire:model.live="required_area" type="number" readonly
+                            <input wire:model.live="required_area" readonly id="required_area"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             @error('required_area')
                             <span class="text-red-500">{{ $message }}</span>
@@ -68,9 +71,8 @@
                     <div class="grid grid-cols-2 gap-4">
 
                         <div class="col-span-1">
-                            <label for="internal_commissions" class="text-md font-semibold text-gray-600 py-2">Comisiones
-                                Internas (%)</label>
-                            <input wire:model.live="internal_commissions" type="number" step="0.01" min="0" max="100"
+                            <label for="internal_commissions" class="text-md font-semibold text-gray-600 py-2">Comisiones Internas (%)</label>
+                            <input wire:model.live="internal_commissions" type="number" step="1" min="0" max="100"
                                    id="internal_commissions" name="internal_commissions"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             @error('internal_commissions')
@@ -81,7 +83,7 @@
                         <div class="col-span-1">
                             <label for="external_commissions" class="text-md font-semibold text-gray-600 py-2">Comisiones
                                 Externas (%)</label>
-                            <input wire:model.live="external_commissions" type="number" step="0.01" min="0" max="100"
+                            <input wire:model.live="external_commissions" type="number" step="1" min="0" max="100"
                                    id="external_commissions" name="external_commissions"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             @error('external_commissions')
@@ -91,7 +93,7 @@
 
                         <div class="col-span-1">
                             <label for="margin" class="text-md font-semibold text-gray-600 py-2">Margen (%)</label>
-                            <input wire:model.live="margin" type="number" step="0.01" min="0" max="100" id="margin"
+                            <input wire:model.live="margin" type="number" step="1" min="0" max="100" id="margin"
                                    name="margin"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             @error('margin')
@@ -101,7 +103,7 @@
 
                         <div class="col-span-1">
                             <label for="discount" class="text-md font-semibold text-gray-600 py-2">Descuento (%)</label>
-                            <input wire:model.live="discount" type="number" step="0.01" min="0" max="100" id="discount"
+                            <input wire:model.live="discount" type="number" step="1" min="0" max="100" id="discount"
                                    name="discount"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             @error('discount')

@@ -1,5 +1,4 @@
 <div class="container mx-auto mt-8">
-    @if ($this->transports->count() > 0)
         <section class="flex justify-between w-full mx-4">
 
             {{-- Barra de búsqueda --}}
@@ -11,7 +10,7 @@
 
             {{-- Título --}}
             <div class="flex justify-center w-1/3">
-                <div class="text-xl font-bold text-center text-blue-400 uppercase">
+                <div class="text-3xl font-bold text-center text-blue-500 uppercase">
                     <h1>Transporte</h1>
                 </div>
             </div>
@@ -22,6 +21,7 @@
             </div>
         </section>
 
+    @if ($this->transports->count() > 0)
         {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
             Resultados

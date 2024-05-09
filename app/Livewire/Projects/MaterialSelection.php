@@ -15,7 +15,6 @@ class MaterialSelection extends Component
     public $efficiencies = [];
     public $partialMaterialCosts = [];
     public $totalMaterialCost = 0;
-    public $formattedTotalMaterialCost;
 
 
     protected $rules = [
@@ -82,7 +81,6 @@ class MaterialSelection extends Component
             }
         }
         $this->totalMaterialCost = $totalCost;
-        $this->formattedTotalMaterialCost = number_format($totalCost, 2);
     }
 
     public function sendTotalMaterialCost(): void

@@ -18,13 +18,13 @@ class AdditionalCost extends Model
     protected $fillable = [
         'name',
         'description',
-        'amount',
+        'unit_price',
     ];
 
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(project::class, 'additional_cost_project')
-            ->withPivot('quantity', 'total_cost')
+            ->withPivot('quantity', 'efficiency', 'total_cost')
             ->withTimestamps();
     }
 }

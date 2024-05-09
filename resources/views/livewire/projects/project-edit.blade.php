@@ -38,7 +38,7 @@
                     <div class="space-y-2 w-3/4 text-xs">
                         <label for="name" class="block text-gray-700">Nombre:</label>
                         <input wire:model="name" type="text" id="name"
-                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
+                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"/>
                         <x-input-error for="name"/>
                     </div>
 
@@ -54,13 +54,13 @@
                     <div class="space-y-2 w-3/4 text-xs">
                         <label for="kilowattsToProvide" class="block text-gray-700">Kilovatios a Proporcionar:</label>
                         <input wire:model="kilowattsToProvide" type="number" id="kilowattsToProvide"
-                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
+                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"/>
                         <x-input-error for="kilowattsToProvide"/>
                     </div>
 
                     <!-- Campo para ingresar el estado del proyecto -->
                     <div class="space-y-2 w-3/4 text-xs">
-                        <select wire:model="status"
+                        <select wire:model="status" name="status"
                                 class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-4"
                                 required="required">
                             <option value="Activo">Activo</option>

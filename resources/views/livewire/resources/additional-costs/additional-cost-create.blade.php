@@ -6,46 +6,46 @@
         <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease"><i
                 class="fa fa-solid fa-plus text-xl"></i> Crear Adicional</span>
     </button>
-
-    <x-dialog-modal maxWidth="3xl" wire:model="openCreate">
-        <div class="w-full mx-auto bg-white shadow-md p-6 rounded-md">
+    <x-dialog-modal maxWidth="2xl" wire:model="openCreate">
+        <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
             <x-slot name="title">
-                <h2 class="font-semibold text-2xl text-center pt-4 text-blue-500">Crear Adicional</h2>
+                <h2 class="text-2xl font-semibold text-center text-blue-400 dark:text-white">Crear Adicional</h2>
             </x-slot>
 
             <x-slot name="content">
-                <form wire:submit="createAdditionalCost" class="flex flex-col items-center mt-6 p-4 bg-gray-50 rounded-lg">
+                <form wire:submit.prevent="createAdditionalCost" class="space-y-5 max-w-sm mx-auto">
 
-                    <!-- Campo para ingresar el nombre del adicional -->
-                    <div class="space-y-2 w-3/4 text-xs">
-                        <label for="name" class="block text-gray-700">Concepto:</label>
+                    <!-- Campo para el nombre -->
+                    <div class="mb-5">
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre:</label>
                         <input wire:model="name" type="text" id="name"
-                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
-                        <x-input-error for="name"/>
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ingrese el nombre" required />
+                        <x-input-error for="name" />
                     </div>
 
-                    <!-- Campo para ingresar la descripción del adicional -->
-                    <div class="space-y-2 w-3/4 text-xs">
-                        <label for="description" class="block text-gray-700">Descripción:</label>
+                    <!-- Campo para la descripción -->
+                    <div class="mb-5">
+                        <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descripción:</label>
                         <textarea wire:model="description" id="description"
-                                  class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-30 px-4 my-2"></textarea>
-                        <x-input-error for="description"/>
+                                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ingrese la descripción" required></textarea>
+                        <x-input-error for="description" />
                     </div>
 
-                    <!-- Campo para ingresar el valor del adicional -->
-                    <div class="space-y-2 w-3/4 text-xs">
-                        <label for="amount" class="block text-gray-700">Valor:</label>
-                        <input wire:model="amount" type="number" id="amount"
-                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
-                        <x-input-error for="amount"/>
+                    <!-- Campo para el valor -->
+                    <div class="mb-5">
+                        <label for="unit_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Valor:</label>
+                        <input wire:model="unitPrice" type="number" id="unit_price"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ingrese el valor" required />
+                        <x-input-error for="unit_price" />
                     </div>
 
                 </form>
             </x-slot>
+
             <x-slot name="footer">
                 <div class="flex justify-end">
                     <button type="submit" wire:click="createAdditionalCost"
-                            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Crear
                     </button>
                 </div>

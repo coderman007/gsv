@@ -6,6 +6,8 @@ namespace App\Helpers;
 //use DateTimeZone;
 //use Exception;
 
+use Exception;
+
 class DataTypeConverter
 {
     /**
@@ -16,24 +18,32 @@ class DataTypeConverter
      */
     public static function convertToFloat(string $fraction): ?float
     {
-        $result = null;
+        try {
+            // Comprobar si es una fracción
+            if (str_contains($fraction, '/')) {
+                $parts = explode('/', $fraction);
 
-        if (str_contains($fraction, '/')) {
-            $parts = explode('/', $fraction);
+                if (count($parts) == 2 && is_numeric($parts[0]) && is_numeric($parts[1])) {
+                    $numerator = floatval($parts[0]);
+                    $denominator = floatval($parts[1]);
 
-            if (count($parts) == 2) {
-                $numerator = floatval($parts[0]);
-                $denominator = floatval($parts[1]);
-
-                if ($denominator != 0) {
-                    $result = $numerator / $denominator;
+                    if ($denominator != 0) {
+                        return $numerator / $denominator;
+                    }
                 }
             }
-        } elseif (is_numeric($fraction)) {
-            $result = floatval($fraction);
-        }
 
-        return $result;
+            // Comprobar si es un número
+            if (is_numeric($fraction)) {
+                return floatval($fraction);
+            }
+
+            // Si no es una fracción válida ni un número, devuelve null
+            return null;
+        } catch (Exception $e) {
+            // Manejo de excepciones
+            return null;
+        }
     }
 
 //    /**

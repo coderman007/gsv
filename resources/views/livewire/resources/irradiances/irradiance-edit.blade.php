@@ -1,7 +1,7 @@
 <div class="container mx-auto mt-6 border border-gray-300 p-6 bg-white rounded-lg shadow-md">
     <!-- Título principal con icono -->
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-3xl font-bold text-gray-700">
+    <div class="flex items-center justify-between mb-6 uppercase">
+        <h2 class="text-3xl font-bold text-blue-500">
             <i class="fas fa-sun text-yellow-500 mr-2"></i>
             Gestor de nivel de irradiancia
         </h2>

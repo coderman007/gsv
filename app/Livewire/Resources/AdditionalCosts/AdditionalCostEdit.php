@@ -14,12 +14,12 @@ class AdditionalCostEdit extends Component
 
     public $additionalCostId;
     public $openEdit = false;
-    public $name, $description, $amount;
+    public $name, $description, $unitPrice;
 
     protected $rules = [
         'name' => 'required|string|max:255',
-        'description' => 'required|string|max:255',
-        'amount' => 'required|numeric|min:0',
+        'description' => 'nullable|string|max:255',
+        'unitPrice' => 'required|numeric|min:0',
     ];
 
     public function mount($additionalCostId): void
@@ -28,7 +28,7 @@ class AdditionalCostEdit extends Component
         $additionalCost = AdditionalCost::findOrFail($additionalCostId);
         $this->name = $additionalCost->name;
         $this->description = $additionalCost->description;
-        $this->amount = $additionalCost->amount;
+        $this->unitPrice = $additionalCost->unit_price;
     }
 
     public function updateAdditionalCost(): void
@@ -39,12 +39,12 @@ class AdditionalCostEdit extends Component
         $additionalCost->update([
             'name' => $this->name,
             'description' => $this->description,
-            'amount' => $this->amount,
+            'unit_price' => $this->unitPrice,
         ]);
 
         $this->dispatch('updatedAdditionalCost', $additionalCost);
         $this->dispatch('updatedAdditionalCostNotification');
-        $this->reset('name', 'description', 'amount');
+        $this->reset('name', 'description', 'unitPrice');
         $this->openEdit = false;
     }
 

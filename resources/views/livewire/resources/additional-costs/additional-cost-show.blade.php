@@ -9,47 +9,39 @@
             </svg>
         </div>
     </a>
+    <x-dialog-modal wire:model="openShow" maxWidth="2xl">
+        <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
+            <x-slot name="title">
+                <h2 class="text-xl font-semibold text-blue-400 dark:text-white">Detalle del Adicional</h2>
+            </x-slot>
 
-    <x-dialog-modal wire:model="openShow" maxWidth="3xl">
-        <x-slot name="title">
-            <h2 class="text-xl font-semibold text-blue-400 dark:text-white">Detalle del Material</h2>
-        </x-slot>
+            <x-slot name="content">
+                <div class="grid grid-cols-2 gap-4 bg-gray-100 rounded-lg p-10">
+                    <div class="col-span-2 mb-4">
+                        <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Nombre</h1>
+                        <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->name }}</p>
+                    </div>
 
-        <x-slot name="content">
-            <div class="flex justify-center items-center w-full h-full bg-white dark:bg-gray-800">
-                <div class="w-full bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden">
-                    <div class="grid grid-cols-2 gap-4 p-4">
+                    <div class="col-span-2 mb-4">
+                        <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Descripción</h1>
+                        <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->description }}</p>
+                    </div>
 
-                        <div class="col-span-2 mb-4">
-                            <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Concepto</h1>
-                            <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->name }}</p>
-                        </div>
-
-                        <div class="col-span-2 mb-4">
-                            <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Descripción</h1>
-                            <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->description }}</p>
-                        </div>
-
-                        <div class="col-span-2 mb-4">
-                            <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Valor</h1>
-                            <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->amount }}</p>
-                        </div>
+                    <div class="col-span-2 mb-4">
+                        <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Precio Unitario</h1>
+                        <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->unit_price }}</p>
                     </div>
                 </div>
-            </div>
-        </x-slot>
+            </x-slot>
 
-        <x-slot name="footer">
-            <div class="mx-auto">
-                <div class="px-6">
-                    <div class="mx-auto">
-                        <button wire:click="$set('openShow', false)"
-                                class="bg-blue-500 hover:bg-blue-600 text-white text-lg font-semibold py-2 px-6 rounded-md">
-                            Salir
-                        </button>
-                    </div>
+            <x-slot name="footer">
+                <div class="flex justify-end">
+                    <button wire:click="$set('openShow', false)"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Salir
+                    </button>
                 </div>
-            </div>
-        </x-slot>
+            </x-slot>
+        </div>
     </x-dialog-modal>
 </div>

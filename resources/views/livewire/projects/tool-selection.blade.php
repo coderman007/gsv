@@ -1,5 +1,4 @@
 <div class="flex flex-col w-full">
-    <!-- Sección de búsqueda -->
     <div class="flex flex-row mb-4">
         <div class="w-full mr-2">
             <input wire:model.live="search" type="text"
@@ -20,36 +19,42 @@
                     </div>
 
                     @if (in_array($tool->id, $selectedTools))
-                        <div class="flex items-center">
-                            <!-- Campos de cantidades y rendimiento -->
-                            <div class="flex space-x-4">
-                                <div class="flex flex-col">
-                                    <label para="quantity_{{ $tool->id }}" class="text-sm text-gray-700">Cantidad:</label>
-                                    <input wire:model.live="quantities.{{ $tool->id }}"
-                                           id="quantity_{{ $tool->id }}" type="number"
-                                           class="w-16 px-2 py-1 border-sky-300 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500">
-                                </div>
-                                <div class="flex flex-col">
-                                    <label para="required_days_{{ $tool->id }}" class="text-sm text-gray-700">Días:</label>
-                                    <input wire:model.live="requiredDays.{{ $tool->id }}"
-                                           id="required_days_{{ $tool->id }}" type="number"
-                                           class="w-16 px-2 py-1 border-sky-300 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500">
-                                </div>
-                                <div class="flex flex-col">
-                                    <label para="efficiency_{{ $tool->id }}" class="text-sm text-gray-700">Rendimiento:</label>
-                                    <input wire:model.live="efficiencies.{{ $tool->id }}"
-                                           id="efficiency_{{ $tool->id }}" type="text"
-                                           class="w-24 px-2 py-1 border-sky-300 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500">
-                                </div>
+                        <div class="flex items-center space-x-4 pr-4">
+
+                            <!-- Cantidad -->
+                            <div class="flex flex-col">
+                                <label for="quantity_{{ $tool->id }}"
+                                       class="text-sm text-gray-700 mb-1">Cantidad:</label>
+                                <input wire:model.live="quantities.{{ $tool->id }}"
+                                       id="quantity_{{ $tool->id }}" min=1 type="number"
+                                       class="w-16 px-2 py-1 border-sky-300 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500">
+                            </div>
+
+                            <!-- Días requeridos -->
+                            <div class="flex flex-col">
+                                <label for="required_days_{{ $tool->id }}"
+                                       class="text-sm text-gray-700 mb-1">Días:</label>
+                                <input wire:model.live="requiredDays.{{ $tool->id }}"
+                                       id="required_days_{{ $tool->id }}" min=1 type="number"
+                                       class="w-16 px-2 py-1 border-sky-300 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500">
+                            </div>
+
+                            <!-- Rendimiento -->
+                            <div class="flex flex-col">
+                                <label for="efficiency_{{ $tool->id }}"
+                                       class="text-sm text-gray-700 mb-1">Rendimiento:</label>
+                                <input wire:model.live="efficiencyInputs.{{ $tool->id }}"
+                                       id="efficiency_{{ $tool->id }}" type="text"
+                                       class="w-16 px-2 py-1 border-sky-300 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500">
                             </div>
 
                             <!-- Costo parcial -->
-                            <div class="flex flex-col ml-4">
-                                <label para="partialCost_{{ $tool->id }}" class="text-sm text-gray-700">Costo Parcial:</label>
+                            <div class="flex flex-col">
+                                <label for="partialCost_{{ $tool->id }}" class="text-sm text-gray-700 mb-1">Costo:</label>
                                 <input type="text" readonly
                                        value="{{ isset($partialCosts[$tool->id]) ? number_format($partialCosts[$tool->id], 2) : 0 }}"
                                        id="partialCost_{{ $tool->id }}"
-                                       class="w-24 px-2 py-1 border border-sky-300 rounded-md bg-slate-100 focus:outline-none focus:ring-sky-500 focus:border-sky-500">
+                                       class="w-32 px-2 py-1 border border-sky-300 rounded-md bg-slate-100 focus:outline-none focus:ring-sky-500 focus:border-sky-500">
                             </div>
                         </div>
                     @endif
@@ -62,10 +67,10 @@
 
     <!-- Total de herramientas -->
     <div class="bg-gray-50 p-2 rounded-lg mb-4 flex items-center">
-        <label para="totalToolCost" class="block text-lg font-medium text-gray-700">Total Herramientas:</label>
+        <label for="totalToolCost" class="block text-lg mr-4 font-medium text-gray-700">Total Herramientas:</label>
         <div class="relative rounded-md shadow-sm flex-1">
             <input type="text" readonly value="{{ number_format($totalToolCost, 2) }}" id="totalToolCost"
-                   class="text-right mt-1 p-2 pl-10 block w-full border-sky-500 rounded-md bg-sky-100 focus:outline-none focus:ring-sky-500 focus:border-sky-500">
+                   class="text-right mt-1 p-2 pl-10 block w-full border-sky-500 rounded-md bg-sky-100 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-md">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
                 <span class="text-gray-500 sm:text-sm"><i class="fas fa-coins ml-1 text-yellow-500"></i> COP</span>
             </div>

@@ -1,5 +1,4 @@
 <div class="container mx-auto mt-8">
-    @if ($positions->count() > 0)
     <div class="grid items-center w-full md:grid-cols-12 mt-4">
         <div class="col-span-4 ml-4 shadow-md shadow-gray-500 border dark:border-blue-500 rounded-lg">
             <input type="text" name="search" wire:model.live="search"
@@ -17,6 +16,7 @@
             </div>
         </div>
     </div>
+    @if ($positions->count() > 0)
     <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
         Resultados
         <select name="perSearch" id="perSearch" wire:model.live="perSearch" class="rounded-lg cursor-pointer">

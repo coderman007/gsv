@@ -2,7 +2,7 @@
     <label class="text-lg font-semibold text-gray-600 py-2">
         <h3 class="mb-2">Mano de Obra</h3>
         <!-- Selección de Posiciones y Configuración -->
-        <div class="mb-4 grid grid-cols-6 gap-4">
+        <div class="mb-4 grid grid-cols-7 gap-4">
             @foreach ($positions as $position)
                 <!-- Columna 1: Checkbox -->
                 <div class="flex items-center col-span-2">
@@ -45,25 +45,24 @@
                     @endif
                 </div>
 
-                <!-- Nueva Columna: Rendimiento -->
-                <div class="col-span-1">
-                    @if (in_array($position->id, $selectedPositions))
+                <!-- Columna 4: Rendimiento como texto -->
+                @if (in_array($position->id, $selectedPositions))
+                    <div class="col-span-1">
                         <div class="mb-2">
                             <label for="efficiency{{ $position->id }}"
                                    class="block text-sm font-medium text-gray-700">Rendimiento</label>
-                            <input wire:model.live="efficiencies.{{ $position->id }}" type="text"
-                                   id="efficiency{{ $position->id }}" name="efficiency{{ $position->id }}"
+                            <input wire:model.live="efficiencyInputs.{{ $position->id }}" type="text"
+                                   id="efficiency{{ $position->id }}"
                                    class="mt-1 p-2 block w-full border-teal-300 rounded-md focus:ring-teal-500 focus:border-teal-500">
-
-                            @error('positionEfficiencies.' . $loop->index)
+                            @error("efficiencyInputs.{{ $position->id }}")
                             <span class="text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
 
-                <!-- Columna 4: Costo Parcial -->
-                <div class="col-span-1">
+                <!-- Columna 5: Costo Parcial -->
+                <div class="col-span-2">
                     @if (in_array($position->id, $selectedPositions))
                         <div class="mb-2">
                             <label for="partialCost{{ $loop->index }}"

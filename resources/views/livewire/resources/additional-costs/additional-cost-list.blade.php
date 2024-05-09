@@ -1,27 +1,26 @@
 <div class="container mx-auto mt-8">
+    <section class="flex justify-between w-full mx-4">
+        {{-- Barra de búsqueda --}}
+        <div class="flex justify-start w-1/3">
+            <x-input type="text" name="search" wire:model.live="search"
+                     class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
+                     placeholder="Buscar..."/>
+        </div>
+
+        {{-- Título --}}
+        <div class="flex justify-center w-1/3">
+            <div class="text-3xl font-bold text-center text-blue-500 uppercase">
+                <h1>Adicionales</h1>
+            </div>
+        </div>
+
+        {{-- Componente de creación --}}
+        <div class="flex justify-end w-1/3 mr-8">
+            <livewire:resources.additional-costs.additional-cost-create/>
+        </div>
+    </section>
+
     @if ($this->additionalCosts->count() > 0)
-        <section class="flex justify-between w-full mx-4">
-
-            {{-- Barra de búsqueda --}}
-            <div class="flex justify-start w-1/3">
-                <x-input type="text" name="search" wire:model.live="search"
-                         class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
-                         placeholder="Buscar..." />
-            </div>
-
-            {{-- Título --}}
-            <div class="flex justify-center w-1/3">
-                <div class="text-xl font-bold text-center text-blue-400 uppercase">
-                    <h1>Adicionales</h1>
-                </div>
-            </div>
-
-            {{-- Componente de creación --}}
-            <div class="flex justify-end w-1/3 mr-8">
-                <livewire:resources.additional-costs.additional-cost-create />
-            </div>
-        </section>
-
         {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
             Resultados
@@ -53,7 +52,7 @@
                     </th>
 
                     <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('name')">
-                        Concepto
+                        Nombre
                         @if ($sortBy == 'name')
                             @if ($sortDirection == 'asc')
                                 <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
@@ -78,9 +77,9 @@
                         @endif
                     </th>
 
-                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('amount')">
-                        Valor
-                        @if ($sortBy == 'amount')
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('unit_price')">
+                        Precio Unitario
+                        @if ($sortBy == 'unit_price')
                             @if ($sortDirection == 'asc')
                                 <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
                             @else
@@ -98,22 +97,25 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700">
                 @forelse ($this->additionalCosts as $additionalCost)
-                    <tr  wire:key="additionalCost-{{ $additionalCost->id }}"
-                         class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <tr wire:key="additionalCost-{{ $additionalCost->id }}"
+                        class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <th scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ $additionalCost->id }}
                         </th>
                         <td class="px-6 py-4 dark:text-lg">{{ $additionalCost->name }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $additionalCost->description }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $additionalCost->amount }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $additionalCost->unit_price }}</td>
 
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">
-                                <livewire:resources.additional-costs.additional-cost-show :additionalCost="$additionalCost" :key="time() . $additionalCost->id" />
-                                <livewire:resources.additional-costs.additional-cost-edit :additionalCostId="$additionalCost->id" :key="time() . $additionalCost->id" />
-                                <livewire:resources.additional-costs.additional-cost-delete :additionalCost="$additionalCost" :key="time() . $additionalCost->id" />
+                                <livewire:resources.additional-costs.additional-cost-show
+                                    :additionalCost="$additionalCost" :key="time() . $additionalCost->id"/>
+                                <livewire:resources.additional-costs.additional-cost-edit
+                                    :additionalCostId="$additionalCost->id" :key="time() . $additionalCost->id"/>
+                                <livewire:resources.additional-costs.additional-cost-delete
+                                    :additionalCost="$additionalCost" :key="time() . $additionalCost->id"/>
                             </div>
                         </td>
                     </tr>
@@ -138,7 +140,7 @@
         </h1>
 
         <div class="flex justify-center w-full h-auto">
-            <livewire:resources.additional-costs.additional-cost-create />
+            <livewire:resources.additional-costs.additional-cost-create/>
             <button
                 class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
                 <a href="{{ route('additional-costs') }}">Volver</a>
@@ -149,7 +151,7 @@
     @push('js')
         <script>
             // Notificación de creación de additionalCostes
-            Livewire.on('createdAdditionalCostNotification', function() {
+            Livewire.on('createdAdditionalCostNotification', function () {
                 swal.fire({
                     icon: 'success',
                     title: 'Adicional Creado!',
@@ -158,7 +160,7 @@
             });
 
             // Notificación de edición de additionalCostes
-            Livewire.on('updatedAdditionalCostNotification', function() {
+            Livewire.on('updatedAdditionalCostNotification', function () {
                 swal.fire({
                     icon: 'success',
                     title: 'Adicional Actualizado!',
@@ -167,7 +169,7 @@
             });
 
             // Notificación de eliminación de additionalCostes
-            Livewire.on('deletedAdditionalCostNotification', function() {
+            Livewire.on('deletedAdditionalCostNotification', function () {
                 swal.fire({
                     icon: 'success',
                     title: 'Adicional Eliminado!',

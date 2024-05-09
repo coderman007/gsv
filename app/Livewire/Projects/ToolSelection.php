@@ -14,7 +14,8 @@ class ToolSelection extends Component
     public $selectedTools = [];
     public $quantities = [];
     public $requiredDays = [];
-    public $efficiencies = [];
+    public $efficiencyInputs = []; // Mantenemos las entradas como cadenas de texto
+    public $efficiencies = []; // Almacenamos las eficiencias como valores numéricos
     public $partialCosts = [];
     public $extraHandToolCost = 0;
     public $totalToolCost = 0;
@@ -24,56 +25,60 @@ class ToolSelection extends Component
         'selectedTools.*' => 'exists:tools,id',
         'quantities.*' => 'nullable|numeric|min:0',
         'requiredDays.*' => 'nullable|numeric|min:0',
-        'efficiencies.*' => 'nullable|string',
+        'efficiencyInputs.*' => 'nullable|string', // Aceptamos cadenas de texto para rendimiento
     ];
 
     public function mount(): void
     {
-        $this->updateTotalToolCost();
+        $this->updateTotalToolCost(); // Actualizar el costo total
     }
+
     public function updatedSearch(): void
     {
-        $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')
-            ->get();
+        $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get(); // Actualizar herramientas según la búsqueda
     }
 
     public function calculatePartialCost($toolId): void
     {
-        // Implementar la lógica para el cálculo de costo de herramientas
         if (in_array($toolId, $this->selectedTools)) {
             $quantity = $this->quantities[$toolId] ?? 0;
             $requiredDays = $this->requiredDays[$toolId] ?? 0;
-            $efficiencyInput = $this->efficiencies[$toolId] ?? "1";
+            $efficiencyInput = $this->efficiencyInputs[$toolId] ?? "1"; // Predeterminado a cadena de texto "1"
 
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
+            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput); // Convertir cadena a número
 
-            if (is_numeric($quantity) && is_numeric($requiredDays) && $efficiency !== null) {
+            if ($efficiency === null) {
+                // Establecer el costo parcial en cero si la conversión falla
+                $this->partialCosts[$toolId] = 0;
+                $this->addError("efficiency_$toolId", "El rendimiento ingresado es inválido.");
+                return; // Salir temprano si la conversión falla
+            }
+
+            if (is_numeric($quantity) && is_numeric($requiredDays)) {
                 $tool = Tool::find($toolId);
                 $dailyCost = $tool->unit_price_per_day;
 
-                // Costo especializado calculado como la suma del costo de herramienta y el costo adicional
-                $specializedToolCost = $quantity * $requiredDays * $efficiency * $dailyCost;
+                // Calcular el costo parcial con la eficiencia convertida
+                $partialCost = $quantity * $requiredDays * $efficiency * $dailyCost;
+                $partialCost += $this->extraHandToolCost; // Sumar costo adicional de herramientas de mano
 
-                // Suma el costo de la herramienta de mano al costo especializado
-                $totalToolCost = $specializedToolCost + $this->extraHandToolCost;
-
-                $this->partialCosts[$toolId] = $totalToolCost;
+                $this->partialCosts[$toolId] = $partialCost;
             } else {
-                $this->partialCosts[$toolId] = 0;  // Defecto a cero si inválido
+                $this->partialCosts[$toolId] = 0; // Establecer el costo parcial en cero si datos son inválidos
             }
         } else {
-            $this->partialCosts[$toolId] = 0;
+            $this->partialCosts[$toolId] = 0; // Si la herramienta no está seleccionada, costo parcial es cero
         }
     }
 
     public function updatedQuantities($value, $toolId): void
     {
-        // Si el valor no es numérico, establece el valor como null
         if (!is_numeric($value)) {
-            $this->quantities[$toolId] = null;
+            $this->quantities[$toolId] = null; // Restablecer si no es numérico
+            return; // Salir temprano si no es numérico
         }
 
-        // Recalcula el costo parcial y total para reflejar cualquier cambio
+        // Recalcular el costo parcial y el total
         $this->calculatePartialCost($toolId);
         $this->updateTotalToolCost();
     }
@@ -81,60 +86,62 @@ class ToolSelection extends Component
     public function updatedRequiredDays($value, $toolId): void
     {
         if (!is_numeric($value)) {
-            $this->requiredDays[$toolId] = null;
-        }
+        $this->requiredDays[$toolId] = null; // Restablecer si no es numérico
+        return; // Salir temprano si no es numérico
+    }
 
-        // Recalcula el costo parcial y total para reflejar cualquier cambio
+        // Recalcular el costo parcial y total
         $this->calculatePartialCost($toolId);
         $this->updateTotalToolCost();
     }
 
-    public function updatedEfficiencies($value, $toolId): void
+    public function updatedEfficiencyInputs($value, $toolId): void
     {
-        // Convierte el valor a float usando DataTypeConverter
-        $efficiency = DataTypeConverter::convertToFloat($value);
+        $efficiency = DataTypeConverter::convertToFloat($value); // Intentar convertir a número
 
         if ($efficiency === null) {
-            // Emitir un mensaje de error si el valor es inválido
-            $this->addError('efficiency', 'El valor de eficiencia es inválido.');
-            return; // No sigas con el cálculo si el valor es inválido
+            // Emitir error si la conversión falla
+            $this->addError("efficiency_$toolId", "El valor de rendimiento es inválido.");
+            return; // Salir temprano si no es convertible a número
         }
 
-        // Actualizar el array de eficiencias con el nuevo valor
-        $this->efficiencies[$toolId] = $efficiency;
-        // Recalcular el costo parcial y total para reflejar cualquier cambio
+        $this->efficiencies[$toolId] = $efficiency; // Actualizar el valor numérico de la eficiencia
+        $this->efficiencyInputs[$toolId] = $value; // Mantener la cadena original para visualización
+
+        // Recalcular el costo parcial y total
         $this->calculatePartialCost($toolId);
         $this->updateTotalToolCost();
     }
 
     public function updateTotalToolCost(): void
     {
+        // Suma de todos los costos parciales
         $this->totalToolCost = array_sum($this->partialCosts);
     }
 
     public function sendTotalToolCost(): void
     {
-        $this->dispatch('totalToolCostUpdated', $this->totalToolCost);
+        $this->dispatch("totalToolCostUpdated", $this->totalToolCost); // Emitir evento para informar cambios
 
-        $this->dispatch('toolSelectionUpdated', [
-            'selectedTools' => $this->selectedTools,
-            'toolQuantities' => $this->quantities,
-            'toolRequiredDays' => $this->requiredDays,
-            'toolEfficiencies' => $this->efficiencies,
-            'totalToolCost' => $this->totalToolCost, // Enviar como número
+        // Detalles del componente para el almacenamiento
+        $this->dispatch("toolSelectionUpdated", [
+            "selectedTools" => $this->selectedTools,
+            "toolQuantities" => $this->quantities,
+            "toolRequiredDays" => $this->requiredDays,
+            "toolEfficiencies" => $this->efficiencies,
+            "totalToolCost" => $this->totalToolCost,
         ]);
 
         if ($this->totalToolCost > 0) {
-            $this->dispatch('hideResourceForm');
+            $this->dispatch("hideResourceForm"); // Ejemplo de otro evento a despachar
         }
     }
-
 
     public function render(): View
     {
         if (!empty($this->search)) {
-            $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get();
+            $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get(); // Actualizar herramientas según búsqueda
         }
-        return view('livewire.projects.tool-selection');
+        return view("livewire.projects.tool-selection"); // Renderizar la vista asociada
     }
 }

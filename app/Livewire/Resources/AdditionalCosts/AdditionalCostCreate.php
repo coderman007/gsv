@@ -9,38 +9,38 @@ use Livewire\WithFileUploads;
 
 /**
  * @property mixed|null $name
- * @property mixed|null $amount
+ * @property mixed|null $unitPrice
  */
 class AdditionalCostCreate extends Component
 {
     use WithFileUploads;
 
     public $openCreate = false;
-    public $name, $description, $amount;
+    public $name, $description, $unitPrice;
 
     protected $rules = [
         'name' => 'required|string|max:255',
-        'description' => 'required|string|max:255',
-        'amount' => 'required|numeric|min:0',
+        'description' => 'nullable|string|max:255',
+        'unitPrice' => 'required|numeric|min:0',
     ];
 
     public function createAdditionalCost(): void
     {
         $this->validate();
 
-        $material = AdditionalCost::create([
+        $additionalCost = AdditionalCost::create([
             'name' => $this->name,
             'description' => $this->description,
-            'amount' => $this->amount,
+            'unit_price' => $this->unitPrice,
         ]);
 
         $this->openCreate = false;
 
         // Emitir eventos
-        $this->dispatch('createdAdditionalCost', $material);
+        $this->dispatch('createdAdditionalCost', $additionalCost);
         $this->dispatch('createdAdditionalCostNotification');
 
-        $this->reset('name', 'description', 'amount');
+        $this->reset('name', 'description', 'unitPrice');
     }
 
     public function render(): View

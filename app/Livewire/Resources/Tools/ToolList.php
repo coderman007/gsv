@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Resources\Tools;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
+use LaravelIdea\Helper\App\Models\_IH_Tool_C;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -33,8 +35,8 @@ class ToolList extends Component
         }
     }
 
-    #[Computed()]
-    public function tools()
+    #[Computed]
+    public function tools(): _IH_Tool_C|LengthAwarePaginator|array
     {
         return Tool::where('name', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)

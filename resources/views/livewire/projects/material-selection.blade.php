@@ -33,15 +33,15 @@
                                 <label for="efficiency_{{ $material->id }}" class="text-sm text-gray-700 mb-1">Rendimiento:</label>
                                 <input wire:model.live="efficiencies.{{ $material->id }}"
                                        id="efficiency_{{ $material->id }}" type="text"
-                                       class="w-24 px-2 py-1 border border-indigo-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="w-16 px-2 py-1 border border-indigo-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
 
-                            <!-- Costo -->
+                            <!-- Costo parcial-->
                             <div class="flex flex-col">
                                 <label for="cost_{{ $material->id }}" class="text-sm text-gray-700 mb-1">Costo:</label>
                                 <input type="text" readonly
-                                       value="{{ $partialMaterialCosts[$material->id] ?? '' }}"
-                                       class="w-24 px-2 py-1 border border-indigo-300 rounded-md focus:outline-none">
+                                       value="{{ isset($partialMaterialCosts[$material->id]) ? number_format($partialMaterialCosts[$material->id], 2) : 0 }}"
+                                       class="w-32 px-2 py-1 border border-indigo-300 rounded-md bg-slate-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
                         </div>
                     @endif
@@ -52,12 +52,13 @@
         @endforelse
     </ul>
 
-    <!-- Costo total -->
+    <!-- Total de materiales -->
     <div class="bg-gray-50 p-2 rounded-lg mb-4 flex items-center">
         <label for="totalMaterialCost" class="block text-lg mr-4 font-medium text-gray-700">Total Materiales</label>
         <div class="relative rounded-md shadow-sm flex-1">
-            <input type="text" readonly wire:model.live="formattedTotalMaterialCost"
-                   class="text-right mt-1 p-2 block w-full border-indigo-500 rounded-md bg-indigo-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md">
+            <input type="text" readonly value="{{ number_format($totalMaterialCost, 2) }}"
+                   id="totalMaterialCost"
+                   class="text-right mt-1 p-2 pl-10 block w-full border-indigo-500 rounded-md bg-indigo-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
                 <span class="text-gray-500 sm:text-sm">
                     <i class="fas fa-coins ml-1 text-yellow-500 mr-2"></i>COP
