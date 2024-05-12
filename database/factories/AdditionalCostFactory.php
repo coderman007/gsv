@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\AdditionalCost;
+use App\Models\Additional;
 use App\Models\Quotation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 class AdditionalCostFactory extends Factory
 {
-    protected $model = AdditionalCost::class;
+    protected $model = Additional::class;
 
     public function definition(): array
     {

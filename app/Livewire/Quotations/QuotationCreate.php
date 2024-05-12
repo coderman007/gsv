@@ -6,111 +6,102 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\Quotation;
 use Illuminate\View\View;
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class QuotationCreate extends Component
 {
-    // Propiedades de las que depende la existencia de la cotización
+    public $openCreate = false;
     public $clients;
+    public $city;
     public $selectedClientId;
     public $newClientModal = false;
-    public $showProjectDetails = false;
+    public $showProjectInfoModal = false;
     public $project;
+    public $projectName;
+    public $consecutive; // Nueva propiedad para almacenar el consecutivo
 
     // Datos importantes que definirán el proyecto
-    public $average_energy_consumption; // Consumo promedio de energía del cliente
-    public $solar_radiation_level; // Nivel de irradiación solar (Se tomó con base en la ubicación del cliente)
+    public $energy_to_provide; // Consumo promedio de energía del cliente
+    public $solar_radiation_level; // Nivel de irradiación solar (Se toma con base en la ubicación del cliente)
     public $transformer; // Define la potencia del transformador (Monofásico/Trifásico)
     public $roof_dimension; // Define las dimensiones de la cubierta donde se va a realizar la instalación de los paneles solares
-
-    // Propiedades para los recursos
-    public $totalLaborCost;
-    public $totalMaterialCost;
-    public $totalToolCost;
-    public $totalTransportCost;
-
-    // Otras propiedades de la cotización
-    public $commissions;
+    public $kilowatt_cost;
     public $quotation_date;
     public $validity_period;
-    public $margin;
     public $subtotal;
-    public $discount;
-    public $total_quotation_amount;
+    public $total;
 
     protected $rules = [
-        'selectedClientId' => 'required',
-        'average_energy_consumption' => 'required|numeric|min:0',
-        'solar_radiation_level' => 'required|numeric|min:0',
+        'selectedClientId' => 'required|exists:clients,id',
+        'energy_to_provide' => 'required|numeric|min:0',
         'transformer' => 'required|in:Trifásico,Monofásico',
         'roof_dimension' => 'required|numeric|min:0',
-        'commissions' => 'nullable|numeric|min:0',
+        'kilowatt_cost' => 'required|numeric|min:0',
         'quotation_date' => 'required|date',
         'validity_period' => 'required|integer|min:1',
-
         'subtotal' => 'required|numeric|min:0',
-        'total_quotation_amount' => 'required|numeric|min:0',
+        'total' => 'required|numeric|min:0',
     ];
 
     public function mount(): void
     {
         $this->clients = Client::all();
+        $this->quotation_date = now(); // Establecer la fecha de cotización al cargar el componente
+        $this->validity_period = 30; // Establecer el período de validez predeterminado (por ejemplo, 30 días)
+        $this->generateConsecutive(); // Generar consecutivo al cargar el componente
     }
 
     public function createQuotation(): void
     {
         $this->validate();
 
-        $this->project = Project::where('kilowatts_to_provide', '>=', $this->average_energy_consumption)->first();
+        $this->project = Project::where('kilowatts_to_provide', '>=', $this->energy_to_provide)->first();
 
         if (!$this->project) {
-            $this->addError('average_energy_consumption', 'No se encontró un proyecto adecuado para la cantidad de kilovatios ingresados.');
+            $this->addError('energy_to_provide', 'No se encontró un proyecto adecuado para la cantidad de kilovatios ingresados.');
             return;
         }
 
-        // Calcula los costos totales de mano de obra, materiales, herramientas y transporte asociados al proyecto
-        $totalLaborCost = $this->project->totalLaborCost();
-        $totalMaterialCost = $this->project->totalMaterialCost();
-        $totalToolCost = $this->project->totalToolCost();
-        $totalTransportCost = $this->project->totalTransportCost();
-
-        // Calcula el subtotal
-        $subtotal = $totalLaborCost + $totalMaterialCost + $totalToolCost + $totalTransportCost;
-
-        // Lógica adicional para calcular el subtotal
-
-        // Calcula el monto total de la cotización
-        $totalQuotationAmount = $subtotal;
-
-        Quotation::create([
+        $quotation = Quotation::create([
             'project_id' => $this->project->id,
             'client_id' => $this->selectedClientId,
-            'average_energy_consumption' => $this->average_energy_consumption,
-            'solar_radiation_level' => $this->solar_radiation_level,
+            'energy_to_provide' => $this->energy_to_provide,
             'transformer' => $this->transformer,
             'roof_dimension' => $this->roof_dimension,
-            'commissions' => $this->commissions,
+            'kilowatt_cost' => $this->kilowatt_cost,
             'quotation_date' => $this->quotation_date,
             'validity_period' => $this->validity_period,
-            'margin' => $this->margin,
-            'subtotal' => $subtotal,
-            'discount' => $this->discount,
-            'total_quotation_amount' => $totalQuotationAmount,
+            'subtotal' => $this->subtotal,
+            'total' => $this->total,
+            'consecutive' => $this->consecutive, // Guardar el consecutivo
         ]);
 
-        $this->reset(['selectedClientId', 'average_energy_consumption', 'project', 'solar_radiation_level', 'transformer', 'roof_dimension', 'commissions', 'quotation_date', 'validity_period', 'margin', 'subtotal', 'iva', 'discount', 'total_quotation_amount']);
+        $this->reset(['selectedClientId', 'energy_to_provide', 'project', 'transformer', 'roof_dimension', 'kilowatt_cost', 'quotation_date', 'validity_period', 'subtotal', 'total']);
 
-        session()->flash('message', 'Cotización creada exitosamente.');
+        $this->generateConsecutive(); // Generar un nuevo consecutivo para la siguiente cotización
+        $this->openCreate = false;
+        $this->dispatch('createdQuotation', $quotation);
+        $this->dispatch('createdQuotationNotification');
+
     }
 
-    public function updatedAverageEnergyConsumption(): void
+
+    public function updatedEnergyToProvide(): void
     {
-        $project = Project::where('kilowatts_to_provide', '>=', $this->average_energy_consumption)
-            ->orderBy('kilowatts_to_provide', 'asc')
+        $project = Project::where('kilowatts_to_provide', '>=', $this->energy_to_provide)
+            ->orderBy('kilowatts_to_provide')
             ->first();
 
         $this->project = $project;
+        if ($project) {
+            $this->projectName = $project->projectCategory->name . " de " . $project->kilowatts_to_provide . " kW.";
+            $this->subtotal = $project->total;
+            $this->total = $project->sale_value;
+        } else {
+            $this->subtotal = 0;
+            $this->total = 0;
+        }
     }
 
     public function showNewClientModal(): void
@@ -123,6 +114,38 @@ class QuotationCreate extends Component
         $this->newClientModal = false;
     }
 
+    public function updateCityAndRadiation(): void
+    {
+        // Buscar el cliente seleccionado
+        $client = Client::find($this->selectedClientId);
+
+        if ($client) {
+            // Obtener la ciudad asociada
+            $city = $client->city;
+
+            if ($city) {
+                // Asignar la ciudad y el nivel de irradiancia
+                $this->city = $city->name; // Si necesitas mostrar el nombre de la ciudad
+                $this->solar_radiation_level = $city->irradiance; // Nivel de irradiancia
+            } else {
+                // Manejo de error si no se encuentra la ciudad
+                $this->addError('selectedClientId', 'El cliente seleccionado no tiene una ciudad asociada.');
+                $this->solar_radiation_level = 0; // Valor por defecto
+            }
+        }
+    }
+
+    // Método para generar el consecutivo
+    private function generateConsecutive(): void
+    {
+        // Obtener el último número de consecutivo de cotización
+        $lastQuotation = Quotation::latest()->first();
+        $consecutiveNumber = $lastQuotation ? $lastQuotation->id + 1 : 1;
+
+        // Formatear el consecutivo según el estándar deseado
+        $this->consecutive = 'PROY' . date('ymd') . '-' . str_pad($consecutiveNumber, 3, '0', STR_PAD_LEFT);
+    }
+
     public function render(): View
     {
         return view('livewire.quotations.quotation-create');
@@ -133,4 +156,11 @@ class QuotationCreate extends Component
     {
         $this->clients = Client::all();
     }
+
+    #[On('createdQuotation')]
+    public function createdQuotation($quotation)
+    {
+        redirect()->to('quotations');
+    }
 }
+

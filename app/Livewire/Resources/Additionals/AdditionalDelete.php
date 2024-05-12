@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Livewire\Resources\AdditionalCosts;
+namespace App\Livewire\Resources\Additionals;
 
-use App\Models\AdditionalCost;
+use App\Models\Additional;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class AdditionalCostDelete extends Component
+class AdditionalDelete extends Component
 {
     public $openDelete = false;
-    public $additionalCost;
+    public $additional;
 
-    public function mount(AdditionalCost $additionalCost): void
+    public function mount(Additional $additional): void
     {
-        $this->additionalCost = $additionalCost;
+        $this->additional = $additional;
     }
 
-    public function deleteAdditionalCost(): void
+    public function deleteAdditional(): void
     {
         // Verificar si el usuario autenticado existe
         if (!auth()->check()) {
@@ -29,16 +29,16 @@ class AdditionalCostDelete extends Component
         }
 
         // Si el costo adicional a eliminar existe, proceder con la eliminación
-        if ($this->additionalCost) {
-            $additionalCost = $this->additionalCost->delete();
-            $this->dispatch('deletedAdditionalCost', $additionalCost);
-            $this->dispatch('deletedAdditionalCostNotification');
+        if ($this->additional) {
+            $additional = $this->additional->delete();
+            $this->dispatch('deletedAdditional', $additional);
+            $this->dispatch('deletedAdditionalNotification');
             $this->openDelete = false;
         }
     }
 
     public function render(): View
     {
-        return view('livewire.resources.additional-costs.additional-cost-delete');
+        return view('livewire.resources.additionals.additional-delete');
     }
 }

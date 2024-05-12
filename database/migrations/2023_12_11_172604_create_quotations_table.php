@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::create('quotations', function (Blueprint $table) {
             $table->id();
+            $table->string('consecutive')->nullable();
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('client_id');
             $table->date('quotation_date');
             $table->unsignedSmallInteger('validity_period');
             $table->enum('transformer', ['Trifásico', 'Monofásico']);
-            $table->decimal('average_energy_consumption', 8, 2);
-            $table->decimal('solar_radiation_level', 8, 2);
+            $table->decimal('energy_to_provide', 8, 2);
             $table->decimal('roof_dimension', 8, 2);
-            $table->decimal('total_cost_kilowatt');
+            $table->decimal('kilowatt_cost');
             $table->decimal('subtotal', 20, 2);
-            $table->decimal('total_quotation_amount', 20, 2);
-            $table->enum('status', ['Generada', 'Ganada', 'Perdida'])->default('Generada');
+            $table->decimal('total', 20, 2);
+            $table->enum('status', ['Generada', 'Ganada', 'Perdida', 'Expirada'])->default('Generada');
             $table->timestamps();
 
             $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();

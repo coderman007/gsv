@@ -16,11 +16,11 @@
 
         {{-- Componente de creación --}}
         <div class="flex justify-end w-1/3 mr-8">
-            <livewire:resources.additional-costs.additional-cost-create/>
+            <livewire:resources.additionals.additional-create/>
         </div>
     </section>
 
-    @if ($this->additionalCosts->count() > 0)
+    @if ($this->additionals->count() > 0)
         {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
             Resultados
@@ -96,26 +96,26 @@
                 </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700">
-                @forelse ($this->additionalCosts as $additionalCost)
-                    <tr wire:key="additionalCost-{{ $additionalCost->id }}"
+                @forelse ($this->additionals as $additional)
+                    <tr wire:key="additional-{{ $additional->id }}"
                         class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <th scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $additionalCost->id }}
+                            {{ $additional->id }}
                         </th>
-                        <td class="px-6 py-4 dark:text-lg">{{ $additionalCost->name }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $additionalCost->description }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $additionalCost->unit_price }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $additional->name }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $additional->description }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $additional->unit_price }}</td>
 
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">
-                                <livewire:resources.additional-costs.additional-cost-show
-                                    :additionalCost="$additionalCost" :key="time() . $additionalCost->id"/>
-                                <livewire:resources.additional-costs.additional-cost-edit
-                                    :additionalCostId="$additionalCost->id" :key="time() . $additionalCost->id"/>
-                                <livewire:resources.additional-costs.additional-cost-delete
-                                    :additionalCost="$additionalCost" :key="time() . $additionalCost->id"/>
+                                <livewire:resources.additionals.additional-show
+                                    :additional="$additional" :key="time() . $additional->id"/>
+                                <livewire:resources.additionals.additional-edit
+                                    :additionalId="$additional->id" :key="time() . $additional->id"/>
+                                <livewire:resources.additionals.additional-delete
+                                    :additional="$additional" :key="time() . $additional->id"/>
                             </div>
                         </td>
                     </tr>
@@ -130,7 +130,7 @@
             </table>
 
             <div class="px-3 py-1">
-                {{ $this->additionalCosts->links() }}
+                {{ $this->additionals->links() }}
             </div>
         </div>
     @else
@@ -140,18 +140,18 @@
         </h1>
 
         <div class="flex justify-center w-full h-auto">
-            <livewire:resources.additional-costs.additional-cost-create/>
+            <livewire:resources.additionals.additional-create/>
             <button
                 class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
-                <a href="{{ route('additional-costs') }}">Volver</a>
+                <a href="{{ route('additionals') }}">Volver</a>
             </button>
         </div>
     @endif
 
     @push('js')
         <script>
-            // Notificación de creación de additionalCostes
-            Livewire.on('createdAdditionalCostNotification', function () {
+            // Notificación de creación de adicionales
+            Livewire.on('createdAdditionalNotification', function () {
                 swal.fire({
                     icon: 'success',
                     title: 'Adicional Creado!',
@@ -159,8 +159,8 @@
                 })
             });
 
-            // Notificación de edición de additionalCostes
-            Livewire.on('updatedAdditionalCostNotification', function () {
+            // Notificación de edición de adicionales
+            Livewire.on('updatedAdditionalNotification', function () {
                 swal.fire({
                     icon: 'success',
                     title: 'Adicional Actualizado!',
@@ -168,8 +168,8 @@
                 })
             });
 
-            // Notificación de eliminación de additionalCostes
-            Livewire.on('deletedAdditionalCostNotification', function () {
+            // Notificación de eliminación de adicionales
+            Livewire.on('deletedAdditionalNotification', function () {
                 swal.fire({
                     icon: 'success',
                     title: 'Adicional Eliminado!',

@@ -10,7 +10,7 @@
     <!-- Modal para crear un proyecto -->
     <x-dialog-modal maxWidth="7xl" wire:model.live="openCreate">
         <x-slot name="title">
-            <h2 class="mt-3 text-2xl text-center">Nuevo APU</h2>
+            <h2 class="text-2xl font-semibold text-center text-blue-400 dark:text-white">Nuevo APU</h2>
         </x-slot>
         <x-slot name="content">
             <div class="grid grid-cols-12 gap-4">
@@ -36,8 +36,13 @@
 
                         <div class="col-span-1"><label for="zone"
                                                        class="text-md font-semibold text-gray-600 py-2">Zona</label>
-                            <input wire:model.live="zone" id="zone" name="zone"
-                                   class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                            <select wire:model.live="zone" id="zone" name="zone"
+                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                <option value="">Seleccionar Zona</option>
+                                @foreach ($zoneOptions as $option)
+                                    <option value="{{ $option }}">{{ $option }}</option>
+                                @endforeach
+                            </select>
                             @error('zone')
                             <span class="text-red-500">{{ $message }}</span>
                             @enderror
@@ -67,26 +72,26 @@
 
                     </div>
                     <!-- Campos para políticas comerciales -->
-                    <h3 class="text-center text-lg font-semibold text-blue-500 mb-4">Políticas Comerciales</h3>
+                    {{--<h3 class="text-center text-lg font-semibold text-blue-500 mb-4">Políticas Comerciales</h3>
                     <div class="grid grid-cols-2 gap-4">
 
                         <div class="col-span-1">
-                            <label for="internal_commissions" class="text-md font-semibold text-gray-600 py-2">Comisiones Internas (%)</label>
-                            <input wire:model.live="internal_commissions" type="number" step="1" min="0" max="100"
-                                   id="internal_commissions" name="internal_commissions"
+                            <label for="internalCommissions" class="text-md font-semibold text-gray-600 py-2">Comisiones Internas (%)</label>
+                            <input wire:model.live="internalCommissions" type="number" step="1" min="0" max="100"
+                                   id="internalCommissions" name="internalCommissions"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
-                            @error('internal_commissions')
+                            @error('internalCommissions')
                             <span class="text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="col-span-1">
-                            <label for="external_commissions" class="text-md font-semibold text-gray-600 py-2">Comisiones
+                            <label for="externalCommissions" class="text-md font-semibold text-gray-600 py-2">Comisiones
                                 Externas (%)</label>
-                            <input wire:model.live="external_commissions" type="number" step="1" min="0" max="100"
-                                   id="external_commissions" name="external_commissions"
+                            <input wire:model.live="externalCommissions" type="number" step="1" min="0" max="100"
+                                   id="externalCommissions" name="externalCommissions"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
-                            @error('external_commissions')
+                            @error('externalCommissions')
                             <span class="text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
@@ -110,15 +115,15 @@
                             <span class="text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
-                    </div>
+                    </div>--}}
                     <div class="flex bg-blue-100 w-full mt-10 px-4 py-2 items-center justify-between rounded-md">
                         <div class="text-blue-500 text-2xl">Costo de Venta</div>
                         <div class="text-center font-semibold text-lg flex items-center justify-center">
                             <!-- Icono de FontAwesome -->
-                            <i class="fas fa-coins text-yellow-700 mr-2"></i>
+                            <span class="text-gray-500 sm:text-sm"><i class="fas fa-coins ml-1 text-yellow-500"></i> COP</span>
 
                             <!-- Texto que muestra el costo total -->
-                            <span class="p-3 rounded-lg text-2xl text-blue-700 font-bold">
+                            <span class="p-3 rounded-lg text-2xl font-bold">
                                 ${{ number_format($totalProjectCost, 2) }}
                             </span>
                         </div>
@@ -137,35 +142,40 @@
                                     class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Mano de obra
                             </button>
-                            <div class="text-teal-500 font-bold text-center ">{{ number_format($totalLaborCost, 2) }}</div>
+                            <div
+                                class="text-teal-500 font-bold text-center ">{{ number_format($totalLaborCost, 2) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showMaterialsForm"
                                     class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Materiales
                             </button>
-                            <div class="text-indigo-500 font-bold text-center ">{{ number_format($totalMaterialCost, 2) }}</div>
+                            <div
+                                class="text-indigo-500 font-bold text-center ">{{ number_format($totalMaterialCost, 2) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showToolsForm"
                                     class="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Herramientas
                             </button>
-                            <div class="text-sky-500 font-bold text-center ">{{ number_format($totalToolCost, 2) }}</div>
+                            <div
+                                class="text-sky-500 font-bold text-center ">{{ number_format($totalToolCost, 2) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showTransportForm"
                                     class="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Transporte
                             </button>
-                            <div class="text-slate-500 font-bold text-center ">{{ number_format($totalTransportCost, 2) }}</div>
+                            <div
+                                class="text-slate-500 font-bold text-center ">{{ number_format($totalTransportCost, 2) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
-                            <button wire:click="showAdditionalCostsForm"
+                            <button wire:click="showAdditionalForm"
                                     class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Adicionales
                             </button>
-                            <div class="text-yellow-500 font-bold text-center">{{ number_format($totalAdditionalCost, 2) }}</div>
+                            <div
+                                class="text-yellow-500 font-bold text-center">{{ number_format($totalAdditionalCost, 2) }}</div>
                         </div>
                     </div>
 
@@ -180,8 +190,8 @@
                             <livewire:projects.tool-selection/>
                         @elseif ($showResource === 'transport')
                             <livewire:projects.transport-selection/>
-                        @elseif ($showResource === 'additionalCosts')
-                            <livewire:projects.additional-cost-selection/>
+                        @elseif ($showResource === 'additionals')
+                            <livewire:projects.additional-selection/>
                         @endif
                     </div>
                 </div>

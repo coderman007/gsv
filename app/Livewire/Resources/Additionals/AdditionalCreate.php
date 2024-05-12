@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Livewire\Resources\AdditionalCosts;
+namespace App\Livewire\Resources\Additionals;
 
-use App\Models\AdditionalCost;
+use App\Models\Additional;
 use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -11,7 +11,7 @@ use Livewire\WithFileUploads;
  * @property mixed|null $name
  * @property mixed|null $unitPrice
  */
-class AdditionalCostCreate extends Component
+class AdditionalCreate extends Component
 {
     use WithFileUploads;
 
@@ -24,11 +24,11 @@ class AdditionalCostCreate extends Component
         'unitPrice' => 'required|numeric|min:0',
     ];
 
-    public function createAdditionalCost(): void
+    public function createAdditional(): void
     {
         $this->validate();
 
-        $additionalCost = AdditionalCost::create([
+        $additional = Additional::create([
             'name' => $this->name,
             'description' => $this->description,
             'unit_price' => $this->unitPrice,
@@ -37,15 +37,15 @@ class AdditionalCostCreate extends Component
         $this->openCreate = false;
 
         // Emitir eventos
-        $this->dispatch('createdAdditionalCost', $additionalCost);
-        $this->dispatch('createdAdditionalCostNotification');
+        $this->dispatch('createdAdditional', $additional);
+        $this->dispatch('createdAdditionalNotification');
 
         $this->reset('name', 'description', 'unitPrice');
     }
 
     public function render(): View
     {
-        return view('livewire.resources.additional-costs.additional-cost-create');
+        return view('livewire.resources.additionals.additional-create');
     }
 }
 

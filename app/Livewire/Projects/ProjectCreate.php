@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Projects;
 
+use App\Models\CommercialPolicy;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use Illuminate\View\View;
@@ -15,16 +16,25 @@ class ProjectCreate extends Component
     public $selectedCategory;
     public $project;
     public $zone;
+    public $zoneOptions = [
+        'Zona Caribe',
+        'Zona Andina',
+        'Zona Pacífica',
+        'Zona de la Orinoquía',
+        'Zona de la Amazonía'
+    ];
     public $kilowatts_to_provide;
     public $required_area = 0;
-    public $internal_commissions = 0;
-    public $external_commissions = 0;
-    public $margin = 0;
-    public $discount = 0;
     public $totalProjectCost = 0;
-    public $showResource = '';
+
+    // Políticas comerciales
+    public $internalCommissions;
+    public $externalCommissions;
+    public $margin;
+    public $discount;
 
     //Resources properties
+    public $showResource = '';
     public $totalLaborCost = 0;
     public $totalMaterialCost = 0;
     public $handToolCost = 0;
@@ -36,7 +46,7 @@ class ProjectCreate extends Component
     public $selectedMaterials;
     public $selectedTools;
     public $selectedTransports;
-    public $selectedAdditionalCosts;
+    public $selectedAdditionals;
     public $selectedPositionQuantity;
     public $selectedPositionRequiredDays;
     public $selectedPositionEfficiencies;
@@ -49,30 +59,33 @@ class ProjectCreate extends Component
     public $selectedTransportQuantity;
     public $selectedTransportRequiredDays;
     public $selectedTransportEfficiencies;
-    public $selectedAdditionalCostQuantity;
+    public $selectedAdditionalQuantity;
+    public $selectedAdditionalEfficiencies;
 
 
     // Validation rules
     protected $rules = [
         'selectedCategory' => 'required|exists:project_categories,id',
-        'zone' => 'required|string',
+        'zone' => 'required|in:Zona Caribe,Zona Andina,Zona Pacífica,Zona de la Orinoquía,Zona de la Amazonía',
         'kilowatts_to_provide' => 'required|numeric|min:0',
-        'required_area' => 'required|numeric|min:0',
-        'internal_commissions' => 'numeric|between:0,1',
-        'external_commissions' => 'numeric|between:0,1',
-        'margin' => 'numeric|between:0,1',
-        'discount' => 'numeric|between:0,1',
     ];
 
     public function mount(): void
     {
         $this->categories = ProjectCategory::pluck('name', 'id')->toArray();
+
+        // Cargar políticas comerciales
+        $this->internalCommissions = CommercialPolicy::where('name', 'like', 'internal_commissions')->first()?->percentage ?? 0;
+        $this->externalCommissions = CommercialPolicy::where('name', 'like', 'external_commissions')->first()?->percentage ?? 0;
+        $this->margin = CommercialPolicy::where('name', 'like', 'margin')->first()?->percentage ?? 0;
+        $this->discount = CommercialPolicy::where('name', 'like', 'discount')->first()?->percentage ?? 0;
+
         // Initialize selected resources arrays
         $this->selectedPositions = [];
         $this->selectedMaterials = [];
         $this->selectedTools = [];
         $this->selectedTransports = [];
-        $this->selectedAdditionalCosts = [];
+        $this->selectedAdditionals = [];
         // Initialize selected resource quantities and required days
         $this->selectedPositionQuantity = 0;
         $this->selectedPositionRequiredDays = 0;
@@ -81,22 +94,18 @@ class ProjectCreate extends Component
         $this->selectedToolRequiredDays = 0;
         $this->selectedTransportQuantity = 0;
         $this->selectedTransportRequiredDays = 0;
-        $this->selectedAdditionalCostQuantity = 0;
+        $this->selectedAdditionalQuantity = 0;
 
     }
 
     public function updated($name, $value): void
     {
         if (in_array($name, [
-            'internal_commissions',
-            'external_commissions',
-            'margin',
-            'discount',
             'totalLaborCost',
             'totalMaterialCost',
             'totalToolCost',
             'totalTransportCost',
-            'totalAdditionalCost'
+            'totalAdditional'
         ])) {
             $this->calculateTotalProjectCost();
         }
@@ -119,23 +128,24 @@ class ProjectCreate extends Component
             $this->totalTransportCost +
             $this->totalAdditionalCost;
 
-        // Aplicar políticas comerciales
-        $internalCommissions = $this->internal_commissions ?? 0;
-        $externalCommissions = $this->external_commissions ?? 0;
-        $margin = $this->margin ?? 0;
-        $discount = $this->discount ?? 0;
+//        dd($totalResourceCost);
+//         Aplicar políticas comerciales
+        // Obtener valores para las políticas comerciales
+        $internalCommissions = $totalResourceCost * ($this->internalCommissions / 100);
+        $externalCommissions = $totalResourceCost * ($this->externalCommissions / 100);
+        $margin = $totalResourceCost * ($this->margin / 100);
+        $discount = $totalResourceCost * ($this->discount / 100);
 
         // Calcular el costo total del proyecto, incluyendo políticas comerciales
-        $this->totalProjectCost = $totalResourceCost / ((1 - $internalCommissions - $externalCommissions - $margin) * (1 - $discount));
+        $this->totalProjectCost = $totalResourceCost + $internalCommissions + $externalCommissions + $margin - $discount;
     }
-
     // Actualizar área necesaria cuando se modifica la potencia
     public function updatedKilowattsToProvide($value): void
     {
         // Verificar que el valor es numérico y mayor o igual a cero
         if (is_numeric($value) && $value >= 0) {
             // Calcular el área necesaria si el valor es válido
-            $this->required_area = number_format(($value / 0.55) * 2.6 * 1.1, 2);
+            $this->required_area = number_format(($value / (0.55 * 2.6 * 1.1)),  2);
 
             // Limpiar el error si existe
             $this->resetErrorBag('kilowatts_to_provide'); // Elimina el mensaje de error
@@ -163,23 +173,19 @@ class ProjectCreate extends Component
         // Definir el valor del costo estándar de herramientas
         $standardToolCost = $this->calculateStandardToolCost();  // Método para calcular este valor
 
-        // Obtener valores para las políticas comerciales
-        $internalCommissions = $this->internal_commissions ?? 0;  // Si no se proporciona, usa el valor por defecto
-        $externalCommissions = $this->external_commissions ?? 0;
-        $margin = $this->margin ?? 0;
-        $discount = $this->discount ?? 0;
-
         // Calcular el costo total del proyecto
         $totalCost = $this->totalLaborCost + $this->totalMaterialCost +
             $this->totalToolCost + $this->totalTransportCost +
             $this->totalAdditionalCost;
 
-
+        // Obtener valores para las políticas comerciales
+        $internalCommissions = $totalCost * ($this->internalCommissions / 100);
+        $externalCommissions = $totalCost * ($this->externalCommissions / 100);
+        $margin = $totalCost * ($this->margin / 100);
+        $discount = $totalCost * ($this->discount / 100);
 
         // Calcular el valor de venta usando las políticas comerciales
-        $saleValue = $totalCost / ((1 - $internalCommissions -
-                    $externalCommissions - $margin) *
-                (1 - $discount));
+        $saleValue = $totalCost + $internalCommissions + $externalCommissions + $margin - $discount;
 
 
         // Crear el proyecto con el valor de venta calculado
@@ -189,11 +195,7 @@ class ProjectCreate extends Component
             'kilowatts_to_provide' => $this->kilowatts_to_provide,
             'standard_tool_cost' => $standardToolCost,
             'required_area' => $this->required_area,
-            'internal_commissions' => $internalCommissions,
-            'external_commissions' => $externalCommissions,
-            'margin' => $margin,
-            'discount' => $discount,
-            'total_cost' => $totalCost,
+            'total' => $totalCost,
             'sale_value' => $saleValue,
         ]);
 
@@ -211,6 +213,7 @@ class ProjectCreate extends Component
         foreach ($this->selectedMaterials as $materialId) {
             $project->materials()->attach($materialId, [
                 'quantity' => $this->selectedMaterialQuantity[$materialId],
+                'efficiency' => $this->selectedMaterialEfficiencies[$materialId],
                 'total_cost' => $this->totalMaterialCost,
             ]);
         }
@@ -236,9 +239,10 @@ class ProjectCreate extends Component
         }
 
         // Associate additional costs and update costs in the 'additional_cost_project' pivot table
-        foreach ($this->selectedAdditionalCosts as $additionalCostId) {
-            $project->additionalCosts()->attach($additionalCostId, [
-                'quantity' => $this->selectedAdditionalCostQuantity[$additionalCostId],
+        foreach ($this->selectedAdditionals as $additionalId) {
+            $project->additionals()->attach($additionalId, [
+                'quantity' => $this->selectedAdditionalQuantity[$additionalId],
+                'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
                 'total_cost' => $this->totalAdditionalCost,
             ]);
         }
@@ -249,12 +253,10 @@ class ProjectCreate extends Component
         // Redirect or show success message
         $this->openCreate = false;
         $this->dispatch('createdProject', $project);
-        $this->dispatch('createdProjectNotification', [
-            'title' => 'Success',
-            'text' => 'APU Creado Exitosamente!',
-            'icon' => 'success'
-        ]);
+        $this->dispatch('createdProjectNotification');
         $this->reset();
+
+        // TODO Se deben de refrescar las categorías de proyectos también
     }
 
     public function showLaborForm(): void
@@ -277,9 +279,9 @@ class ProjectCreate extends Component
         $this->showResource = 'transport'; // Update property based on the selected resource
     }
 
-    public function showAdditionalCostsForm(): void
+    public function showAdditionalForm(): void
     {
-        $this->showResource = 'additionalCosts'; // Update property based on the selected resource
+        $this->showResource = 'additionals'; // Update property based on the selected resource
     }
 
     #[On('positionSelectionUpdated')]
@@ -287,9 +289,9 @@ class ProjectCreate extends Component
     {
         // Update relevant properties with received data
         $this->selectedPositions = $data['selectedPositions'];
-        $this->selectedPositionQuantity = $data['quantities'];
-        $this->selectedPositionRequiredDays = $data['requiredDays'];
-        $this->selectedPositionEfficiencies = $data['efficiencies'];
+        $this->selectedPositionQuantity = $data['positionQuantities'];
+        $this->selectedPositionRequiredDays = $data['positionRequiredDays'];
+        $this->selectedPositionEfficiencies = $data['positionEfficiencies'];
         $this->totalLaborCost = $data['totalLaborCost'];
 
         // Update the 'position_project' pivot table if the project already exists
@@ -299,6 +301,7 @@ class ProjectCreate extends Component
                     $positionId => [
                         'quantity' => $this->selectedPositionQuantity[$positionId],
                         'required_days' => $this->selectedPositionRequiredDays[$positionId],
+                        'efficiencies' => $this->selectedPositionEfficiencies[$positionId],
                         'total_cost' => $this->totalLaborCost,
                     ]
                 ]);
@@ -313,6 +316,7 @@ class ProjectCreate extends Component
         // Update relevant properties with received data
         $this->selectedMaterials = $data['selectedMaterials'];
         $this->selectedMaterialQuantity = $data['materialQuantities'];
+        $this->selectedMaterialEfficiencies = $data['materialEfficiencies'];
         $this->totalMaterialCost = $data['totalMaterialCost'];
 
         // Update the 'material_project' pivot table if the project already exists
@@ -321,6 +325,7 @@ class ProjectCreate extends Component
                 $this->project->materials()->syncWithoutDetaching([
                     $materialId => [
                         'quantity' => $this->selectedMaterialQuantity[$materialId],
+                        'efficiencies' => $this->selectedMaterialEfficiencies[$materialId],
                         'total_cost' => $this->totalMaterialCost,
                     ]
                 ]);
@@ -375,20 +380,22 @@ class ProjectCreate extends Component
         }
     }
 
-    #[On('additionalCostSelectionUpdated')]
-    public function handleAdditionalCostSelectionUpdated($data): void
+    #[On('additionalSelectionUpdated')]
+    public function handleAdditionalSelectionUpdated($data): void
     {
         // Update relevant properties with received data
-        $this->selectedAdditionalCosts = $data['selectedAdditionalCosts'];
-        $this->selectedAdditionalCostQuantity = $data['additionalCostQuantities'];
+        $this->selectedAdditionals = $data['selectedAdditionals'];
+        $this->selectedAdditionalQuantity = $data['additionalQuantities'];
+        $this->selectedAdditionalEfficiencies = $data['additionalEfficiencies'];
         $this->totalAdditionalCost = $data['totalAdditionalCost'];
 
         // Update the 'additional_cost_project' pivot table if the project already exists
         if ($this->project) {
-            foreach ($this->selectedAdditionalCosts as $additionalCostId) {
-                $this->project->additionalCosts()->syncWithoutDetaching([
-                    $additionalCostId => [
-                        'quantity' => $this->selectedAdditionalCostQuantity[$additionalCostId],
+            foreach ($this->selectedAdditionals as $additionalId) {
+                $this->project->additionals()->syncWithoutDetaching([
+                    $additionalId => [
+                        'quantity' => $this->selectedAdditionalQuantity[$additionalId],
+                        'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
                         'total_cost' => $this->totalAdditionalCost,
                     ]
                 ]);

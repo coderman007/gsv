@@ -5,7 +5,6 @@ namespace App\Livewire\Resources\Transports;
 use App\Models\Transport;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class TransportEdit extends Component

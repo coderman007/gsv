@@ -2,9 +2,13 @@
 
 namespace App\Livewire\Quotations;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
+use LaravelIdea\Helper\App\Models\_IH_Quotation_C;
 use Livewire\Component;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use App\Models\Quotation;
-use App\Models\Client;
 use Livewire\WithPagination;
 
 class QuotationList extends Component
@@ -16,12 +20,12 @@ class QuotationList extends Component
     public $sortDirection = 'desc';
     public $perSearch = 10;
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function order($sort)
+    public function order($sort): void
     {
         if ($this->sortBy == $sort) {
             $this->sortDirection = ($this->sortDirection == "desc") ? "asc" : "desc";
@@ -31,22 +35,38 @@ class QuotationList extends Component
         }
     }
 
-    public function quotations()
+    #[Computed]
+    public function quotations(): array|LengthAwarePaginator|_IH_Quotation_C
     {
-        return Quotation::with(['project', 'client'])
-            ->whereHas('client', function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%');
-            })
+        return Quotation::where('consecutive', 'like', '%' . $this->search . '%')
+            ->orWhere('total', 'like', '%' . $this->search . '%')
             ->orWhere('quotation_date', 'like', '%' . $this->search . '%')
-            ->orWhere('total_quotation_amount', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
     }
 
-    public function render()
+    #[On('createdQuotation')]
+    public function createdQuotation($quotationData = null)
     {
-        return view('livewire.quotations.quotation-list', [
-            'quotations' => $this->quotations(),
-        ]);
+    }
+
+    #[On('notification')]
+    public function notify($message = null)
+    {
+    }
+
+    #[On('updatedQuotation')]
+    public function updatedQuotation($quotation = null)
+    {
+    }
+
+    #[On('deletedQuotation')]
+    public function deletedQuotation($quotation = null)
+    {
+    }
+
+    public function render(): View
+    {
+        return view('livewire.quotations.quotation-list');
     }
 }

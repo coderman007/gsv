@@ -1,4 +1,4 @@
-<!-- resources/views/livewire/resources/materials/additional-cost-show.blade.php -->
+<!-- resources/views/livewire/resources/materials/additional-show.blade.php -->
 
 <div class="relative inline-block text-center cursor-pointer group">
     <a href="#" wire:click="$set('openShow', true)">

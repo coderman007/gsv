@@ -17,7 +17,7 @@ class ProjectCategorySeeder extends Seeder
             // Define sample project categories data
             $categoriesData = [
                 [
-                    'name' => 'APU Sistema Fotovoltaico On-Grid',
+                    'name' => 'Sistema Fotovoltaico On-Grid',
                     'description' => 'El sistema on-grid, también conocido como conectado a la red, es aquel que está conectado a la red eléctrica convencional. Algunas características clave son:
                     Conexión a la Red: Los paneles solares generan electricidad que se inyecta directamente en la red eléctrica de tu área.
                     Compensación de Excedentes: En momentos de alta generación, el exceso de electricidad puede ser enviado de vuelta a la red, obteniendo créditos o compensaciones.
@@ -26,7 +26,7 @@ class ProjectCategorySeeder extends Seeder
                 ],
 
                 [
-                    'name' => 'APU Sistema Fotovoltaico Off-Grid',
+                    'name' => 'Sistema Fotovoltaico Off-Grid',
                     'description' => 'El sistema off-grid es autónomo y no está conectado a la red eléctrica. Características clave:
                     Independencia Energética: Funciona de manera aislada, ideal para lugares remotos donde la conexión a la red no es viable.
                     Baterías de Almacenamiento: Almacena la energía generada en baterías para su uso cuando el sol no está disponible.
@@ -34,7 +34,7 @@ class ProjectCategorySeeder extends Seeder
                     'status' => 'Activo',
                 ],
                 [
-                    'name' => 'APU Sistema de Biomasa',
+                    'name' => 'Sistema de Biomasa',
                     'description' => 'Este sistema utiliza biomasa, que son materiales orgánicos como residuos agrícolas, madera o residuos forestales, para generar energía. La biomasa se quema, liberando calor que se convierte en electricidad.',
                     'status' => 'Inactivo',
                 ],
@@ -45,7 +45,7 @@ class ProjectCategorySeeder extends Seeder
                 ],
 
                 [
-                    'name' => 'APU Sistema Energía Eléctrica Tradicional',
+                    'name' => 'Sistema Energía Eléctrica Tradicional',
                     'description' => 'Descripción de Sistema de Energía Eléctrica Tradicional',
                     'status' => 'Activo',
                 ],

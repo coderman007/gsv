@@ -19,7 +19,7 @@
             </x-slot>
 
             <x-slot name="content">
-                <form wire:submit.prevent="updateAdditionalCost" class="space-y-5 max-w-sm mx-auto bg-gray-100 p-10 rounded-lg">
+                <form wire:submit.prevent="updateAdditional" class="space-y-5 max-w-sm mx-auto bg-gray-100 p-10 rounded-lg">
 
                     <!-- Campo para el nombre -->
                     <div class="mb-5">
@@ -53,7 +53,7 @@
 
             <x-slot name="footer">
                 <div class="flex justify-end">
-                    <button type="submit" wire:click="updateAdditionalCost"
+                    <button type="submit" wire:click="updateAdditional"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Actualizar
                     </button>

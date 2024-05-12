@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property mixed $total
+ * @property mixed $sale_value
+ */
 class Project extends Model
 {
     use HasFactory;
@@ -16,11 +20,7 @@ class Project extends Model
         'project_category_id',
         'zone',
         'kilowatts_to_provide',
-        'internal_commissions',
-        'external_commissions',
         'standard_tool_cost',
-        'margin',
-        'discount',
         'total',
         'sale_value',
         'status',
@@ -30,10 +30,6 @@ class Project extends Model
         'status' => 'Activo'
     ];
     protected $casts = [
-        'internal_commissions' => 'decimal:2',
-        'external_commissions' => 'decimal:2',
-        'margin' => 'decimal:2',
-        'discount' => 'decimal:2',
         'total' => 'decimal:2',
         'sale_value' => 'decimal:2',
         'kilowatts_to_provide' => 'decimal:2',
@@ -49,9 +45,9 @@ class Project extends Model
         return $this->belongsTo(ProjectCategory::class);
     }
 
-    public function additionalCosts(): BelongsToMany
+    public function additionals(): BelongsToMany
     {
-        return $this->belongsToMany(AdditionalCost::class, 'additional_cost_project')
+        return $this->belongsToMany(Additional::class, 'additional_project')
             ->withPivot('quantity', 'efficiency', 'total_cost')
             ->withTimestamps();
     }

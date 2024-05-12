@@ -19,7 +19,7 @@ class ProjectList extends Component
     public $search = '';
     public $sortBy = 'id';
     public $sortDirection = 'asc';
-    public $perPage = 10;
+    public $perSearch = 10;
     public $selectedCategory = null;
 
     public function updatingSearch(): void
@@ -50,7 +50,7 @@ class ProjectList extends Component
 
         $projects = $query->where('id', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate($this->perPage);
+            ->paginate($this->perSearch);
 
         $categories = ProjectCategory::all(); // Obtener todas las categorías
 
@@ -69,7 +69,7 @@ class ProjectList extends Component
                 ->orWhere('zone', 'like', '%' . $this->search . '%')
                 ->orWhere('status', 'like', '%' . $this->search . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage);
+                ->paginate($this->perSearch);
     }
 
     #[On('createdProject')]

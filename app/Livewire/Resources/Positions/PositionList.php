@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Resources\Positions;
 
-use App\Models\Position;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
+use LaravelIdea\Helper\App\Models\_IH_Position_C;
+use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
-use Livewire\Component;
+use App\Models\Position;
 use Livewire\WithPagination;
 
 class PositionList extends Component
@@ -14,15 +17,15 @@ class PositionList extends Component
 
     public $search = '';
     public $sortBy = 'id';
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
     public $perSearch = 10;
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function order($sort)
+    public function order($sort): void
     {
         if ($this->sortBy == $sort) {
             $this->sortDirection = ($this->sortDirection == "desc") ? "asc" : "desc";
@@ -30,20 +33,25 @@ class PositionList extends Component
             $this->sortBy = $sort;
             $this->sortDirection = "asc";
         }
-
-        $this->resetPage();
     }
 
     #[Computed]
-    public function positions()
+    public function positions(): LengthAwarePaginator|_IH_Position_C|array
     {
         return Position::where('name', 'like', '%' . $this->search . '%')
+            ->orWhere('basic', 'like', '%' . $this->search . '%')
+            ->orWhere('monthly_work_hours', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
     }
 
     #[On('createdPosition')]
-    public function createdPosition($position = null)
+    public function createdPosition($positionData = null)
+    {
+    }
+
+    #[On('notification')]
+    public function notify($message = null)
     {
     }
 
@@ -57,9 +65,8 @@ class PositionList extends Component
     {
     }
 
-    public function render()
+    public function render(): View
     {
-        $positions = $this->positions();
-        return view('livewire.resources.positions.position-list', compact('positions'));
+        return view('livewire.resources.positions.position-list');
     }
 }

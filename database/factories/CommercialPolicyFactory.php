@@ -2,18 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Transport;
+use App\Models\CommercialPolicy;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Carbon;
 
-class TransportFactory extends Factory
+class CommercialPolicyFactory extends Factory
 {
-    protected $model = Transport::class;
+    protected $model = CommercialPolicy::class;
 
     public function definition(): array
     {
         return [
-            //
+
         ];
     }
 }

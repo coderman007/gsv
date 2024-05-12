@@ -45,7 +45,7 @@
                                     hacer esto?</h3>
 
                                 <div class="flex gap-3">
-                                    <button wire:click="deleteAdditionalCost" type="button"
+                                    <button wire:click="deleteCommercialPolicy" type="button"
                                             class="relative w-full flex justify-center items-center px-5 py-2.5 font-medium tracking-wide text-white capitalize bg-red-500 rounded-md hover:bg-red-700 focus:outline-none transition duration-300 transform active:scale-95 ease-in-out disabled:opacity-50 disabled:bg-red-600 disabled:text-white"
                                             wire:click="updateAdditionalCost" wire:loading.attr="disabled"
                                             wire:target="updateAdditionalCost">
@@ -60,8 +60,8 @@
                                     </button>
                                     <button wire:click="$set('openDelete', false)" type="button"
                                             class="relative w-full flex justify-center items-center px-5 py-2.5 font-medium tracking-wide text-white capitalize bg-gray-500 rounded-md hover:bg-gray-700 focus:outline-none transition duration-300 transform active:scale-95 ease-in-out disabled:opacity-50 disabled:bg-gray-600 disabled:text-white"
-                                            wire:click="updateAdditionalCost" wire:loading.attr="disabled"
-                                            wire:target="updateAdditionalCost">
+                                            wire:click="updateCommercialPolicy" wire:loading.attr="disabled"
+                                            wire:target="updateCommercialPolicy">
                                         <span class="pl-2 mx-1">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24px" fill="#FFFFFF"
                                                  height="24px" viewBox="0 0 512 512">
@@ -80,3 +80,4 @@
         </div>
     @endif
 </div>
+

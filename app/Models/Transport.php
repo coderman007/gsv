@@ -23,7 +23,7 @@ class Transport extends Model
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class)->
-            withPivot('quantity', 'required_days', 'total_cost')->
+            withPivot('quantity', 'required_days', 'efficiency', 'total_cost')->
             withTimestamps();
     }
 }

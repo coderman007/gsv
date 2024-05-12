@@ -25,7 +25,7 @@
         {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
             Resultados
-            <select name="perPage" id="perSearch" wire:model.live="perPage" class="rounded-lg cursor-pointer">
+            <select name="perPage" id="perSearch" wire:model.live="perSearch" class="rounded-lg cursor-pointer">
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
@@ -33,7 +33,7 @@
             </select>
         </div>
 
-        <!-- Tabla de Categorías de Proyectos -->
+        <!-- Tabla de Proyectos -->
         <div class="relative hidden md:block mt-2 sm:mx-4 md:mt-4 overflow-x-hidden shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead
@@ -134,13 +134,12 @@
             </div>
         </div>
     @else
-        <!-- Mensaje de no hay Clientes -->
         <div class="flex justify-end m-4 p-4">
             <livewire:projects.project-create/>
         </div>
         <!-- Mensaje de no hay categorías -->
         <h1 class="my-32 text-5xl text-center dark:text-gray-200">
-            <br> <span class="mt-4">Aún no hay datos. </span>
+            <br> <span class="mt-4">No hay registros. </span>
         </h1>
 
         <div class="flex justify-center w-full h-auto">

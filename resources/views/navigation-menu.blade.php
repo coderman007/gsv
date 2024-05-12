@@ -71,10 +71,16 @@
                                 {{ __('Transporte') }}
                             </x-dropdown-link>
 
-                            <x-dropdown-link class="hover:text-blue-500" href="{{ route('additional-costs') }}"
-                                             :active="request()->routeIs('additional-costs')">
+                            <x-dropdown-link class="hover:text-blue-500" href="{{ route('additionals') }}"
+                                             :active="request()->routeIs('additionals')">
                                 {{ __('Adicionales') }}
                             </x-dropdown-link>
+
+                            <x-dropdown-link class="hover:text-blue-500" href="{{ route('commercial-policies') }}"
+                                             :active="request()->routeIs('commercial-policies')">
+                                {{ __('Políticas Comerciales') }}
+                            </x-dropdown-link>
+
                             <x-dropdown-link class="hover:text-blue-500" href="{{ route('irradiances') }}"
                                              :active="request()->routeIs('irradiances')">
                                 {{ __('Irradiancia') }}

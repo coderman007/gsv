@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Resources\Materials;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
+use LaravelIdea\Helper\App\Models\_IH_Material_C;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -33,8 +35,8 @@ class MaterialList extends Component
         }
     }
 
-    #[Computed()]
-    public function materials()
+    #[Computed]
+    public function materials(): LengthAwarePaginator|array|_IH_Material_C
     {
         return Material::where('reference', 'like', '%' . $this->search . '%')
             ->orWhere('description', 'like', '%' . $this->search . '%')

@@ -22,7 +22,7 @@ class Material extends Model
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class)
-            ->withPivot('quantity', 'total_cost')
+            ->withPivot('quantity', 'efficiency', 'total_cost')
             ->withTimestamps();
     }
 

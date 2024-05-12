@@ -12,24 +12,24 @@
     <x-dialog-modal wire:model="openShow" maxWidth="2xl">
         <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
             <x-slot name="title">
-                <h2 class="text-xl font-semibold text-blue-400 dark:text-white">Detalle del Adicional</h2>
+                <h2 class="text-2xl font-semibold text-blue-400 dark:text-white">Detalle del Adicional</h2>
             </x-slot>
 
             <x-slot name="content">
                 <div class="grid grid-cols-2 gap-4 bg-gray-100 rounded-lg p-10">
                     <div class="col-span-2 mb-4">
                         <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Nombre</h1>
-                        <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->name }}</p>
+                        <p class="text-lg text-gray-800 dark:text-white">{{ $additional->name }}</p>
                     </div>
 
                     <div class="col-span-2 mb-4">
                         <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Descripción</h1>
-                        <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->description }}</p>
+                        <p class="text-lg text-gray-800 dark:text-white">{{ $additional->description }}</p>
                     </div>
 
                     <div class="col-span-2 mb-4">
                         <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Precio Unitario</h1>
-                        <p class="text-lg text-gray-800 dark:text-white">{{ $additionalCost->unit_price }}</p>
+                        <p class="text-lg text-gray-800 dark:text-white">{{ $additional->unit_price }}</p>
                     </div>
                 </div>
             </x-slot>

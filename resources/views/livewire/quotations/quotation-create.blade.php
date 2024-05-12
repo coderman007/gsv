@@ -1,204 +1,186 @@
-<div class="p-10 m-10 bg-white rounded-lg shadow-lg flex">
-    <!-- Columna izquierda: Formulario de cotización -->
-    <div class="w-1/2 pr-6">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6">Formulario de Cotización</h3>
+<div>
+    <button wire:click="$set('openCreate', true)"
+            class="rounded-md px-3.5 py-2 m-1 overflow-hidden relative group cursor-pointer border-2 font-medium border-gray-500 hover:border-blue-500 text-white">
+        <span
+            class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
+        <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease"><i
+                class="fa fa-solid fa-plus text-xl"></i> Cotización </span>
+    </button>
 
-        <form wire:submit="createQuotation">
-            <!-- Selección de cliente -->
-            <div class="mb-6">
-                <label for="selectedClientId" class="block font-semibold mb-2">Cliente</label>
-                <div class="relative flex items-center justify-between">
-                    <select
-                        id="selectedClientId"
-                        name="selectedClientId"
-                        wire:model="selectedClientId"
-                        class="w-2/3 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    >
-                        <option value="">Seleccionar cliente...</option>
-                        @foreach ($clients as $client)
-                            <option value="{{ $client->id }}">{{ $client->name }}</option>
-                        @endforeach
-                    </select>
-                    <livewire:quotations.quotation-client-create/>
-                    @error('selectedClientId')
-                    <span class="absolute bottom-0 left-0 text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+    <!-- Modal para crear un proyecto -->
+    <x-dialog-modal maxWidth="7xl" wire:model.live="openCreate">
+        <x-slot name="title">
+            <h2 class="text-2xl font-semibold text-center text-blue-400 dark:text-white">Nueva Cotización</h2>
+        </x-slot>
+
+        <x-slot name="content">
+            <!-- Encabezado con Logo y Número de Cotización -->
+            <div class="flex justify-between ">
+                <!-- Logo de la Compañía -->
+                {{--        <x-application-logo class="block h-12 w-auto"/>--}}
+                <!-- Número de Cotización, Fecha y Periodo de Validez -->
+                <div>
+                    <div class="">
+                        <p class="text-gray-600 font-semibold">Número de Cotización:</p>
+                        <p class="text-lg text-blue-500 font-bold">{{ $consecutive }}</p>
+                    </div>
+                </div>
+                <div class="text-3xl font-bold text-center text-blue-500 uppercase">
+                    COTIZACIÓN
+                </div>
+
+                <!-- Fecha de Cotización y Validez -->
+                <div class="flex flex-col justify-start mb-12">
+                    <div class="">
+                        <p class="text-gray-600 font-semibold">Fecha de Cotización:</p>
+                        <p class="text-lg text-blue-500 font-bold">{{ \Carbon\Carbon::parse($quotation_date)->format('d/m/Y') }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 font-semibold">Validez (días):
+                            <input type="number" min="1" max="365"
+                                   class="w-16 h-8 mx-2 px-2 rounded text-lg text-blue-500 font-bold border-1 border-gray-500 bg-gray-200"
+                                   wire:model="validity_period"/>
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Detalles del proyecto -->
-            <div class="border border-gray-300 rounded-md p-4 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-8">
+                <!-- Columna izquierda -->
+                <div class="col-span-1">
+                    <!-- Información del Cliente -->
                     <div>
-                        <label for="average_energy_consumption" class="block font-semibold mb-2">Consumo promedio de
-                            energía (kWh)</label>
-                        <input
-                            type="number"
-                            id="average_energy_consumption"
-                            wire:model.live="average_energy_consumption"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        >
-                        @error('average_energy_consumption')
-                        <span class="text-red-500">{{ $message }}</span>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold" for="selectedClientId">Cliente</label>
+                            <div class="flex space-x-2 mb-4">
+                                <select id="selectedClientId"
+                                        name="selectedClientId"
+                                        wire:model="selectedClientId"
+                                        wire:change="updateCityAndRadiation"
+                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                    <option value="">Seleccionar cliente...</option>
+                                    @foreach ($clients as $client)
+                                        <option value="{{ $client->id }}">{{ $client->name }}</option>
+                                    @endforeach
+                                </select>
+                                <livewire:quotations.quotation-client-create/>
+                            </div>
+                        </div>
+                        @error('selectedClientId')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div>
-                        <label for="solar_radiation_level" class="block font-semibold mb-2">Nivel de irradiación
-                            solar</label>
-                        <input
-                            type="number"
-                            id="solar_radiation_level"
-                            wire:model="solar_radiation_level"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        >
-                        @error('solar_radiation_level')
-                        <span class="text-red-500">{{ $message }}</span>
-                        @enderror
+
+                    <!-- Costos Cotización -->
+                    <div class="">
+                        <div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold" for="subtotal">Subtotal</label>
+                                <input type="number" id="subtotal" wire:model="subtotal"
+                                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                @error('subtotal')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold" for="total">Total</label>
+                                <input type="number" id="total" wire:model="total"
+                                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                @error('total')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 
-                <div class="mt-4">
-                    <label para="roof_dimension" class="block font-semibold mb-2">Dimensión del techo (m²)</label>
-                    <input
-                        type="number"
-                        id="roof_dimension"
-                        wire:model="roof_dimension"
-                        class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    >
-                    @error('roof_dimension')
-                    <span class="text-red-500">{{ $message }}</span>
-                    @enderror
+                <!-- Columna derecha -->
+                <div class="col-span-1">
+                    <!-- Detalles de la Cotización -->
+                    <div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="">
+                                <label class="block text-gray-700 text-sm font-bold" for="energy_to_provide">Energía a
+                                    Generar
+                                    (kWh)</label>
+                                <input type="number" id="energy_to_provide" wire:model.live="energy_to_provide"
+                                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                @error('energy_to_provide')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="">
+                                <label class="block text-gray-700 text-sm font-bold" for="projectName">APU
+                                    Apropiado</label>
+                                <input type="text" id="projectName" wire:model="projectName"
+                                       class="shadow appearance-none border rounded w-full py-2 px-2 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                @error('projectName')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="">
+                                <label class="block text-gray-700 text-sm font-bold" for="solar_radiation_level">Nivel
+                                    de
+                                    irradiancia</label>
+                                <input type="number" id="solar_radiation_level" wire:model.live="solar_radiation_level"
+                                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                       readonly>
+                                @error('solar_radiation_level')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="">
+                                <label class="block text-gray-700 text-sm font-bold"
+                                       for="transformer">Transformador</label>
+                                <select id="transformer" wire:model="transformer"
+                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                    <option value="">Seleccionar transformador...</option>
+                                    <option value="Monofásico">Monofásico</option>
+                                    <option value="Trifásico">Trifásico</option>
+                                </select>
+                                @error('transformer')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="">
+                                <label class="block text-gray-700 text-sm font-bold" for="kilowatt_cost">Costo por
+                                    Kilowatt</label>
+                                <input type="number" id="kilowatt_cost" wire:model="kilowatt_cost"
+                                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                @error('kilowatt_cost')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="">
+                                <label class="block text-gray-700 text-sm font-bold" for="roof_dimension">Dimensión
+                                    Cubierta
+                                    (m²)</label>
+                                <input type="number" id="roof_dimension" wire:model="roof_dimension"
+                                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                @error('roof_dimension')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <!-- Botón de Acción -->
+
+                            <!-- Add more fields related to quotation details here -->
+                        </div>
+                    </div>
                 </div>
+
             </div>
+        </x-slot>
 
-            <!-- Otros detalles de la cotización -->
-            <div class="border border-gray-300 rounded-md p-4 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label para="internal_commissions" class="block font-semibold mb-2">Comisiones internas</label>
-                        <input
-                            type="number"
-                            id="internal_commissions"
-                            wire:model="internal_commissions"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        >
-                        @error('internal_commissions')
-                        <span class="text-red-500">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div>
-                        <label para="external_commissions" class="block font-semibold mb-2">Comisiones externas</label>
-                        <input
-                            type="number"
-                            id="external_commissions"
-                            wire:model="external_commissions"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        >
-                        @error('external_commissions')
-                        <span class="text-red-500">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div>
-                        <label para="quotation_date" class="block font-semibold mb-2">Fecha de cotización</label>
-                        <input
-                            type="date"
-                            id="quotation_date"
-                            wire:model="quotation_date"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        >
-                        @error('quotation_date')
-                        <span class="text-red-500">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
+        <x-slot name="footer">
+            <div class="flex justify-end mt-6">
+                <x-info-button wire:click="createQuotation">Cotizar
+                </x-info-button>
 
-                <div class="mt-4 grid grid-cols-1 md-grid-cols-2 gap-4">
-                    <div>
-                        <label para="validity_period" class="block font-semibold mb-2">Período de validez (días)</label>
-                        <input
-                            type="number"
-                            id="validity_period"
-                            wire:model="validity_period"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        >
-                        @error('validity_period')
-                        <span class="text-red-500">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div>
-                        <label para="margin" class="block font-semibold mb-2">Margen (opcional)</label>
-                        <input
-                            type="number"
-                            id="margin"
-                            wire:model="margin"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        >
-                        @error('margin')
-                        <span class="text-red-500">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
             </div>
-        </form>
-    </div>
-
-    <!-- Columna derecha: Detalles del Proyecto -->
-    <div class="w-1/2 pl-6">
-        @if ($this->project)
-            <div class="p-6 bg-gray-100 border rounded-lg shadow-sm">
-                <h4 class="text-2xl font-semibold text-center text-gray-800 mb-4">Detalles del Proyecto</h4>
-
-                <div class="flex flex-col space-y-4">
-                    <!-- Nombre del proyecto -->
-                    <div class="flex items-center justify-center">
-                        <div class="flex items-center space-x-6">
-                        </div>
-                        <span>{{ $project->name }}</span>
-                    </div>
-
-                    <!-- Total de mano de obra -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <i class="fas fa-people-carry text-emerald-500"></i>
-                            <span class="font-semibold ml-4">Total de mano de obra:</span>
-                        </div>
-                        <span class="text-emerald-500">${{ $project->totalLaborCost() }}</span>
-                    </div>
-
-                    <!-- Total de materiales -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-5">
-                            <i class="fas fa-box text-indigo-500"></i>
-                            <span class="font-semibold ml-4">Total de materiales:</span>
-                        </div>
-                        <span class="text-indigo-500">${{ $project->totalMaterialCost() }}</span>
-                    </div>
-
-                    <!-- Total de herramientas -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-5">
-                            <i class="fas fa-tools text-sky-500"></i>
-                            <span class="font-semibold ml-4">Total de herramientas:</span>
-                        </div>
-                        <span class="text-sky-500">${{ $project->totalToolCost() }}</span>
-                    </div>
-
-                    <!-- Total de transporte -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <i class="fas fa-truck text-gray-600"></i>
-                            <span class="font-semibold ml-4">Total de transporte:</span>
-                        </div>
-                        <span class="text-gray-600">${{ $project->totalTransportCost() }}</span>
-                    </div>
-                </div>
-            </div>
-        @else
-            <div
-                class="flex flex-col items-center justify-center h-full p-6 text-gray-600 text-center bg-gray-100 border rounded-lg shadow-sm">
-                <i class="fas fa-exclamation-circle text-4xl text-gray-400 mb-4"></i>
-                <p>No hay información del proyecto para mostrar.</p>
-            </div>
-        @endif
-    </div>
+        </x-slot>
+    </x-dialog-modal>
 </div>

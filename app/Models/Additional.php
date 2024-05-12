@@ -4,14 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\HigherOrderCollectionProxy;
 
-/**
- * @property HigherOrderCollectionProxy|mixed $name
- */
-class AdditionalCost extends Model
+class Additional extends Model
 {
     use HasFactory;
 
@@ -23,7 +18,7 @@ class AdditionalCost extends Model
 
     public function projects(): BelongsToMany
     {
-        return $this->belongsToMany(project::class, 'additional_cost_project')
+        return $this->belongsToMany(project::class, 'additional_project')
             ->withPivot('quantity', 'efficiency', 'total_cost')
             ->withTimestamps();
     }

@@ -13,7 +13,7 @@
             </x-slot>
 
             <x-slot name="content">
-                <form wire:submit.prevent="createAdditionalCost" class="space-y-5 max-w-sm mx-auto">
+                <form wire:submit.prevent="createAdditional" class="space-y-5 max-w-sm mx-auto">
 
                     <!-- Campo para el nombre -->
                     <div class="mb-5">
@@ -44,7 +44,7 @@
 
             <x-slot name="footer">
                 <div class="flex justify-end">
-                    <button type="submit" wire:click="createAdditionalCost"
+                    <button type="submit" wire:click="createAdditional"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Crear
                     </button>

@@ -107,9 +107,9 @@ class PositionSelection extends Component
 
         $this->dispatch('positionSelectionUpdated', [
             'selectedPositions' => $this->selectedPositions,
-            'quantities' => $this->quantities,
-            'requiredDays' => $this->requiredDays,
-            'efficiencies' => $this->efficiencies,
+            'positionQuantities' => $this->quantities,
+            'positionRequiredDays' => $this->requiredDays,
+            'positionEfficiencies' => $this->efficiencies,
             'totalLaborCost' => $this->totalLaborCost,
         ]);
 

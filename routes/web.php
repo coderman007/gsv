@@ -13,7 +13,8 @@ use App\Livewire\Resources\Positions\PositionList;
 use App\Livewire\Resources\Transports\TransportList;
 use App\Livewire\Resources\Materials\MaterialList;
 use App\Livewire\Resources\Tools\ToolList;
-use App\Livewire\Resources\AdditionalCosts\AdditionalCostList;
+use App\Livewire\Resources\Additionals\AdditionalList;
+use App\Livewire\Resources\CommercialPolicies\CommercialPolicyList;
 use App\Livewire\Users\UserList;
 use App\Livewire\Resources\Irradiances\IrradianceEdit;
 
@@ -51,7 +52,8 @@ Route::middleware([
     Route::get('materials', MaterialList::class)->name('materials');
     Route::get('tools', ToolList::class)->name('tools');
     Route::get('transports', TransportList::class)->name('transports');
-    Route::get('additional-costs', AdditionalCostList::class)->name('additional-costs');
+    Route::get('additionals', AdditionalList::class)->name('additionals');
+    Route::get('commercial-policies', CommercialPolicyList::class)->name('commercial-policies');
     Route::get('layouts', LayoutList::class)->name('layouts');
     Route::get('irradiances', IrradianceEdit::class)->name('irradiances');
 });
