@@ -4,7 +4,7 @@
         <span
             class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
         <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease"><i
-                class="fa fa-solid fa-plus text-xl"></i> Crear Material</span>
+                class="fa fa-solid fa-plus text-xl"></i> Nuevo Material</span>
     </button>
 
     <x-dialog-modal maxWidth="3xl" wire:model="openCreate">
@@ -52,7 +52,7 @@
                                 class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
                             <option value="">Seleccione una categoría</option>
                             @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                <option value="{{ $category->id }}" wire:key="category_">{{ $category->name }}</option>
                             @endforeach
                         </select>
                         <x-input-error for="selectedCategory"/>

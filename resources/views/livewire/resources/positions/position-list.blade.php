@@ -1,9 +1,10 @@
 <div class="container mx-auto mt-8">
+    @if($this->positions->count() > 0)
     <section class="flex justify-between w-full mx-4">
 
         {{-- Barra de búsqueda --}}
         <div class="flex justify-start w-1/3">
-            <x-input type="text" name="search" wire:model.live="search"
+            <x-input type="text" name="search" wire:model.lazy="search"
                      class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
                      placeholder="Buscar..."/>
         </div>
@@ -21,7 +22,6 @@
         </div>
     </section>
 
-    @if($this->positions->count() > 0)
         {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
             Resultados
@@ -102,7 +102,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700">
                 @forelse ($this->positions as $position)
-                    <tr wire:key="position-{{ $position->id }}"
+                    <tr wire:key="position-list-{{ $position->id }}"
                         class="text-center bg-white border-b text-md dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <th scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -119,7 +119,6 @@
                                                                             :key="time() . $position->id"/>
                                 <livewire:resources.positions.position-edit :positionId="$position->id"
                                                                             :key="time() . $position->id"/>
-
                                 <livewire:resources.positions.position-delete :position="$position"
                                                                               :key="time() . $position->id"/>
                             </div>
@@ -140,17 +139,21 @@
             </div>
         </div>
     @else
-        <!-- Mensaje de no hay Posiciones -->
-        <h1 class="my-64 text-5xl text-center dark:text-gray-200">
+        <div class="flex justify-end m-4 p-4">
+            <livewire:resources.positions.position-create/>
+        </div>
+
+        <!-- Mensaje de no hay posiciones -->
+        <h2 class="my-32 text-5xl text-center dark:text-gray-200">
             <span class="mt-4"> No hay registros. </span>
-        </h1>
+        </h2>
 
         <div class="flex justify-center w-full h-auto">
-            <livewire:resources.positions.position-create/>
-            <button
-                class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
-                <a href="{{ route('positions') }}">Volver</a>
-            </button>
+            <a href="{{ route('positions') }}">
+                <x-gray-button>
+                    Volver
+                </x-gray-button>
+            </a>
         </div>
     @endif
 

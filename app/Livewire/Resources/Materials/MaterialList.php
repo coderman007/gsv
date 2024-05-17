@@ -11,6 +11,9 @@ use Livewire\Attributes\On;
 use App\Models\Material;
 use Livewire\WithPagination;
 
+/**
+ * @property array|LengthAwarePaginator|_IH_Material_C|mixed|null $materials
+ */
 class MaterialList extends Component
 {
     use WithPagination;

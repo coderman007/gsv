@@ -1,4 +1,5 @@
 <div class="container mx-auto mt-8">
+    @if ($this->quotations->count() > 0)
     <section class="flex justify-between w-full mx-4">
 
         {{-- Barra de búsqueda --}}
@@ -21,7 +22,6 @@
         </div>
     </section>
 
-    @if ($this->quotations->count() > 0)
         {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
             Resultados
@@ -143,17 +143,22 @@
             </div>
         </div>
     @else
+
+        <div class="flex justify-end m-4 p-4">
+            <livewire:quotations.quotation-create/>
+        </div>
+
         <!-- Mensaje de no hay Cotizaciones -->
-        <h1 class="my-64 text-5xl text-center dark:text-gray-200">
+        <h2 class="my-32 text-5xl text-center dark:text-gray-200">
             <span class="mt-4"> No hay registros. </span>
-        </h1>
+        </h2>
 
         <div class="flex justify-center w-full h-auto">
-            <livewire:resources.quotations.quotation-create/>
-            <button
-                class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
-                <a href="{{ route('quotations') }}">Volver</a>
-            </button>
+            <a href="{{ route('quotations') }}">
+                <x-gray-button>
+                    Volver
+                </x-gray-button>
+            </a>
         </div>
     @endif
 

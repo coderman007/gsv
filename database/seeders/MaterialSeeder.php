@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Material;
 
@@ -13,7 +12,7 @@ class MaterialSeeder extends Seeder
         $materialsData = [
             [
                 'material_category_id' => 1,
-                'reference' => 'varilla roscada zincada de 3/8 x 3 mtrs',
+                'reference' => 'varilla roscada zincada de 3/8 x 3 mts',
                 'description' => 'Varilla roscada zincada de 3/8 x 3 metros',
                 'unit_price' => 9838.00,
             ],

@@ -5,7 +5,7 @@
         <span
             class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
         <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease">
-            <i class="fa fa-solid fa-plus text-xl"></i> Agregar
+            <i class="fa fa-solid fa-plus text-xl"></i> Nuevo Transporte
         </span>
     </button>
 

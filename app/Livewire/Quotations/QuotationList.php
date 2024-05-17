@@ -11,6 +11,9 @@ use Livewire\Attributes\On;
 use App\Models\Quotation;
 use Livewire\WithPagination;
 
+/**
+ * @property array|LengthAwarePaginator|_IH_Quotation_C|mixed|null $quotations
+ */
 class QuotationList extends Component
 {
     use WithPagination;

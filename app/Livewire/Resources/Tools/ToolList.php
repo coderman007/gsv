@@ -11,6 +11,9 @@ use Livewire\Attributes\On;
 use App\Models\Tool;
 use Livewire\WithPagination;
 
+/**
+ * @property array|LengthAwarePaginator|_IH_Tool_C|mixed|null $tools
+ */
 class ToolList extends Component
 {
     use WithPagination;

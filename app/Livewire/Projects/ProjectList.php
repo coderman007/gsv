@@ -2,16 +2,21 @@
 
 namespace App\Livewire\Projects;
 
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Project;
+use App\Models\ProjectCategory;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 use LaravelIdea\Helper\App\Models\_IH_Project_C;
-use Livewire\Component;
-use App\Models\Project;
-use App\Models\ProjectCategory; // Agrega esta línea
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
+use Livewire\Component;
 use Livewire\WithPagination;
 
+// Agrega esta línea
+
+/**
+ * @property array|LengthAwarePaginator|\Illuminate\Pagination\LengthAwarePaginator|_IH_Project_C|mixed|null $projects
+ */
 class ProjectList extends Component
 {
     use WithPagination;
@@ -37,40 +42,35 @@ class ProjectList extends Component
         }
     }
 
-    public function render(): View
+    #[Computed]
+    public function projects(): LengthAwarePaginator|array|\Illuminate\Pagination\LengthAwarePaginator|_IH_Project_C
     {
         $query = Project::query();
 
         // Filtrar por categoría si se ha seleccionado una
         if ($this->selectedCategory) {
-            $query->whereHas('projectCategory', function ($query) {
-                $query->where('id', $this->selectedCategory);
-            });
+            $query->where('project_category_id', $this->selectedCategory);
         }
 
-        $projects = $query->where('id', 'like', '%' . $this->search . '%')
+        return $query->where(function ($query) {
+            $query->where('id', 'like', '%' . $this->search . '%')
+                ->orWhere('zone', 'like', '%' . $this->search . '%')
+                ->orWhere('status', 'like', '%' . $this->search . '%');
+        })
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
+    }
 
-        $categories = ProjectCategory::all(); // Obtener todas las categorías
+    public function render(): View
+    {
+        $categories = ProjectCategory::all();
 
         return view('livewire.projects.project-list', [
-            'projects' => $projects,
-            'categories' => $categories, // Pasar las categorías a la vista
+            'projects' => $this->projects(),
+            'categories' => $categories,
         ]);
     }
 
-    #[Computed]
-    public function projects(): array|LengthAwarePaginator|_IH_Project_C
-    {
-        return
-            Project::where('id', 'like', '%' . $this->search . '%')
-                ->orWhere('kilowatts_to_provide', 'like', '%' . $this->search . '%')
-                ->orWhere('zone', 'like', '%' . $this->search . '%')
-                ->orWhere('status', 'like', '%' . $this->search . '%')
-                ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perSearch);
-    }
 
     #[On('createdProject')]
     public function createdProject($project = null)

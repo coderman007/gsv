@@ -4,7 +4,7 @@
 
             {{-- Barra de búsqueda --}}
             <div class="flex justify-start w-1/3">
-                <x-input type="text" name="search" wire:model.live="search"
+                <x-input type="text" name="search" wire:model.lazy="search"
                          class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
                          placeholder="Buscar..."/>
             </div>
@@ -136,9 +136,14 @@
                         <td class="px-6 py-4 dark:text-lg">{{ $client->email }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $client->address }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $client->phone }}</td>
-                        <td
-                            class="px-6 py-4 dark:text-lg {{ $client->status === 'Activo' ? 'text-green-600' : 'text-red-500' }}">
-                            {{ $client->status }}
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                            @if ($client->status == 'Activo')
+                                <span class="bg-green-100 px-2 py-1 rounded-md text-green-500">{{ $client->status
+                                        }}</span>
+                            @else
+                                <span class="bg-red-200 px-2 py-1 rounded-md text-red-500">{{ $client->status
+                                        }}</span>
+                            @endif
                         </td>
 
                         <td class="flex justify-around py-4 pl-2 pr-8">
@@ -173,19 +178,21 @@
             </div>
         </div>
     @else
-        <!-- Mensaje de no hay Clientes -->
         <div class="flex justify-end m-4 p-4">
             <livewire:clients.client-create/>
         </div>
-        <h1 class="my-48 text-5xl text-center dark:text-gray-200">
+
+        <!-- Mensaje de no hay clientes -->
+        <h2 class="my-32 text-5xl text-center dark:text-gray-200">
             <span class="mt-4"> No hay registros. </span>
-        </h1>
+        </h2>
 
         <div class="flex justify-center w-full h-auto">
-            <button
-                class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
-                <a href="{{ route('clients') }}">Volver</a>
-            </button>
+            <a href="{{ route('clients') }}">
+                <x-gray-button>
+                    Volver
+                </x-gray-button>
+            </a>
         </div>
     @endif
 

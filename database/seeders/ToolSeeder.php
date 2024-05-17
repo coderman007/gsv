@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 class ToolSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $toolsData = [
             [

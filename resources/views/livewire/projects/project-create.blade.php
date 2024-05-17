@@ -72,12 +72,12 @@
 
                     </div>
                     <!-- Campos para políticas comerciales -->
-                    {{--<h3 class="text-center text-lg font-semibold text-blue-500 mb-4">Políticas Comerciales</h3>
+                    <h3 class="text-center text-lg font-semibold text-blue-500 mb-4">Políticas Comerciales</h3>
                     <div class="grid grid-cols-2 gap-4">
 
                         <div class="col-span-1">
                             <label for="internalCommissions" class="text-md font-semibold text-gray-600 py-2">Comisiones Internas (%)</label>
-                            <input wire:model.live="internalCommissions" type="number" step="1" min="0" max="100"
+                            <input wire:model="internalCommissions" readonly type="number" step="1" min="0" max="100"
                                    id="internalCommissions" name="internalCommissions"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             @error('internalCommissions')
@@ -88,7 +88,7 @@
                         <div class="col-span-1">
                             <label for="externalCommissions" class="text-md font-semibold text-gray-600 py-2">Comisiones
                                 Externas (%)</label>
-                            <input wire:model.live="externalCommissions" type="number" step="1" min="0" max="100"
+                            <input wire:model="externalCommissions" readonly type="number" step="1" min="0" max="100"
                                    id="externalCommissions" name="externalCommissions"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             @error('externalCommissions')
@@ -98,7 +98,7 @@
 
                         <div class="col-span-1">
                             <label for="margin" class="text-md font-semibold text-gray-600 py-2">Margen (%)</label>
-                            <input wire:model.live="margin" type="number" step="1" min="0" max="100" id="margin"
+                            <input wire:model="margin" readonly type="number" step="1" min="0" max="100" id="margin"
                                    name="margin"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             @error('margin')
@@ -108,14 +108,14 @@
 
                         <div class="col-span-1">
                             <label for="discount" class="text-md font-semibold text-gray-600 py-2">Descuento (%)</label>
-                            <input wire:model.live="discount" type="number" step="1" min="0" max="100" id="discount"
+                            <input wire:model="discount" readonly type="number" step="1" min="0" max="100" id="discount"
                                    name="discount"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
                             @error('discount')
                             <span class="text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
-                    </div>--}}
+                    </div>
                     <div class="flex bg-blue-100 w-full mt-10 px-4 py-2 items-center justify-between rounded-md">
                         <div class="text-blue-500 text-2xl">Costo de Venta</div>
                         <div class="text-center font-semibold text-lg flex items-center justify-center">

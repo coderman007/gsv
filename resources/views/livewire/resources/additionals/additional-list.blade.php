@@ -1,8 +1,9 @@
 <div class="container mx-auto mt-8">
+    @if ($this->additionals->count() > 0)
     <section class="flex justify-between w-full mx-4">
         {{-- Barra de búsqueda --}}
         <div class="flex justify-start w-1/3">
-            <x-input type="text" name="search" wire:model.live="search"
+            <x-input type="text" name="search" wire:model.lazy="search"
                      class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
                      placeholder="Buscar..."/>
         </div>
@@ -20,7 +21,6 @@
         </div>
     </section>
 
-    @if ($this->additionals->count() > 0)
         {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
             Resultados
@@ -134,17 +134,22 @@
             </div>
         </div>
     @else
-        <!-- Mensaje de no hay Materiales -->
-        <h1 class="my-64 text-5xl text-center dark:text-gray-200">
+
+        <div class="flex justify-end m-4 p-4">
+            <livewire:resources.additionals.additional-create/>
+        </div>
+
+        <!-- Mensaje de no hay adicionales -->
+        <h2 class="my-32 text-5xl text-center dark:text-gray-200">
             <span class="mt-4"> No hay registros. </span>
-        </h1>
+        </h2>
 
         <div class="flex justify-center w-full h-auto">
-            <livewire:resources.additionals.additional-create/>
-            <button
-                class="px-8 py-3 mx-auto text-2xl text-blue-500 bg-blue-200 border-2 border-blue-400 rounded-md shadow-md hover:border-blue-500 hover:shadow-blue-400 hover:text-gray-100 hover:bg-blue-300">
-                <a href="{{ route('additionals') }}">Volver</a>
-            </button>
+            <a href="{{ route('additionals') }}">
+                <x-gray-button>
+                    Volver
+                </x-gray-button>
+            </a>
         </div>
     @endif
 

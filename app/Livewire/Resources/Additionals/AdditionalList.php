@@ -11,6 +11,9 @@ use Livewire\Attributes\On;
 use App\Models\Additional;
 use Livewire\WithPagination;
 
+/**
+ * @property array|LengthAwarePaginator|_IH_Material_C|mixed|null $additionals
+ */
 class AdditionalList extends Component
 {
     use WithPagination;

@@ -2,13 +2,15 @@
 
 namespace App\Livewire\Users;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
+use LaravelIdea\Helper\App\Models\_IH_Position_C;
+use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
-use Livewire\Component;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
-use Illuminate\View\View;
 
 class UserList extends Component
 {
@@ -16,7 +18,7 @@ class UserList extends Component
 
     public $search = '';
     public $sortBy = 'id';
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
     public $perSearch = 10;
 
     public function updatingSearch(): void
@@ -32,12 +34,10 @@ class UserList extends Component
             $this->sortBy = $sort;
             $this->sortDirection = "asc";
         }
-
-        $this->resetPage();
     }
 
     #[Computed]
-    public function users()
+    public function users(): LengthAwarePaginator|_IH_Position_C|array
     {
         return User::where('users.id', 'like', '%' . $this->search . '%')
             ->orWhere('users.name', 'like', '%' . $this->search . '%')
@@ -45,7 +45,7 @@ class UserList extends Component
             ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
             ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
             ->select('users.*', DB::raw('IFNULL(roles.name, "Sin Rol") as role_name'))
-            ->orderBy('role_name', $this->sortDirection)
+            ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
     }
 

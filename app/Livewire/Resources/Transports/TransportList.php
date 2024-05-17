@@ -11,6 +11,9 @@ use Livewire\Attributes\On;
 use App\Models\Transport;
 use Livewire\WithPagination;
 
+/**
+ * @property array|LengthAwarePaginator|_IH_Transport_C|mixed|null $transports
+ */
 class TransportList extends Component
 {
     use WithPagination;

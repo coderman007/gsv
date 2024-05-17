@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 class PositionSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $positionsData = [
             [

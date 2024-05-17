@@ -2,13 +2,18 @@
 
 namespace App\Livewire\Clients;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
+use LaravelIdea\Helper\App\Models\_IH_Client_C;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use App\Models\Client;
 use Livewire\WithPagination;
 
+/**
+ * @property Client[]|LengthAwarePaginator|_IH_Client_C|mixed|null $clients
+ */
 class ClientList extends Component
 {
     use WithPagination;
