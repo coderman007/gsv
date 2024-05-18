@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\PositionUpdated;
+use App\Events\ProofUpdated;
+use App\Listeners\UpdateAPUsOnPositionChange;
+use App\Listeners\UpdateProofValue;
 use App\Models\Project;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -18,6 +22,12 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        PositionUpdated::class => [
+            UpdateAPUsOnPositionChange::class,
+        ],
+        ProofUpdated::class => [
+            UpdateProofValue::class,
         ],
     ];
 

@@ -2,10 +2,10 @@
     @if ($this->projects->count() > 0)
         <section class="flex justify-between w-full mx-4">
             <div class="flex justify-start w-1/3">
-                <div class="flex flex-col">
+                <div class="flex flex-col w-full">
                     {{-- Barra de búsqueda --}}
                     <x-input type="text" name="search" wire:model.lazy="search"
-                             class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
+                             class="bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
                              placeholder="Buscar..."/>
 
                     {{-- Selector de categorías --}}
@@ -94,7 +94,7 @@
                     </th>
 
                     <th scope="col" class="px-6 py-3">
-                        Estado
+                        Precio de Venta
                     </th>
 
                     <th scope="col" class="px-6 py-3">
@@ -110,11 +110,9 @@
                         </th>
 
                         <td class="px-6 py-4 dark:text-lg">{{ $project->projectCategory->name ?? 'N/A' }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $project->kilowatts_to_provide . " Kwh" }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $project->kilowatts_to_provide . " kWp" }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->zone }}</td>
-                        <td class="px-6 py-4 dark:text-lg {{ $project->status === 'Activo' ? 'text-green-600' : 'text-red-500' }}">
-                            {{ $project->status }}
-                        </td>
+                        <td class="px-6 py-4 dark:text-lg"> {{ $project->sale_value }}</td>
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">

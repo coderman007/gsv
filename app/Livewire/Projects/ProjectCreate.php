@@ -55,7 +55,6 @@ class ProjectCreate extends Component
     public $selectedToolQuantity;
     public $selectedToolRequiredDays;
     public $selectedToolEfficiencies;
-
     public $selectedTransportQuantity;
     public $selectedTransportRequiredDays;
     public $selectedTransportEfficiencies;
@@ -95,7 +94,6 @@ class ProjectCreate extends Component
         $this->selectedTransportQuantity = 0;
         $this->selectedTransportRequiredDays = 0;
         $this->selectedAdditionalQuantity = 0;
-
     }
 
     public function updated($name, $value): void
@@ -128,9 +126,7 @@ class ProjectCreate extends Component
             $this->totalTransportCost +
             $this->totalAdditionalCost;
 
-//        dd($totalResourceCost);
-//         Aplicar políticas comerciales
-        // Obtener valores para las políticas comerciales
+        // Aplicar políticas comerciales
         $internalCommissions = $totalResourceCost * ($this->internalCommissions / 100);
         $externalCommissions = $totalResourceCost * ($this->externalCommissions / 100);
         $margin = $totalResourceCost * ($this->margin / 100);
@@ -139,13 +135,14 @@ class ProjectCreate extends Component
         // Calcular el costo total del proyecto, incluyendo políticas comerciales
         $this->totalProjectCost = $totalResourceCost + $internalCommissions + $externalCommissions + $margin - $discount;
     }
+
     // Actualizar área necesaria cuando se modifica la potencia
     public function updatedKilowattsToProvide($value): void
     {
         // Verificar que el valor es numérico y mayor o igual a cero
         if (is_numeric($value) && $value >= 0) {
             // Calcular el área necesaria si el valor es válido
-            $this->required_area = number_format(($value / (0.55 * 2.6 * 1.1)),  2);
+            $this->required_area = number_format(($value / 0.55 * (2.6 * 1.1)),  2);
 
             // Limpiar el error si existe
             $this->resetErrorBag('kilowatts_to_provide'); // Elimina el mensaje de error
@@ -163,7 +160,6 @@ class ProjectCreate extends Component
         // Obtiene el costo total de la mano de obra
         return $this->totalLaborCost * 0.05;
     }
-
 
     // Method to save the project
     public function saveProject(): void
@@ -194,7 +190,6 @@ class ProjectCreate extends Component
             'zone' => $this->zone,
             'kilowatts_to_provide' => $this->kilowatts_to_provide,
             'standard_tool_cost' => $standardToolCost,
-            'required_area' => $this->required_area,
             'total' => $totalCost,
             'sale_value' => $saleValue,
         ]);
@@ -419,5 +414,4 @@ class ProjectCreate extends Component
         ]);
     }
 }
-
 

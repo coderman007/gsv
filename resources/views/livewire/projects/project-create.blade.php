@@ -21,7 +21,7 @@
                         <div class="col-span-1"><label for="project_category"
                                                        class="text-md font-semibold text-gray-600 py-2">Categoría</label>
                             <select wire:model.live="selectedCategory" id="project_category" name="project_category"
-                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md text-sm">
                                 @if ($categories)
                                     <option value="">Seleccionar Categoría</option>
                                     @foreach ($categories as $id => $name)
@@ -72,7 +72,7 @@
 
                     </div>
                     <!-- Campos para políticas comerciales -->
-                    <h3 class="text-center text-lg font-semibold text-blue-500 mb-4">Políticas Comerciales</h3>
+                    {{--<h3 class="text-center text-lg font-semibold text-blue-500 mb-4">Políticas Comerciales</h3>
                     <div class="grid grid-cols-2 gap-4">
 
                         <div class="col-span-1">
@@ -115,7 +115,7 @@
                             <span class="text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
-                    </div>
+                    </div>--}}
                     <div class="flex bg-blue-100 w-full mt-10 px-4 py-2 items-center justify-between rounded-md">
                         <div class="text-blue-500 text-2xl">Costo de Venta</div>
                         <div class="text-center font-semibold text-lg flex items-center justify-center">

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\PositionUpdated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,8 +20,13 @@ class Position extends Model
         'real_daily_cost',
     ];
 
+    protected $dispatchesEvents = [
+        'updated' => PositionUpdated::class,
+    ];
+
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class)->withPivot('quantity', 'required_days', 'efficiency', 'total_cost')->withTimestamps();
     }
 }
+

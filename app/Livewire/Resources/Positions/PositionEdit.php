@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Resources\Positions;
 
+use App\Events\PositionUpdated;
 use App\Models\Position;
 use Livewire\Component;
 
@@ -46,6 +47,8 @@ class PositionEdit extends Component
         ]);
 
         $this->openEdit = false;
+        // Disparar el evento
+        event(new PositionUpdated($this->position));
         $this->dispatch('updatedPosition', $this->position);
         $this->dispatch('updatedPositionNotification');
     }

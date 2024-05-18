@@ -13,71 +13,160 @@
         </div>
     </a>
 
-    <x-dialog-modal maxWidth="3xl" wire:model="openEdit">
-        <div class="w-full mx-auto bg-white shadow-md p-6 rounded-md">
-            <x-slot name="title">
-                <h2 class="font-semibold text-2xl text-center pt-4 text-blue-500">Editar Proyecto</h2>
-            </x-slot>
+    <!-- Modal para editar un proyecto -->
+    <x-dialog-modal maxWidth="7xl" wire:model.live="openEdit">
+        <x-slot name="title">
+            <h2 class="text-2xl font-semibold text-center text-blue-400 dark:text-white">Editar APU</h2>
+        </x-slot>
+        <x-slot name="content">
+            <div class="grid grid-cols-12 gap-4">
 
-            <x-slot name="content">
-                <form wire:submit.prevent="updateProject" class="flex flex-col items-center mt-6 p-4 bg-gray-50 rounded-lg">
-                    <!-- Dropdown para seleccionar la categoría -->
-                    <div class="space-y-2 w-3/4 text-xs">
-                        <label for="selectedCategory" class="block text-gray-700">Categoría:</label>
-                        <select wire:model="selectedCategory" id="selectedCategory"
-                                class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
-                            <option value="">Seleccione una categoría</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                        <x-input-error for="selectedCategory"/>
-                    </div>
+                <div class="col-span-5 bg-white p-4 rounded-lg">
+                    <h2 class="text-center text-lg font-bold mb-4 text-blue-500">Datos</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-1"><label for="project_category"
+                                                       class="text-md font-semibold text-gray-600 py-2">Categoría</label>
+                            <select wire:model.live="selectedCategory" id="project_category" name="project_category"
+                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md text-sm">
+                                @if ($categories)
+                                    <option value="">Seleccionar Categoría</option>
+                                    @foreach ($categories as $id => $name)
+                                        <option value="{{ $id }}">{{ $name }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                            @error('selectedCategory')
+                            <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                    <!-- Campo para ingresar el nombre del proyecto -->
-                    <div class="space-y-2 w-3/4 text-xs">
-                        <label for="name" class="block text-gray-700">Nombre:</label>
-                        <input wire:model="name" type="text" id="name"
-                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"/>
-                        <x-input-error for="name"/>
-                    </div>
+                        <div class="col-span-1"><label for="zone"
+                                                       class="text-md font-semibold text-gray-600 py-2">Zona</label>
+                            <select wire:model.live="zone" id="zone" name="zone"
+                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                                <option value="">Seleccionar Zona</option>
+                                @foreach ($zoneOptions as $option)
+                                    <option value="{{ $option }}">{{ $option }}</option>
+                                @endforeach
+                            </select>
+                            @error('zone')
+                            <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                    <!-- Campo para ingresar la descripción del proyecto -->
-                    <div class="space-y-2 w-3/4 text-xs">
-                        <label for="zone" class="block text-gray-700">Zona:</label>
-                        <textarea wire:model="zone" id="zone"
-                                  class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-30 px-4 my-2"></textarea>
-                        <x-input-error for="zone"/>
-                    </div>
+                        <div class="col-span-1">
+                            <label for="kilowatts_to_provide" class="text-md font-semibold text-gray-600 py-2">Potencia
+                                (kWp)
+                            </label>
+                            <input wire:model.live="kilowatts_to_provide" type="number" id="kilowatts_to_provide"
+                                   name="kilowatts_to_provide"
+                                   class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                            @error('kilowatts_to_provide')
+                            <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="required_area" class="text-md font-semibold text-gray-600 py-2">Área Mínima
+                                Necesaria
+                                (m²)</label>
+                            <input wire:model.live="required_area" readonly id="required_area"
+                                   class="mt-1 p-2 block w-full border-gray-300 rounded-md">
+                            @error('required_area')
+                            <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                    <!-- Campo para ingresar los kilovatios a proporcionar -->
-                    <div class="space-y-2 w-3/4 text-xs">
-                        <label for="kilowattsToProvide" class="block text-gray-700">Kilovatios a Proporcionar:</label>
-                        <input wire:model="kilowattsToProvide" type="number" id="kilowattsToProvide"
-                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"/>
-                        <x-input-error for="kilowattsToProvide"/>
                     </div>
+                    <div class="flex bg-blue-100 w-full mt-10 px-4 py-2 items-center justify-between rounded-md">
+                        <div class="text-blue-500 text-2xl">Costo de Venta</div>
+                        <div class="text-center font-semibold text-lg flex items-center justify-center">
+                            <span class="text-gray-500 sm:text-sm"><i class="fas fa-coins ml-1 text-yellow-500"></i> COP</span>
 
-                    <!-- Campo para ingresar el estado del proyecto -->
-                    <div class="space-y-2 w-3/4 text-xs">
-                        <select wire:model="status" name="status"
-                                class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-4"
-                                required="required">
-                            <option value="Activo">Activo</option>
-                            <option value="Inactivo">Inactivo</option>
-                        </select>
-                        <x-input-error for="status"/>
+                            <span class="p-3 rounded-lg text-2xl font-bold">
+                                ${{ number_format($totalProjectCost, 2) }}
+                            </span>
+                        </div>
                     </div>
-                </form>
-            </x-slot>
-            <x-slot name="footer">
-                <div class="flex justify-end">
-                    <button type="submit" wire:click="updateProject"
-                            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
-                        Actualizar
-                    </button>
                 </div>
-            </x-slot>
-        </div>
+
+                <!-- Columna derecha -->
+                <div class="col-span-7 bg-white p-4 rounded-lg">
+                    <h2 class="text-center text-lg font-bold mb-4 text-blue-500">Recursos</h2>
+
+                    <div class="flex justify-center space-x-4">
+                        <div class="flex flex-col justify-center">
+                            <button wire:click="showLaborForm"
+                                    class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-full"
+                                    type="button">Mano de obra
+                            </button>
+                            <div
+                                class="text-teal-500 font-bold text-center ">{{ number_format($totalLaborCost, 2) }}</div>
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <button wire:click="showMaterialsForm"
+                                    class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full"
+                                    type="button">Materiales
+                            </button>
+                            <div
+                                class="text-indigo-500 font-bold text-center ">{{ number_format($totalMaterialCost, 2) }}</div>
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <button wire:click="showToolsForm"
+                                    class="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full"
+                                    type="button">Herramientas
+                            </button>
+                            <div
+                                class="text-sky-500 font-bold text-center ">{{ number_format($totalToolCost, 2) }}</div>
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <button wire:click="showTransportForm"
+                                    class="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-full"
+                                    type="button">Transporte
+                            </button>
+                            <div
+                                class="text-slate-500 font-bold text-center ">{{ number_format($totalTransportCost, 2) }}</div>
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <button wire:click="showAdditionalForm"
+                                    class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full"
+                                    type="button">Adicionales
+                            </button>
+                            <div
+                                class="text-yellow-500 font-bold text-center">{{ number_format($totalAdditionalCost, 2) }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <!-- Mostrar componente Livewire correspondiente -->
+                        @if ($showResource === 'labor')
+                            <livewire:projects.position-selection/>
+                        @elseif ($showResource === 'materials')
+                            <livewire:projects.material-selection/>
+                        @elseif ($showResource === 'tools')
+                            <livewire:projects.tool-selection/>
+                        @elseif ($showResource === 'transport')
+                            <livewire:projects.transport-selection/>
+                        @elseif ($showResource === 'additionals')
+                            <livewire:projects.additional-selection/>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+        </x-slot>
+        <x-slot name="footer">
+            <div class="mt-4 text-center flex justify-center space-x-2">
+                <!-- Botón para cancelar/ cerrar el modal -->
+                <x-button-exit wire:click="$set('openEdit', false)">
+                    Cancelar
+                </x-button-exit>
+
+                <!-- Botón para guardar cambios en el proyecto -->
+                <x-button-edit wire:click="updateProject" wire:loading.attr="disabled" wire:target="updateProject">
+                    Actualizar
+                </x-button-edit>
+            </div>
+        </x-slot>
     </x-dialog-modal>
 </div>
+
