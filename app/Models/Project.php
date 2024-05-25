@@ -36,11 +36,11 @@ class Project extends Model
         'sale_value' => 'decimal:2',
         'power_output' => 'decimal:2',
         'hand_tool_cost' => 'decimal:2',
-        'total_labor_cost'  => 'decimal:2',
-        'total_tool_cost'  => 'decimal:2',
-        'total_material_cost'  => 'decimal:2',
-        'total_transport_cost'  => 'decimal:2',
-        'total_additional_cost'  => 'decimal:2'
+        'total_labor_cost' => 'decimal:2',
+        'total_tool_cost' => 'decimal:2',
+        'total_material_cost' => 'decimal:2',
+        'total_transport_cost' => 'decimal:2',
+        'total_additional_cost' => 'decimal:2'
     ];
 
     protected array $dates = [
@@ -91,5 +91,67 @@ class Project extends Model
     public function quotations(): HasMany
     {
         return $this->hasMany(Quotation::class);
+    }
+
+    public function updateTotalCost(): void
+    {
+        // Calcular el costo total de cada recurso
+        $totalLaborCost = $this->positions->sum(function ($position) {
+            $pivotData = $position->pivot;
+            return $position->real_daily_cost * $pivotData->quantity * $pivotData->required_days * $pivotData->efficiency;
+        });
+
+        $totalMaterialCost = $this->materials->sum(function ($material) {
+            $pivotData = $material->pivot;
+            return $material->unit_price * $pivotData->quantity * $pivotData->efficiency;
+        });
+
+        $totalToolCost = $this->tools->sum(function ($tool) {
+            $pivotData = $tool->pivot;
+            return $tool->unit_price_per_day * $pivotData->quantity * $pivotData->required_days * $pivotData->efficiency;
+        });
+
+        $totalTransportCost = $this->transports->sum(function ($transport) {
+            $pivotData = $transport->pivot;
+            return $transport->cost_per_day * $pivotData->quantity * $pivotData->required_days * $pivotData->efficiency;
+        });
+
+        $totalAdditionalCost = $this->additionals->sum(function ($additional) {
+            $pivotData = $additional->pivot;
+            return $additional->unit_price * $pivotData->quantity * $pivotData->efficiency;
+        });
+
+        // Calcular el costo de las herramientas de mano (5% del total de la mano de obra)
+        $handToolCost = $totalLaborCost * 0.05;
+
+        // Calcular el valor bruto incluyendo el costo de la herramienta de mano
+        $rawValue = $totalLaborCost + $totalMaterialCost + $totalToolCost + $totalTransportCost + $totalAdditionalCost + $handToolCost;
+
+        // Obtener valores para las políticas comerciales
+        $internalCommissions = CommercialPolicy::where('name', 'like', 'internal_commissions')->first()?->percentage ?? 0;
+        $externalCommissions = CommercialPolicy::where('name', 'like', 'external_commissions')->first()?->percentage ?? 0;
+        $margin = CommercialPolicy::where('name', 'like', 'margin')->first()?->percentage ?? 0;
+        $discount = CommercialPolicy::where('name', 'like', 'discount')->first()?->percentage ?? 0;
+
+        // Calcular las políticas comerciales
+        $internalCommissionsValue = $rawValue * ($internalCommissions / 100);
+        $externalCommissionsValue = $rawValue * ($externalCommissions / 100);
+        $marginValue = $rawValue * ($margin / 100);
+        $discountValue = $rawValue * ($discount / 100);
+
+        // Calcular el valor de venta
+        $saleValue = $rawValue + $internalCommissionsValue + $externalCommissionsValue + $marginValue - $discountValue;
+
+        // Actualizar el proyecto con los nuevos valores
+        $this->update([
+            'hand_tool_cost' => $handToolCost,
+            'total_labor_cost' => $totalLaborCost,
+            'total_material_cost' => $totalMaterialCost,
+            'total_tool_cost' => $totalToolCost,
+            'total_transport_cost' => $totalTransportCost,
+            'total_additional_cost' => $totalAdditionalCost,
+            'raw_value' => $rawValue,
+            'sale_value' => $saleValue,
+        ]);
     }
 }

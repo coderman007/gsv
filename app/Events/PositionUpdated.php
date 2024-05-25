@@ -3,9 +3,12 @@
 namespace App\Events;
 
 use App\Models\Position;
+use Illuminate\Queue\SerializesModels;
 
 class PositionUpdated
 {
+    use SerializesModels;
+
     public Position $position;
 
     /**

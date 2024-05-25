@@ -2,9 +2,14 @@
 
 namespace App\Livewire\Projects;
 
+use App\Models\Additional;
 use App\Models\CommercialPolicy;
+use App\Models\Material;
+use App\Models\Position;
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use App\Models\Tool;
+use App\Models\Transport;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -106,7 +111,6 @@ class ProjectCreate extends Component
         $this->selectedTransportRequiredDays = 0;
         $this->selectedAdditionalQuantity = 0;
     }
-
     public function updated($name, $value): void
     {
         if (in_array($name, [
@@ -194,7 +198,6 @@ class ProjectCreate extends Component
         // Calcular el valor de venta usando las políticas comerciales
         $saleValue = $rawValue + $internalCommissions + $externalCommissions + $margin - $discount;
 
-
         // Crear el proyecto con el valor de venta calculado
         $project = Project::create([
             'project_category_id' => $this->selectedCategory,
@@ -207,49 +210,82 @@ class ProjectCreate extends Component
 
         // Associate positions and update costs in the 'position_project' pivot table
         foreach ($this->selectedPositions as $positionId) {
+            $quantity = $this->selectedPositionQuantity[$positionId];
+            $requiredDays = $this->selectedPositionRequiredDays[$positionId];
+            $efficiency = $this->selectedPositionEfficiencies[$positionId];
+            $position = Position::find($positionId);
+
+            $totalCost = $quantity * $requiredDays * $efficiency * $position->real_daily_cost;
+
             $project->positions()->attach($positionId, [
-                'quantity' => $this->selectedPositionQuantity[$positionId],
-                'required_days' => $this->selectedPositionRequiredDays[$positionId],
-                'efficiency' => $this->selectedPositionEfficiencies[$positionId],
-                'total_cost' => $this->totalLaborCost,
+                'quantity' => $quantity,
+                'required_days' => $requiredDays,
+                'efficiency' => $efficiency,
+                'total_cost' => $totalCost,
             ]);
         }
 
         // Associate materials and update costs in the 'material_project' pivot table
         foreach ($this->selectedMaterials as $materialId) {
+            $quantity = $this->selectedMaterialQuantity[$materialId];
+            $efficiency = $this->selectedMaterialEfficiencies[$materialId];
+            $material = Material::find($materialId);
+
+            $totalCost = $quantity * $efficiency * $material->unit_price;
+
             $project->materials()->attach($materialId, [
-                'quantity' => $this->selectedMaterialQuantity[$materialId],
-                'efficiency' => $this->selectedMaterialEfficiencies[$materialId],
-                'total_cost' => $this->totalMaterialCost,
+                'quantity' => $quantity,
+                'efficiency' => $efficiency,
+                'total_cost' => $totalCost,
             ]);
         }
 
         // Associate tools and update costs in the 'project_tool' pivot table
         foreach ($this->selectedTools as $toolId) {
+            $quantity = $this->selectedToolQuantity[$toolId];
+            $requiredDays = $this->selectedToolRequiredDays[$toolId];
+            $efficiency = $this->selectedToolEfficiencies[$toolId];
+            $tool = Tool::find($toolId);
+
+            $totalCost = $quantity * $requiredDays * $efficiency * $tool->unit_price_per_day;
+
             $project->tools()->attach($toolId, [
-                'quantity' => $this->selectedToolQuantity[$toolId],
-                'required_days' => $this->selectedToolRequiredDays[$toolId],
-                'efficiency' => $this->selectedToolEfficiencies[$toolId],
-                'total_cost' => $this->totalToolCost,
+                'quantity' => $quantity,
+                'required_days' => $requiredDays,
+                'efficiency' => $efficiency,
+                'total_cost' => $totalCost,
             ]);
         }
 
         // Associate transports and update costs in the 'project_transport' pivot table
         foreach ($this->selectedTransports as $transportId) {
+            $quantity = $this->selectedTransportQuantity[$transportId];
+            $requiredDays = $this->selectedTransportRequiredDays[$transportId];
+            $efficiency = $this->selectedTransportEfficiencies[$transportId];
+            $transport = Transport::find($transportId);
+
+            $totalCost = $quantity * $requiredDays * $efficiency * $transport->cost_per_day;
+
             $project->transports()->attach($transportId, [
-                'quantity' => $this->selectedTransportQuantity[$transportId],
-                'required_days' => $this->selectedTransportRequiredDays[$transportId],
-                'efficiency' => $this->selectedTransportEfficiencies[$transportId],
-                'total_cost' => $this->totalTransportCost,
+                'quantity' => $quantity,
+                'required_days' => $requiredDays,
+                'efficiency' => $efficiency,
+                'total_cost' => $totalCost,
             ]);
         }
 
         // Associate additional costs and update costs in the 'additional_cost_project' pivot table
         foreach ($this->selectedAdditionals as $additionalId) {
+            $quantity = $this->selectedAdditionalQuantity[$additionalId];
+            $efficiency = $this->selectedAdditionalEfficiencies[$additionalId];
+            $additional = Additional::find($additionalId);
+
+            $totalCost = $quantity * $efficiency * $additional->unit_price;
+
             $project->additionals()->attach($additionalId, [
-                'quantity' => $this->selectedAdditionalQuantity[$additionalId],
-                'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
-                'total_cost' => $this->totalAdditionalCost,
+                'quantity' => $quantity,
+                'efficiency' => $efficiency,
+                'total_cost' => $totalCost,
             ]);
         }
 
@@ -264,6 +300,29 @@ class ProjectCreate extends Component
 
         // TODO Se deben de refrescar las categorías de proyectos también
     }
+
+
+// Métodos adicionales para obtener el costo unitario de cada recurso
+    protected function getPositionUnitCost($positionId) {
+        // Implementar la lógica para obtener el costo unitario de una posición
+    }
+
+    protected function getMaterialUnitCost($materialId) {
+        // Implementar la lógica para obtener el costo unitario de un material
+    }
+
+    protected function getToolUnitCost($toolId) {
+        // Implementar la lógica para obtener el costo unitario de una herramienta
+    }
+
+    protected function getTransportUnitCost($transportId) {
+        // Implementar la lógica para obtener el costo unitario de un transporte
+    }
+
+    protected function getAdditionalUnitCost($additionalId) {
+        // Implementar la lógica para obtener el costo unitario de un costo adicional
+    }
+
 
     public function showLaborForm(): void
     {
@@ -410,7 +469,6 @@ class ProjectCreate extends Component
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
-
     #[On('hideResourceForm')]  // Listen for the event
     public function hideResourceForm(): void
     {
@@ -425,4 +483,3 @@ class ProjectCreate extends Component
         ]);
     }
 }
-

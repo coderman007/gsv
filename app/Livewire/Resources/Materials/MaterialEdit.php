@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Resources\Materials;
 
+use App\Events\MaterialUpdated;
 use App\Models\Material;
 use App\Models\MaterialCategory;
 use Illuminate\Support\Facades\Storage;
@@ -57,6 +58,9 @@ class MaterialEdit extends Component
             $image_url = $this->image->store('materials', 'public');
             $material->update(['image' => $image_url]);
         }
+
+        // Emitir el evento después de actualizar el transporte
+        event(new MaterialUpdated($material));
 
         $this->dispatch('updatedMaterial', $material);
         $this->dispatch('updatedMaterialNotification');

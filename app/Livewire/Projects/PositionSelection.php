@@ -23,7 +23,7 @@ class PositionSelection extends Component
         'selectedPositions.*' => 'exists:positions,id',
         'quantities.*' => 'nullable|numeric|min:0',
         'requiredDays.*' => 'nullable|numeric|min:0',
-        'efficiencyInputs.*' => 'nullable|string', // Aceptamos cualquier cadena para los inputs
+        'efficiencyInputs.*' => 'nullable|string', // Se acepta cualquier cadena para los inputs
     ];
 
     public function mount(): void

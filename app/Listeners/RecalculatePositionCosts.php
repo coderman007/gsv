@@ -3,10 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\PositionUpdated;
-use App\Models\Position;
-use App\Models\Project;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class RecalculatePositionCosts
 {
@@ -47,12 +43,11 @@ class RecalculatePositionCosts
                 // Sumar el costo total de esta posición al costo total de mano de obra del proyecto
                 $totalLaborCost += $positionCost;
             }
-
-            // Actualizar el costo total del proyecto con el nuevo costo total de mano de obra
+            // Actualizar el costo total de herramientas del proyecto
             $project->update(['total_labor_cost' => $totalLaborCost]);
 
-            // Emitir evento para actualizar el costo total del proyecto
-//            event(new ProjectUpdated($project));
+            // Actualizar el costo total del proyecto
+            $project->updateTotalCost();
         }
     }
 }

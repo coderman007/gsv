@@ -2,12 +2,16 @@
 
 namespace App\Livewire\Resources\Tools;
 
+use App\Events\ToolUpdated;
 use App\Models\Tool;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
+/**
+ * @property mixed|null $tool
+ */
 class ToolEdit extends Component
 {
     use WithFileUploads;
@@ -47,9 +51,12 @@ class ToolEdit extends Component
             $tool->save();
         }
 
+        // Emitir el evento después de actualizar la herramienta
+        event(new ToolUpdated($tool));
+
+        $this->openEdit = false;
         $this->dispatch('updatedTool', $tool);
         $this->dispatch('updatedToolNotification');
-        $this->openEdit = false;
     }
 
     public function render(): View
@@ -57,5 +64,4 @@ class ToolEdit extends Component
         $tool = Tool::findOrFail($this->toolId);
         return view('livewire.resources.tools.tool-edit', compact('tool'));
     }
-
 }

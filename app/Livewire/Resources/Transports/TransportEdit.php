@@ -2,10 +2,11 @@
 
 namespace App\Livewire\Resources\Transports;
 
+use App\Events\TransportUpdated;
 use App\Models\Transport;
+use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\View\View;
 
 class TransportEdit extends Component
 {
@@ -47,6 +48,8 @@ class TransportEdit extends Component
             'toll_cost' => $this->toll_cost,
         ]);
 
+        // Emitir el evento después de actualizar el transporte
+        event(new TransportUpdated($transport));
 
         $this->dispatch('updatedTransport', $transport);
         $this->dispatch('updatedTransportNotification');

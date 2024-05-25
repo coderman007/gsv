@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Resources\Additionals;
 
+use App\Events\AdditionalUpdated;
 use App\Models\Additional;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -41,6 +41,9 @@ class AdditionalEdit extends Component
             'description' => $this->description,
             'unit_price' => $this->unitPrice,
         ]);
+
+        // Emitir el evento después de actualizar el adicional
+        event(new AdditionalUpdated($additional));
 
         $this->dispatch('updatedAdditional', $additional);
         $this->dispatch('updatedAdditionalNotification');
