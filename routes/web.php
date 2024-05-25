@@ -20,13 +20,6 @@ use App\Livewire\Resources\Irradiances\IrradianceEdit;
 
 // use App\Http\Controllers\QuotationController;
 
-// Pruebas
-use App\Http\Controllers\ProofController;
-
-Route::get('/proofs', [ProofController::class, 'index'])->name('proofs.index');
-Route::post('/proofs/update', [ProofController::class, 'update'])->name('proofs.update');
-
-
 Route::get('/',         [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/help',    [HomeController::class, 'help'])->name('help');
 Route::get('/settings',     [HomeController::class, 'settings'])->name('settings');

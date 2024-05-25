@@ -8,9 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @property mixed $zone
- */
 class Project extends Model
 {
     use HasFactory;
@@ -18,11 +15,16 @@ class Project extends Model
     protected $fillable = [
         'project_category_id',
         'zone',
-        'kilowatts_to_provide',
-        'standard_tool_cost',
-        'total',
+        'power_output',
+        'hand_tool_cost',
+        'raw_value',
         'sale_value',
         'status',
+        'total_labor_cost',
+        'total_tool_cost',
+        'total_material_cost',
+        'total_transport_cost',
+        'total_additional_cost',
     ];
 
     protected $attributes = [
@@ -32,39 +34,19 @@ class Project extends Model
     protected $casts = [
         'total' => 'decimal:2',
         'sale_value' => 'decimal:2',
-        'kilowatts_to_provide' => 'decimal:2',
-        'standard_tool_cost' => 'decimal:2',
+        'power_output' => 'decimal:2',
+        'hand_tool_cost' => 'decimal:2',
+        'total_labor_cost'  => 'decimal:2',
+        'total_tool_cost'  => 'decimal:2',
+        'total_material_cost'  => 'decimal:2',
+        'total_transport_cost'  => 'decimal:2',
+        'total_additional_cost'  => 'decimal:2'
     ];
 
-    protected $dates = [
+    protected array $dates = [
         'created_at',
         'updated_at',
     ];
-
-    public function calculateTotalCost(): float
-    {
-        $totalLaborCost = $this->positions()->sum('total_cost');
-        $totalMaterialCost = $this->materials()->sum('total_cost');
-        $totalToolCost = $this->tools()->sum('total_cost');
-        $totalTransportCost = $this->transports()->sum('total_cost');
-        $totalAdditionalCost = $this->additionals()->sum('total_cost');
-
-        $handToolCost = $totalLaborCost * 0.05; // 5% del costo de la mano de obra
-
-        $totalResourceCost = $totalLaborCost + $totalMaterialCost + $totalToolCost + $handToolCost + $totalTransportCost + $totalAdditionalCost;
-
-        $internalCommissions = $totalResourceCost * ($this->internal_commissions / 100);
-        $externalCommissions = $totalResourceCost * ($this->external_commissions / 100);
-        $margin = $totalResourceCost * ($this->margin / 100);
-        $discount = $totalResourceCost * ($this->discount / 100);
-
-        $totalCost = $totalResourceCost + $internalCommissions + $externalCommissions + $margin - $discount;
-
-        $this->total = $totalCost;
-        $this->save();
-
-        return $totalCost;
-    }
 
     public function projectCategory(): BelongsTo
     {

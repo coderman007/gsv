@@ -56,7 +56,7 @@ class QuotationCreate extends Component
     {
         $this->validate();
 
-        $this->project = Project::where('kilowatts_to_provide', '>=', $this->energy_to_provide)->first();
+        $this->project = Project::where('power_output', '>=', $this->energy_to_provide)->first();
 
         if (!$this->project) {
             $this->addError('energy_to_provide', 'No se encontró un proyecto adecuado para la cantidad de kilovatios ingresados.');
@@ -89,14 +89,14 @@ class QuotationCreate extends Component
 
     public function updatedEnergyToProvide(): void
     {
-        $project = Project::where('kilowatts_to_provide', '>=', $this->energy_to_provide)
-            ->orderBy('kilowatts_to_provide')
+        $project = Project::where('power_output', '>=', $this->energy_to_provide)
+            ->orderBy('power_output')
             ->first();
 
         $this->project = $project;
         if ($project) {
-            $this->projectName = $project->projectCategory->name . " de " . $project->kilowatts_to_provide . " kW.";
-            $this->subtotal = $project->total;
+            $this->projectName = $project->projectCategory->name . " de " . $project->power_output . " kW.";
+            $this->subtotal = $project->raw_value;
             $this->total = $project->sale_value;
         } else {
             $this->subtotal = 0;

@@ -26,7 +26,8 @@ class Position extends Model
 
     public function projects(): BelongsToMany
     {
-        return $this->belongsToMany(Project::class)->withPivot('quantity', 'required_days', 'efficiency', 'total_cost')->withTimestamps();
+        return $this->belongsToMany(Project::class, 'position_project')
+            ->withPivot('quantity', 'required_days', 'efficiency', 'total_cost')
+            ->withTimestamps();
     }
 }
-

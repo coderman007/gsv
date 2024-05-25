@@ -114,7 +114,7 @@ class PositionSelection extends Component
         ]);
 
         if ($this->totalLaborCost > 0) {
-            $this->dispatch('hideResourceForm'); // Ejemplo de otro evento
+            $this->dispatch('hideResourceForm');
         }
     }
 
@@ -124,4 +124,5 @@ class PositionSelection extends Component
             'positions' => $this->positions,
         ]);
     }
+
 }

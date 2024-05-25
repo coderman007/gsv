@@ -49,13 +49,13 @@
                         </div>
 
                         <div class="col-span-1">
-                            <label for="kilowatts_to_provide" class="text-md font-semibold text-gray-600 py-2">Potencia
+                            <label for="power_output" class="text-md font-semibold text-gray-600 py-2">Potencia
                                 (kWp)
                             </label>
-                            <input wire:model.live="kilowatts_to_provide" type="number" id="kilowatts_to_provide"
-                                   name="kilowatts_to_provide"
+                            <input wire:model.live="power_output" type="number" id="power_output"
+                                   name="power_output"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
-                            @error('kilowatts_to_provide')
+                            @error('power_output')
                             <span class="text-red-500">{{ $message }}</span>
                             @enderror
                         </div>

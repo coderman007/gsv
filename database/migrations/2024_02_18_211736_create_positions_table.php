@@ -21,7 +21,6 @@ return new class extends Migration
             $table->decimal('real_monthly_cost', 20);
             $table->decimal('real_daily_cost', 20);
             $table->timestamps();
-
         });
     }
 
@@ -33,4 +32,5 @@ return new class extends Migration
         Schema::dropIfExists('positions');
     }
 };
+
 

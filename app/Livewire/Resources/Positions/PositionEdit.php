@@ -4,6 +4,7 @@ namespace App\Livewire\Resources\Positions;
 
 use App\Events\PositionUpdated;
 use App\Models\Position;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class PositionEdit extends Component
@@ -34,8 +35,6 @@ class PositionEdit extends Component
 
     public function updatePosition(): void
     {
-        // Aquí puedes realizar las validaciones adicionales necesarias
-
         $this->validate();
 
         $this->position->update([
@@ -47,13 +46,13 @@ class PositionEdit extends Component
         ]);
 
         $this->openEdit = false;
-        // Disparar el evento
-        event(new PositionUpdated($this->position));
         $this->dispatch('updatedPosition', $this->position);
         $this->dispatch('updatedPositionNotification');
+
+        event(new PositionUpdated($this->position));
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.resources.positions.position-edit');
     }

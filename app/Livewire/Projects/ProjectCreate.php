@@ -17,13 +17,14 @@ class ProjectCreate extends Component
     public $project;
     public $zone;
     public $zoneOptions = [
-        'Zona Caribe',
-        'Zona Andina',
-        'Zona Pacífica',
-        'Zona de la Orinoquía',
-        'Zona de la Amazonía'
+        'Medellin y Municipios Cercanos',
+        'Antioquia Lejana',
+        'Caribe',
+        'Urabá',
+        'Centro',
+        'Valle'
     ];
-    public $kilowatts_to_provide;
+    public $power_output;
     public $required_area = 0;
     public $totalProjectCost = 0;
 
@@ -61,12 +62,22 @@ class ProjectCreate extends Component
     public $selectedAdditionalQuantity;
     public $selectedAdditionalEfficiencies;
 
-
     // Validation rules
     protected $rules = [
         'selectedCategory' => 'required|exists:project_categories,id',
-        'zone' => 'required|in:Zona Caribe,Zona Andina,Zona Pacífica,Zona de la Orinoquía,Zona de la Amazonía',
-        'kilowatts_to_provide' => 'required|numeric|min:0',
+        'zone' => 'required|in:Medellin y Municipios Cercanos,Antioquia Lejana,Caribe,Urabá,Centro,Valle',
+        'power_output' => 'required|numeric|min:0',
+    ];
+
+    // Validation messages
+    protected $messages = [
+        'selectedCategory.required' => 'Debe seleccionar una categoría de proyecto.',
+        'selectedCategory.exists' => 'La categoría seleccionada no es válida.',
+        'zone.required' => 'Debe seleccionar una zona.',
+        'zone.in' => 'La zona seleccionada no es válida.',
+        'power_output.required' => 'Debe ingresar la potencia del proyecto.',
+        'power_output.numeric' => 'La potencia debe ser un número.',
+        'power_output.min' => 'La potencia no puede ser negativa.',
     ];
 
     public function mount(): void
@@ -137,7 +148,7 @@ class ProjectCreate extends Component
     }
 
     // Actualizar área necesaria cuando se modifica la potencia
-    public function updatedKilowattsToProvide($value): void
+    public function updatedPowerOutput($value): void
     {
         // Verificar que el valor es numérico y mayor o igual a cero
         if (is_numeric($value) && $value >= 0) {
@@ -145,13 +156,13 @@ class ProjectCreate extends Component
             $this->required_area = number_format(($value / 0.55 * (2.6 * 1.1)),  2);
 
             // Limpiar el error si existe
-            $this->resetErrorBag('kilowatts_to_provide'); // Elimina el mensaje de error
+            $this->resetErrorBag('power_output'); // Elimina el mensaje de error
         } else {
             // Si el valor no es válido, restablece el área necesaria y emite un error de validación
             $this->required_area = null;
 
             // Generar un mensaje de error
-            $this->addError('kilowatts_to_provide', 'Debe ingresar un número válido de kilovatios.');
+            $this->addError('power_output', 'Debe ingresar un número válido de kilovatios.');
         }
     }
 
@@ -167,30 +178,30 @@ class ProjectCreate extends Component
         $this->validate();
 
         // Definir el valor del costo estándar de herramientas
-        $standardToolCost = $this->calculateStandardToolCost();  // Método para calcular este valor
+        $handToolCost = $this->calculateStandardToolCost();  // Método para calcular este valor
 
         // Calcular el costo total del proyecto
-        $totalCost = $this->totalLaborCost + $this->totalMaterialCost +
+        $rawValue = $this->totalLaborCost + $this->totalMaterialCost +
             $this->totalToolCost + $this->totalTransportCost +
             $this->totalAdditionalCost;
 
         // Obtener valores para las políticas comerciales
-        $internalCommissions = $totalCost * ($this->internalCommissions / 100);
-        $externalCommissions = $totalCost * ($this->externalCommissions / 100);
-        $margin = $totalCost * ($this->margin / 100);
-        $discount = $totalCost * ($this->discount / 100);
+        $internalCommissions = $rawValue * ($this->internalCommissions / 100);
+        $externalCommissions = $rawValue * ($this->externalCommissions / 100);
+        $margin = $rawValue * ($this->margin / 100);
+        $discount = $rawValue * ($this->discount / 100);
 
         // Calcular el valor de venta usando las políticas comerciales
-        $saleValue = $totalCost + $internalCommissions + $externalCommissions + $margin - $discount;
+        $saleValue = $rawValue + $internalCommissions + $externalCommissions + $margin - $discount;
 
 
         // Crear el proyecto con el valor de venta calculado
         $project = Project::create([
             'project_category_id' => $this->selectedCategory,
             'zone' => $this->zone,
-            'kilowatts_to_provide' => $this->kilowatts_to_provide,
-            'standard_tool_cost' => $standardToolCost,
-            'total' => $totalCost,
+            'power_output' => $this->power_output,
+            'hand_tool_cost' => $handToolCost,
+            'raw_value' => $rawValue,
             'sale_value' => $saleValue,
         ]);
 

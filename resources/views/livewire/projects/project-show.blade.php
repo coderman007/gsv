@@ -27,7 +27,7 @@
                         </div>
                         <div class="rounded-lg bg-gray-100 dark:bg-gray-700 p-4">
                             <h1 class="text-lg font-bold text-gray-900 dark:text-gray-300">Potencia</h1>
-                            <p class="text-lg text-gray-800 dark:text-white">{{ $project->kilowatts_to_provide }}</p>
+                            <p class="text-lg text-gray-800 dark:text-white">{{ $project->power_output }}</p>
                         </div>
                         <div class="rounded-lg bg-gray-100 dark:bg-gray-700 p-4">
                             <h1 class="text-lg font-bold text-gray-900 dark:text-gray-300">Estado</h1>

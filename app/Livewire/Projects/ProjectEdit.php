@@ -24,7 +24,7 @@ class ProjectEdit extends Component
         'Zona de la Orinoquía',
         'Zona de la Amazonía'
     ];
-    public $kilowatts_to_provide;
+    public $power_output;
     public $required_area = 0;
     public $totalProjectCost = 0;
 
@@ -67,7 +67,7 @@ class ProjectEdit extends Component
     protected $rules = [
         'selectedCategory' => 'required|exists:project_categories,id',
         'zone' => 'required|in:Zona Caribe,Zona Andina,Zona Pacífica,Zona de la Orinoquía,Zona de la Amazonía',
-        'kilowatts_to_provide' => 'required|numeric|min:0',
+        'power_output' => 'required|numeric|min:0',
         'required_area' => 'required'
     ];
 
@@ -80,7 +80,7 @@ class ProjectEdit extends Component
         // Set project data
         $this->selectedCategory = $project->project_category_id;
         $this->zone = $project->zone;
-        $this->kilowatts_to_provide = $project->kilowatts_to_provide;
+        $this->power_output = $project->power_output;
         // Set other project data...
 
         // Cargar políticas comerciales
@@ -151,7 +151,7 @@ class ProjectEdit extends Component
         $this->totalProjectCost = $totalResourceCost + $internalCommissions + $externalCommissions + $margin - $discount;
     }
 
-    public function updatedKilowattsToProvide($value): void
+    public function updatedPowerOutput($value): void
     {
         // Actualiza el área necesaria cuando se modifica la potencia
         // Verificar que el valor es numérico y mayor o igual a cero
@@ -160,13 +160,13 @@ class ProjectEdit extends Component
             $this->required_area = number_format(($value / 0.55 * (2.6 * 1.1)),  2);
 
             // Limpiar el error si existe
-            $this->resetErrorBag('kilowatts_to_provide'); // Elimina el mensaje de error
+            $this->resetErrorBag('power_output'); // Elimina el mensaje de error
         } else {
             // Si el valor no es válido, restablece el área necesaria y emite un error de validación
             $this->required_area = null;
 
             // Generar un mensaje de error
-            $this->addError('kilowatts_to_provide', 'Debe ingresar un número válido de kilovatios.');
+            $this->addError('power_output', 'Debe ingresar un número válido de kilovatios.');
         }
     }
 
@@ -179,7 +179,7 @@ class ProjectEdit extends Component
     public function updateProject(): void
     {
         // Definir el valor del costo estándar de herramientas
-        $standardToolCost = $this->calculateStandardToolCost();  // Método para calcular este valor
+        $handToolCost = $this->calculateStandardToolCost();  // Método para calcular este valor
 
         // Calcular el costo total del proyecto
         $totalCost = $this->totalLaborCost + $this->totalMaterialCost +
@@ -199,8 +199,8 @@ class ProjectEdit extends Component
         $isUpdated = $this->project->update([
             'project_category_id' => $this->selectedCategory,
             'zone' => $this->zone,
-            'kilowatts_to_provide' => $this->kilowatts_to_provide,
-            'standard_tool_cost' => $standardToolCost,
+            'power_output' => $this->power_output,
+            'hand_tool_cost' => $handToolCost,
             'total' => $totalCost,
             'sale_value' => $saleValue,
         ]);

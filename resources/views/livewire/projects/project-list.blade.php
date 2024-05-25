@@ -76,9 +76,9 @@
                         @endif
                     </th>
 
-                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('kilowatts_to_provide')">
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('power_output')">
                         Potencia
-                        @if ($sortBy == 'kilowatts_to_provide')
+                        @if ($sortBy == 'power_output')
                             @if ($sortDirection == 'asc')
                                 <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
                             @else
@@ -110,7 +110,7 @@
                         </th>
 
                         <td class="px-6 py-4 dark:text-lg">{{ $project->projectCategory->name ?? 'N/A' }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $project->kilowatts_to_provide . " kWp" }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $project->power_output . " kWp" }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->zone }}</td>
                         <td class="px-6 py-4 dark:text-lg"> {{ $project->sale_value }}</td>
 
