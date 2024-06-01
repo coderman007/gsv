@@ -23,7 +23,7 @@ class ProjectList extends Component
 
     public $search = '';
     public $sortBy = 'id';
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
     public $perSearch = 10;
     public $selectedCategory = null;
 

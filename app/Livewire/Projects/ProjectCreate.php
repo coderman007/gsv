@@ -18,6 +18,8 @@ class ProjectCreate extends Component
 {
     public $openCreate = false;
     public $categories;
+
+
     public $selectedCategory;
     public $project;
     public $zone;
@@ -111,7 +113,7 @@ class ProjectCreate extends Component
         $this->selectedTransportRequiredDays = 0;
         $this->selectedAdditionalQuantity = 0;
     }
-    public function updated($name, $value): void
+    public function updated($name): void
     {
         if (in_array($name, [
             'totalLaborCost',
@@ -123,33 +125,41 @@ class ProjectCreate extends Component
             $this->calculateTotalProjectCost();
         }
     }
-    public function calculateHandToolCost(): void
+    public function calculateHandToolCost(): float
     {
         $this->extraHandToolCost = $this->totalLaborCost * 0.05;  // 5% del costo de la mano de obra
         $this->handToolCost = $this->extraHandToolCost;  // Puedes incluir más cálculos si es necesario
+
+        return $this->handToolCost;
     }
 
     // Método para calcular el costo total del proyecto, incluyendo políticas comerciales
     public function calculateTotalProjectCost(): void
     {
-        // Calcular el costo de la herramienta de mano
-        $this->calculateHandToolCost();
+        $handToolCost = $this->calculateHandToolCost();
 
         // Calcular el costo total de los recursos incluyendo la herramienta de mano
         $totalResourceCost = $this->totalLaborCost + $this->totalMaterialCost +
-            $this->totalToolCost + $this->handToolCost +  // Incluir el costo de la herramienta de mano
-            $this->totalTransportCost +
-            $this->totalAdditionalCost;
+            $this->totalToolCost + $this->totalTransportCost + $this->totalAdditionalCost +
+            $handToolCost; // Incluir el costo de la herramienta de mano
 
         // Aplicar políticas comerciales
-        $internalCommissions = $totalResourceCost * ($this->internalCommissions / 100);
-        $externalCommissions = $totalResourceCost * ($this->externalCommissions / 100);
-        $margin = $totalResourceCost * ($this->margin / 100);
-        $discount = $totalResourceCost * ($this->discount / 100);
+        $internalCommissions = $this->internalCommissions / 100;
+        $externalCommissions = $this->externalCommissions / 100;
+        $margin = $this->margin / 100;
+        $discount = $this->discount / 100;
 
-        // Calcular el costo total del proyecto, incluyendo políticas comerciales
-        $this->totalProjectCost = $totalResourceCost + $internalCommissions + $externalCommissions + $margin - $discount;
+        // Calcular el precio de venta del proyecto utilizando la fórmula correcta
+        $denominator = (1 - $margin - $internalCommissions - $externalCommissions) * (1 - $discount);
+
+        // Verificar que el denominador no sea cero o negativo para evitar divisiones por cero o resultados negativos
+        if ($denominator > 0) {
+            $this->totalProjectCost = $totalResourceCost / $denominator;
+        } else {
+            $this->totalProjectCost = 0; // O manejar el error apropiadamente
+        }
     }
+
 
     // Actualizar área necesaria cuando se modifica la potencia
     public function updatedPowerOutput($value): void
@@ -170,33 +180,34 @@ class ProjectCreate extends Component
         }
     }
 
-    public function calculateStandardToolCost(): float
-    {
-        // Obtiene el costo total de la mano de obra
-        return $this->totalLaborCost * 0.05;
-    }
-
     // Method to save the project
     public function saveProject(): void
     {
         $this->validate();
 
-        // Definir el valor del costo estándar de herramientas
-        $handToolCost = $this->calculateStandardToolCost();  // Método para calcular este valor
+        // Calcular el costo de las herramientas de mano
+        $handToolCost = $this->calculateHandToolCost();
 
-        // Calcular el costo total del proyecto
+        // Calcular el valor bruto incluyendo el costo de herramientas de mano
         $rawValue = $this->totalLaborCost + $this->totalMaterialCost +
             $this->totalToolCost + $this->totalTransportCost +
-            $this->totalAdditionalCost;
+            $this->totalAdditionalCost + $handToolCost;
 
         // Obtener valores para las políticas comerciales
-        $internalCommissions = $rawValue * ($this->internalCommissions / 100);
-        $externalCommissions = $rawValue * ($this->externalCommissions / 100);
-        $margin = $rawValue * ($this->margin / 100);
-        $discount = $rawValue * ($this->discount / 100);
+        $internalCommissions = $this->internalCommissions / 100;
+        $externalCommissions = $this->externalCommissions / 100;
+        $margin = $this->margin / 100;
+        $discount = $this->discount / 100;
 
-        // Calcular el valor de venta usando las políticas comerciales
-        $saleValue = $rawValue + $internalCommissions + $externalCommissions + $margin - $discount;
+        // Calcular el precio de venta del proyecto utilizando la fórmula correcta
+        $denominator = (1 - $margin - $internalCommissions - $externalCommissions) * (1 - $discount);
+
+        // Verificar que el denominador no sea cero o negativo para evitar divisiones por cero o resultados negativos
+        if ($denominator > 0) {
+            $saleValue = $rawValue / $denominator;
+        } else {
+            $saleValue = 0; // O manejar el error apropiadamente
+        }
 
         // Crear el proyecto con el valor de venta calculado
         $project = Project::create([
@@ -206,6 +217,11 @@ class ProjectCreate extends Component
             'hand_tool_cost' => $handToolCost,
             'raw_value' => $rawValue,
             'sale_value' => $saleValue,
+            'total_labor_cost' => $this->totalLaborCost,
+            'total_tool_cost' => $this->totalToolCost,
+            'total_material_cost' => $this->totalMaterialCost,
+            'total_transport_cost' => $this->totalTransportCost,
+            'total_additional_cost' => $this->totalAdditionalCost,
         ]);
 
         // Associate positions and update costs in the 'position_project' pivot table
@@ -297,10 +313,7 @@ class ProjectCreate extends Component
         $this->dispatch('createdProject', $project);
         $this->dispatch('createdProjectNotification');
         $this->reset();
-
-        // TODO Se deben de refrescar las categorías de proyectos también
     }
-
 
 // Métodos adicionales para obtener el costo unitario de cada recurso
     protected function getPositionUnitCost($positionId) {

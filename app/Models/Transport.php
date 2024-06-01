@@ -9,6 +9,8 @@ use Illuminate\Support\HigherOrderCollectionProxy;
 
 /**
  * @property HigherOrderCollectionProxy|mixed $cost_per_day
+ * @property HigherOrderCollectionProxy|mixed $capacity
+ * @property HigherOrderCollectionProxy|mixed $fuel_type
  */
 class Transport extends Model
 {
@@ -16,9 +18,9 @@ class Transport extends Model
 
     protected $fillable = [
         'vehicle_type',
-        'gasoline_cost_per_km',
         'cost_per_day',
-        'toll_cost',
+        'capacity',
+        'fuel_type'
     ];
     public function projects(): BelongsToMany
     {

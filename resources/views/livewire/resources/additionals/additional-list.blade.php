@@ -9,7 +9,7 @@
         </div>
 
         {{-- Título --}}
-        <div class="flex justify-center w-1/3">
+        <div class="flex justify-center items-center w-1/3">
             <div class="text-3xl font-bold text-center text-blue-500 uppercase">
                 <h1>Adicionales</h1>
             </div>

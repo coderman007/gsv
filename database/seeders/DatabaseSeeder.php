@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             MaterialSeeder::class,
             ToolSeeder::class,
             TransportSeeder::class,
+            AdditionalSeeder::class,
             CommercialPolicySeeder::class,
         ]);
 

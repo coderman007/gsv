@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Resources\Positions;
 
-use App\Events\PositionUpdated;
 use App\Models\Position;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -11,45 +10,85 @@ class PositionEdit extends Component
 {
     public $openEdit = false;
     public $positionId;
-    public $name, $basic, $benefit_factor, $real_monthly_cost, $real_daily_cost;
-    public $position;
+    public $name, $basic, $benefitFactor, $monthlyWorkHours;
+    public $realMonthlyCost, $realDailyCost;
 
     protected $rules = [
         'name' => 'required|min:3|max:255',
         'basic' => 'required|numeric|min:0',
-        'benefit_factor' => 'required|numeric|min:0|max:100',
-        'real_monthly_cost' => 'required|numeric|min:0',
-        'real_daily_cost' => 'required|numeric|min:0',
+        'benefitFactor' => 'required|numeric|min:0',
+        'monthlyWorkHours' => 'required|numeric|min:0',
+    ];
+
+    protected $messages = [
+        'required' => 'El campo :attribute es obligatorio.',
+        'name.min' => 'El nombre de la posición de trabajo debe tener al menos :min caracteres.',
+        'name.max' => 'El nombre de la posición de trabajo debe tener como máximo :max caracteres.',
+        'basic.numeric' => 'El salario básico debe ser un número.',
+        'basic.min' => 'El salario básico debe ser mínimo :min.',
+        'benefitFactor.numeric' => 'El factor de beneficio debe ser un número.',
+        'benefitFactor.min' => 'El factor de beneficio debe ser mínimo :min.',
+        'monthlyWorkHours.numeric' => 'Las horas mensuales de trabajo deben ser un número.',
+        'monthlyWorkHours.min' => 'Las horas mensuales de trabajo deben ser mínimo :min.',
     ];
 
     public function mount($positionId): void
     {
         $this->positionId = $positionId;
-        $this->position = Position::findOrFail($positionId);
-        $this->name = $this->position->name;
-        $this->basic = $this->position->basic;
-        $this->benefit_factor = $this->position->benefit_factor;
-        $this->real_monthly_cost = $this->position->real_monthly_cost;
-        $this->real_daily_cost = $this->position->real_daily_cost;
+        $position = Position::findOrFail($positionId);
+
+        $this->name = $position->name;
+        $this->basic = $position->basic;
+        $this->benefitFactor = $position->benefit_factor;
+        $this->monthlyWorkHours = $position->monthly_work_hours;
+        $this->realMonthlyCost = $position->real_monthly_cost;
+        $this->realDailyCost = $position->real_daily_cost;
+    }
+
+    public function updated($propertyName): void
+    {
+        $this->validateOnly($propertyName);
+
+        if ($this->basic && $this->monthlyWorkHours && $this->benefitFactor) {
+            // Ajustar el cálculo al proporcionado
+            $this->realDailyCost = number_format((($this->basic * (1 + $this->benefitFactor)) / $this->monthlyWorkHours) * 8, 2, '.', '');
+            $this->realMonthlyCost = number_format($this->basic * (1 + $this->benefitFactor), 2, '.', ''); // Mantener el cálculo mensual
+        }
     }
 
     public function updatePosition(): void
     {
         $this->validate();
 
-        $this->position->update([
+        $position = Position::findOrFail($this->positionId);
+
+        $position->update([
             'name' => $this->name,
             'basic' => $this->basic,
-            'benefit_factor' => $this->benefit_factor,
-            'real_monthly_cost' => $this->real_monthly_cost,
-            'real_daily_cost' => $this->real_daily_cost,
+            'benefit_factor' => $this->benefitFactor,
+            'monthly_work_hours' => $this->monthlyWorkHours,
+            'real_monthly_cost' => $this->realMonthlyCost,
+            'real_daily_cost' => $this->realDailyCost,
         ]);
 
         $this->openEdit = false;
-        $this->dispatch('updatedPosition', $this->position);
-        $this->dispatch('updatedPositionNotification');
 
-        event(new PositionUpdated($this->position));
+        $this->dispatch('updatedPosition', $position);
+        $this->dispatch('updatedPositionNotification');
+    }
+
+    public function openEditForm($positionId): void
+    {
+        $this->positionId = $positionId;
+        $position = Position::findOrFail($positionId);
+
+        $this->name = $position->name;
+        $this->basic = $position->basic;
+        $this->benefitFactor = $position->benefit_factor;
+        $this->monthlyWorkHours = $position->monthly_work_hours;
+        $this->realMonthlyCost = $position->real_monthly_cost;
+        $this->realDailyCost = $position->real_daily_cost;
+        $this->openEdit = true;
     }
 
     public function render(): View

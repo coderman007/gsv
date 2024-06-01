@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 /**
  * @method static find(mixed $additionalId)
  * @method static findOrFail($additionalId)
+ * @method create(array $additionalData)
  * @property mixed $projects
  */
 class Additional extends Model

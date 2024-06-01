@@ -21,3 +21,4 @@ class TransportShow extends Component
         return view('livewire.resources.transports.transport-show');
     }
 }
+

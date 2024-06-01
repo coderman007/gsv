@@ -11,16 +11,16 @@ class TransportCreate extends Component
 
     public $openCreate = false;
     public $vehicle_type;
-    public $gasoline_cost_per_km;
+    public $capacity;
     public $cost_per_day;
-    public $toll_cost;
+    public $fuel_type;
 
 
     protected $rules = [
         'vehicle_type' => 'required|in:motocicleta,automóvil,camión,autobús,van,otro',
-        'gasoline_cost_per_km' => 'required|numeric|min:0',
+        'capacity' => 'nullable|numeric|min:0',
         'cost_per_day' => 'required|numeric|min:0',
-        'toll_cost' => 'required|numeric|min:0',
+        'fuel_type' => 'nullable|string',
     ];
 
     public function createTransport(): void
@@ -29,9 +29,9 @@ class TransportCreate extends Component
 
         $transport = Transport::create([
             'vehicle_type' => $this->vehicle_type,
-            'gasoline_cost_per_km' => $this->gasoline_cost_per_km,
+            'capacity' => $this->capacity ?? 0,
             'cost_per_day' => $this->cost_per_day,
-            'toll_cost' => $this->toll_cost ?? 0,
+            'fuel_type' => $this->fuel_type,
         ]);
 
         $this->openCreate = false;
@@ -46,3 +46,4 @@ class TransportCreate extends Component
         return view('livewire.resources.transports.transport-create');
     }
 }
+

@@ -10,7 +10,7 @@
             </div>
 
             {{-- Título --}}
-            <div class="flex justify-center w-1/3">
+            <div class="flex justify-center items-center w-1/3">
                 <div class="text-3xl font-bold text-center text-blue-500 uppercase">
                     <h1>Transporte</h1>
                 </div>
@@ -52,9 +52,9 @@
                         @endif
                     </th>
 
-                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('vehicule_type')">
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('vehicle_type')">
                         Tipo de Vehículo
-                        @if ($sortBy == 'vehicule_type')
+                        @if ($sortBy == 'vehicle_type')
                             @if ($sortDirection == 'asc')
                                 <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
                             @else
@@ -65,9 +65,9 @@
                         @endif
                     </th>
 
-                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('gasoline_cost_per_km')">
-                        Costo gasolina por km
-                        @if ($sortBy == 'gasoline_cost_per_km')
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('capacity')">
+                        capacidad
+                        @if ($sortBy == 'capacity')
                             @if ($sortDirection == 'asc')
                                 <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
                             @else
@@ -78,9 +78,9 @@
                         @endif
                     </th>
 
-                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('toll_cost')">
-                        Costo Peaje
-                        @if ($sortBy == 'toll_cost')
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('fuel_type')">
+                        Tipo de combustible
+                        @if ($sortBy == 'fuel_type')
                             @if ($sortDirection == 'asc')
                                 <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
                             @else
@@ -122,8 +122,8 @@
                             {{ $transport->id }}
                         </th>
                         <td class="px-6 py-4 dark:text-lg">{{ $transport->vehicle_type }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $transport->gasoline_cost_per_km }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $transport->toll_cost }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $transport->capacity }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $transport->fuel_type }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $transport->cost_per_day }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $transport->projects()->count() }}</td>
 

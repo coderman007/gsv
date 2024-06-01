@@ -12,9 +12,10 @@
     <!-- Diálogo modal para crear un nuevo transporte -->
     <x-dialog-modal wire:model="openCreate">
         <x-slot name="title">
-            <div  class="my-4 text-center text-blue-500 text-xl">
+            <div class="my-4 text-center text-blue-500 text-xl">
                 Crear Transporte
-            </div></x-slot>
+            </div>
+        </x-slot>
         <x-slot name="content">
             <!-- Sección para el tipo de vehículo -->
             <div class="mt-5 bg-white rounded-lg shadow p-6">
@@ -36,13 +37,6 @@
                     <x-input-error for="vehicle_type" />
                 </div>
 
-                <div class="mt-4">
-                    <x-label class="text-left text-lg text-gray-700" value="Costo gasolina por km" />
-                    <input wire:model="gasoline_cost_per_km" type="number"
-                           class="text-gray-800 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    <x-input-error for="gasoline_cost_per_km" />
-                </div>
-
                 <!-- Costo por día -->
                 <div class="mt-4">
                     <x-label class="text-left text-lg text-gray-700" value="Costo por Día" />
@@ -51,12 +45,20 @@
                     <x-input-error for="cost_per_day" />
                 </div>
 
-                <!-- Costo Peaje -->
+                <!-- Capacidad -->
                 <div class="mt-4">
-                    <x-label class="text-left text-lg text-gray-700" value="Costo Peaje" />
-                    <input wire:model="toll_cost" type="number"
+                    <x-label class="text-left text-lg text-gray-700" value="Capacidad" />
+                    <input wire:model="capacity" type="number"
                            class="text-gray-800 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    <x-input-error for="toll_cost" />
+                    <x-input-error for="capacity" />
+                </div>
+
+                <!-- Tipo de combustible -->
+                <div class="mt-4">
+                    <x-label class="text-left text-lg text-gray-700" value="Tipo de Combustible" />
+                    <input wire:model="fuel_type" type="text"
+                           class="text-gray-800 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <x-input-error for="fuel_type" />
                 </div>
             </div>
         </x-slot>

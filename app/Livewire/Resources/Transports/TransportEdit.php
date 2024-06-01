@@ -15,15 +15,16 @@ class TransportEdit extends Component
     public $transportId;
     public $openEdit = false;
     public $vehicle_type;
-    public $gasoline_cost_per_km;
+    public $capacity;
     public $cost_per_day;
-    public $toll_cost;
+    public $fuel_type;
+    public $showVehicleTypeDropdown = false;
 
     protected $rules = [
         'vehicle_type' => 'required|in:motocicleta,automóvil,camión,autobús,van,otro',
-        'gasoline_cost_per_km' => 'required|numeric|min:0',
+        'capacity' => 'nullable|numeric|min:0',
         'cost_per_day' => 'required|numeric|min:0',
-        'toll_cost' => 'required|numeric|min:0',
+        'fuel_type' => 'nullable|string',
     ];
 
     public function mount($transportId): void
@@ -31,9 +32,14 @@ class TransportEdit extends Component
         $this->transportId = $transportId;
         $transport = Transport::findOrFail($this->transportId);
         $this->vehicle_type = $transport->vehicle_type;
-        $this->gasoline_cost_per_km = $transport->gasoline_cost_per_km;
+        $this->capacity = $transport->capacity;
         $this->cost_per_day = $transport->cost_per_day;
-        $this->toll_cost = $transport->toll_cost;
+        $this->fuel_type = $transport->fuel_type;
+    }
+
+    public function toggleVehicleTypeDropdown(): void
+    {
+        $this->showVehicleTypeDropdown = !$this->showVehicleTypeDropdown;
     }
 
     public function updateTransport(): void
@@ -43,12 +49,11 @@ class TransportEdit extends Component
         $transport = Transport::findOrFail($this->transportId);
         $transport->update([
             'vehicle_type' => $this->vehicle_type,
-            'gasoline_cost_per_km' => $this->gasoline_cost_per_km,
-            'cost_per_day' => $this->cost_per_day,
-            'toll_cost' => $this->toll_cost,
+            'capacity' => $this->capacity,
+            'cost_per_day' =>$this->cost_per_day,
+            'fuel_type' => $this->fuel_type,
         ]);
 
-        // Emitir el evento después de actualizar el transporte
         event(new TransportUpdated($transport));
 
         $this->dispatch('updatedTransport', $transport);

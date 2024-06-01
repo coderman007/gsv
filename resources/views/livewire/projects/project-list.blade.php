@@ -46,7 +46,7 @@
         </div>
 
         <!-- Tabla de Proyectos -->
-        <div class="relative hidden md:block mt-2 sm:mx-4 md:mt-4 overflow-x-hidden shadow-md sm:rounded-lg">
+        <div class="relative mt-2 sm:mx-4 md:mt-4 overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-sm text-center text-gray-100 uppercase bg-gray-400 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -112,7 +112,7 @@
                         <td class="px-6 py-4 dark:text-lg">{{ $project->projectCategory->name ?? 'N/A' }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->power_output . " kWp" }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->zone }}</td>
-                        <td class="px-6 py-4 dark:text-lg"> {{ $project->sale_value }}</td>
+                        <td class="px-6 py-4 dark:text-lg"> {{ number_format($project->sale_value, 2) }}</td>
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">

@@ -13,74 +13,77 @@
         </div>
     </a>
 
+    <!-- Modal de edición -->
+    <x-dialog-modal maxWidth="3xl" wire:model.live="openEdit">
+        <div class="w-full mx-auto bg-white dark:bg-gray-800 shadow-md p-6 rounded-md">
+            <!-- Título del modal -->
+            <x-slot name="title">
+                <h2 class="font-semibold text-2xl text-center pt-4 text-blue-500 dark:text-blue-400">Editar Posición Laboral</h2>
+            </x-slot>
 
-        <!-- Modal de edición -->
-        <x-dialog-modal maxWidth="3xl" wire:model="openEdit">
-            <div class="w-full mx-auto bg-white shadow-md p-6 rounded-md">
-                <!-- Título del modal -->
-                <x-slot name="title">
-                    <h2 class="font-semibold text-2xl text-center pt-4 text-blue-500">Editar Posición Laboral</h2>
-                </x-slot>
-
-                <!-- Contenido del modal -->
-                <x-slot name="content">
-                    <form wire:submit.prevent="updatePosition" class="flex flex-col items-center mt-6 p-4 bg-gray-50 rounded-lg">
-                        <!-- Nombre -->
-                        <div class="space-y-2 w-full text-md">
-                            <label for="name" class="font-semibold">Nombre de la posición:</label>
-                            <input id="name" placeholder="Nombre de la posición" wire:model.defer="name"
-                                   class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"
-                                   required="required" type="text">
-                            <x-input-error for="name"/>
+            <!-- Contenido del modal -->
+            <x-slot name="content">
+                <div>
+                    <div class="col-span-5 bg-white p-4 rounded-lg">
+                        <h2 class="text-center text-lg font-bold mb-4 text-blue-500">Datos</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2 mb-4">
+                                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre</label>
+                                <input id="name" placeholder="Nombre de la posición" wire:model.live="name"
+                                       class="mt-1 p-2 block w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200">
+                                <x-input-error for="name" class="mt-2"/>
+                            </div>
+                            <div class="col-span-1">
+                                <label for="basic" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Salario Básico</label>
+                                <input id="basic" placeholder="Salario Básico" wire:model.live="basic"
+                                       class="mt-1 p-2 block w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                                       type="number" step="0.01">
+                                <x-input-error for="basic" class="mt-2"/>
+                            </div>
+                            <div class="col-span-1">
+                                <label for="benefitFactor" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Factor Prestacional</label>
+                                <input id="benefitFactor" placeholder="Factor Prestacional" wire:model.live="benefitFactor"
+                                       class="mt-1 p-2 block w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                                       type="number" step="0.01">
+                                <x-input-error for="benefitFactor" class="mt-2"/>
+                            </div>
+                            <div class="col-span-2 mb-4">
+                                <label for="monthlyWorkHours" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas Mensuales de Trabajo</label>
+                                <input id="monthlyWorkHours" placeholder="Horas Mensuales de Trabajo" wire:model.live="monthlyWorkHours"
+                                       class="mt-1 p-2 block w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                                       type="number" step="0.01">
+                                <x-input-error for="monthlyWorkHours" class="mt-2"/>
+                            </div>
+                            <div class="col-span-1">
+                                <label for="realMonthlyCost" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Costo Real Mensual</label>
+                                <input id="realMonthlyCost" placeholder="Costo Real Mensual" value="{{ number_format($realMonthlyCost, 2) }}" readonly
+                                       class="mt-1 p-2 block w-full border-gray-300 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+                                       type="text">
+                                <x-input-error for="realMonthlyCost" class="mt-2"/>
+                            </div>
+                            <div class="col-span-1">
+                                <label for="realDailyCost" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Costo Real Diario</label>
+                                <input id="realDailyCost" placeholder="Costo Real Diario" value="{{ number_format($realDailyCost, 2) }}" readonly
+                                       class="mt-1 p-2 block w-full border-gray-300 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+                                       type="text">
+                                <x-input-error for="realDailyCost" class="mt-2"/>
+                            </div>
                         </div>
-
-                        <!-- Salario Básico -->
-                        <div class="space-y-2 w-full text-md">
-                            <label for="basic" class="font-semibold">Salario Básico:</label>
-                            <input id="basic" placeholder="Salario Básico" wire:model.defer="basic"
-                                   class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"
-                                   required="required" type="number" step="0.01">
-                            <x-input-error for="basic"/>
-                        </div>
-
-                        <!-- Factor de Beneficio -->
-                        <div class="space-y-2 w-full text-md">
-                            <label for="benefit_factor" class="font-semibold">Factor de Beneficio:</label>
-                            <input id="benefit_factor" placeholder="Factor de Beneficio" wire:model.defer="benefit_factor"
-                                   class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"
-                                   required="required" type="number" step="0.01">
-                            <x-input-error for="benefit_factor"/>
-                        </div>
-
-                        <!-- Costo Mensual Real -->
-                        <div class="space-y-2 w-full text-md">
-                            <label for="real_monthly_cost" class="font-semibold">Costo Mensual Real:</label>
-                            <input id="real_monthly_cost" placeholder="Costo Mensual Real" wire:model.defer="real_monthly_cost"
-                                   class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"
-                                   required="required" type="number" step="0.01">
-                            <x-input-error for="real_monthly_cost"/>
-                        </div>
-
-                        <!-- Costo Diario Real -->
-                        <div class="space-y-2 w-full text-md">
-                            <label for="real_daily_cost" class="font-semibold">Costo Diario Real:</label>
-                            <input id="real_daily_cost" placeholder="Costo Diario Real" wire:model.defer="real_daily_cost"
-                                   class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"
-                                   required="required" type="number" step="0.01">
-                            <x-input-error for="real_daily_cost"/>
-                        </div>
-                    </form>
-                </x-slot>
-
-                <!-- Pie del modal con el botón de actualización -->
-                <x-slot name="footer">
-                    <div class="flex justify-end">
-                        <button type="submit" wire:click="updatePosition"
-                                class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
-                            Actualizar Posición
-                        </button>
                     </div>
-                </x-slot>
-            </div>
-        </x-dialog-modal>
-    </div>
+                </div>
+            </x-slot>
+
+            <!-- Botones -->
+            <x-slot name="footer">
+                <div class="flex justify-end mt-4">
+                    <button type="button" wire:click="$set('openEdit', false)" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                        <i class="fas fa-times mr-2"></i> Cancelar
+                    </button>
+                    <button type="submit" wire:click="updatePosition" class="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                        <i class="fas fa-edit mr-2"></i> Actualizar Posición
+                    </button>
+                </div>
+            </x-slot>
+        </div>
+    </x-dialog-modal>
+</div>

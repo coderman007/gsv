@@ -10,7 +10,7 @@
     <!-- Modal para crear un proyecto -->
     <x-dialog-modal maxWidth="7xl" wire:model.live="openCreate">
         <x-slot name="title">
-            <h2 class="text-2xl font-semibold text-center text-blue-400 dark:text-white">Nuevo APU</h2>
+            <h2 class="text-2xl font-semibold text-center text-gray-400 dark:text-white">Nuevo APU</h2>
         </x-slot>
         <x-slot name="content">
             <div class="grid grid-cols-12 gap-4">

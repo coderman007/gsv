@@ -1,16 +1,16 @@
 <div class="container mx-auto mt-8">
     @if($this->positions->count() > 0)
-    <section class="flex justify-between w-full mx-4">
+    <section class="flex justify-between w-full">
 
         {{-- Barra de búsqueda --}}
-        <div class="flex justify-start w-1/3">
+        <div class="flex justify-start items-center w-1/3">
             <x-input type="text" name="search" wire:model.lazy="search"
-                     class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
+                     class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400 h-10"
                      placeholder="Buscar..."/>
         </div>
 
         {{-- Título --}}
-        <div class="flex justify-center w-1/3">
+        <div class="flex justify-center items-center w-1/3">
             <div class="text-3xl font-bold text-center text-blue-500 uppercase">
                 <h1>Posiciones</h1>
             </div>
