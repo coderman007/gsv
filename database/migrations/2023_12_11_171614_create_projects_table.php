@@ -24,6 +24,7 @@ return new class extends Migration {
                 'Valle'
             ])->default('Medellin y Municipios Cercanos');
             $table->decimal('hand_tool_cost', 20)->default(0);
+            $table->decimal('required_area', 10)->default(0);
             $table->decimal('total_labor_cost', 20)->default(0);
             $table->decimal('total_tool_cost', 20)->default(0);
             $table->decimal('total_material_cost', 20)->default(0);

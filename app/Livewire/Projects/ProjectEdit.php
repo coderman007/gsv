@@ -2,27 +2,40 @@
 
 namespace App\Livewire\Projects;
 
+use App\Models\Additional;
 use App\Models\CommercialPolicy;
+use App\Models\Material;
+use App\Models\Position;
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use App\Models\Tool;
+use App\Models\Transport;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
+// Para manejar archivos
+
+/**
+ * @method resetProjectCreateComponent()
+ */
 class ProjectEdit extends Component
 {
+    use WithFileUploads;
+
+    public Project $project;
     public $openEdit = false;
-    public $projectId;
     public $categories;
     public $selectedCategory;
-    public $project;
     public $zone;
     public $zoneOptions = [
-        'Zona Caribe',
-        'Zona Andina',
-        'Zona Pacífica',
-        'Zona de la Orinoquía',
-        'Zona de la Amazonía'
+        'Medellin y Municipios Cercanos',
+        'Antioquia Lejana',
+        'Caribe',
+        'Urabá',
+        'Centro',
+        'Valle'
     ];
     public $power_output;
     public $required_area = 0;
@@ -62,26 +75,32 @@ class ProjectEdit extends Component
     public $selectedAdditionalQuantity;
     public $selectedAdditionalEfficiencies;
 
-
     // Validation rules
     protected $rules = [
         'selectedCategory' => 'required|exists:project_categories,id',
-        'zone' => 'required|in:Zona Caribe,Zona Andina,Zona Pacífica,Zona de la Orinoquía,Zona de la Amazonía',
+        'zone' => 'required|in:Medellin y Municipios Cercanos,Antioquia Lejana,Caribe,Urabá,Centro,Valle',
         'power_output' => 'required|numeric|min:0',
-        'required_area' => 'required'
+        'required_area' => 'required|numeric|min:0',
+    ];
+
+    // Validation messages
+    protected $messages = [
+        'selectedCategory.required' => 'Debe seleccionar una categoría de proyecto.',
+        'selectedCategory.exists' => 'La categoría seleccionada no es válida.',
+        'zone.required' => 'Debe seleccionar una zona.',
+        'zone.in' => 'La zona seleccionada no es válida.',
+        'power_output.required' => 'Debe ingresar la potencia del proyecto.',
+        'power_output.numeric' => 'La potencia debe ser un número.',
+        'power_output.min' => 'La potencia no puede ser negativa.',
+        'required_area.required' => 'Debe ingresar el area necesaria del proyecto.',
+        'required_area.numeric' => 'El area necesaria debe ser un número.',
+        'required_area.min' => 'El area necesaria no puede ser negativa.',
     ];
 
     public function mount(Project $project): void
     {
         $this->project = $project;
-        $this->projectId = $project->id;
         $this->categories = ProjectCategory::pluck('name', 'id')->toArray();
-
-        // Set project data
-        $this->selectedCategory = $project->project_category_id;
-        $this->zone = $project->zone;
-        $this->power_output = $project->power_output;
-        // Set other project data...
 
         // Cargar políticas comerciales
         $this->internalCommissions = CommercialPolicy::where('name', 'like', 'internal_commissions')->first()?->percentage ?? 0;
@@ -89,26 +108,58 @@ class ProjectEdit extends Component
         $this->margin = CommercialPolicy::where('name', 'like', 'margin')->first()?->percentage ?? 0;
         $this->discount = CommercialPolicy::where('name', 'like', 'discount')->first()?->percentage ?? 0;
 
-        // Initialize selected resources arrays
-        $this->selectedPositions = [];
-        $this->selectedMaterials = [];
-        $this->selectedTools = [];
-        $this->selectedTransports = [];
-        $this->selectedAdditionals = [];
-        // Initialize selected resource quantities and required days
-        $this->selectedPositionQuantity = 0;
-        $this->selectedPositionRequiredDays = 0;
-        $this->selectedMaterialQuantity = 0;
-        $this->selectedToolQuantity = 0;
-        $this->selectedToolRequiredDays = 0;
-        $this->selectedTransportQuantity = 0;
-        $this->selectedTransportRequiredDays = 0;
-        $this->selectedAdditionalQuantity = 0;
+        // Load existing project data into the component properties
+        $this->selectedCategory = $project->project_category_id;
+        $this->zone = $project->zone;
+        $this->power_output = $project->power_output;
+        $this->required_area = $project->required_area;
+        $this->totalLaborCost = $project->total_labor_cost;
+        $this->totalMaterialCost = $project->total_material_cost;
+        $this->handToolCost = $project->hand_tool_cost;
+        $this->totalToolCost = $project->total_tool_cost;
+        $this->totalTransportCost = $project->total_transport_cost;
+        $this->totalAdditionalCost = $project->total_additional_cost;
+        $this->totalProjectCost = $project->sale_value;
 
-        // Calculate initial values...
+        // Cargar datos de recursos existentes (posiciones, materiales, etc.)
+        $this->selectedPositions = $project->positions->pluck('id')->toArray();
+        foreach ($project->positions as $position) {
+            $this->selectedPositionQuantity[$position->id] = $position->pivot->quantity;
+            $this->selectedPositionRequiredDays[$position->id] = $position->pivot->required_days;
+            $this->selectedPositionEfficiencies[$position->id] = $position->pivot->efficiency;
+        }
+
+        $this->selectedMaterials = $project->materials->pluck('id')->toArray();
+        foreach ($project->materials as $material) {
+            $this->selectedMaterialQuantity[$material->id] = $material->pivot->quantity;
+            $this->selectedMaterialEfficiencies[$material->id] = $material->pivot->efficiency;
+        }
+
+        $this->selectedTools = $project->tools->pluck('id')->toArray();
+        foreach ($project->tools as $tool) {
+            $this->selectedToolQuantity[$tool->id] = $tool->pivot->quantity;
+            $this->selectedToolRequiredDays[$tool->id] = $tool->pivot->required_days;
+            $this->selectedToolEfficiencies[$tool->id] = $tool->pivot->efficiency;
+        }
+
+        $this->selectedTransports = $project->transports->pluck('id')->toArray();
+        foreach ($project->transports as $transport) {
+            $this->selectedTransportQuantity[$transport->id] = $transport->pivot->quantity;
+            $this->selectedTransportRequiredDays[$transport->id] = $transport->pivot->required_days;
+            $this->selectedTransportEfficiencies[$transport->id] = $transport->pivot->efficiency;
+        }
+
+        $this->selectedAdditionals = $project->additionals->pluck('id')->toArray();
+        foreach ($project->additionals as $additional) {
+            $this->selectedAdditionalQuantity[$additional->id] = $additional->pivot->quantity;
+            $this->selectedAdditionalEfficiencies[$additional->id] = $additional->pivot->efficiency;
+        }
+
+        // Calculate total costs on mount
+        $this->calculateTotalProjectCost();
     }
 
-    public function updated($name, $value): void
+    public function updated($name): void
     {
         if (in_array($name, [
             'totalLaborCost',
@@ -121,43 +172,49 @@ class ProjectEdit extends Component
         }
     }
 
-    // Agrega métodos para manejar eventos, cálculos y guardar los datos actualizados del proyecto
-
-    public function calculateHandToolCost(): void
+    public function calculateHandToolCost(): float
     {
         $this->extraHandToolCost = $this->totalLaborCost * 0.05;  // 5% del costo de la mano de obra
         $this->handToolCost = $this->extraHandToolCost;  // Puedes incluir más cálculos si es necesario
+        return $this->handToolCost;
     }
 
+    // Método para calcular el costo total del proyecto, incluyendo políticas comerciales
     public function calculateTotalProjectCost(): void
     {
-        // Calcula el costo total del proyecto, incluyendo políticas comerciales
-        // Calcular el costo de la herramienta de mano
-        $this->calculateHandToolCost();
+        $handToolCost = $this->calculateHandToolCost();
 
         // Calcular el costo total de los recursos incluyendo la herramienta de mano
-        $totalResourceCost = $this->totalLaborCost + $this->totalMaterialCost +
-            $this->totalToolCost + $this->handToolCost +  // Incluir el costo de la herramienta de mano
-            $this->totalTransportCost +
-            $this->totalAdditionalCost;
+        $rawValue = $this->totalLaborCost + $this->totalMaterialCost +
+            $this->totalToolCost + $this->totalTransportCost +
+            $this->totalAdditionalCost + $handToolCost;
 
         // Aplicar políticas comerciales
-        $internalCommissions = $totalResourceCost * ($this->internalCommissions / 100);
-        $externalCommissions = $totalResourceCost * ($this->externalCommissions / 100);
-        $margin = $totalResourceCost * ($this->margin / 100);
-        $discount = $totalResourceCost * ($this->discount / 100);
+        $internalCommissions = $this->internalCommissions / 100;
+        $externalCommissions = $this->externalCommissions / 100;
+        $margin = $this->margin / 100;
+        $discount = $this->discount / 100;
 
-        // Calcular el costo total del proyecto, incluyendo políticas comerciales
-        $this->totalProjectCost = $totalResourceCost + $internalCommissions + $externalCommissions + $margin - $discount;
+        // Calcular el precio de venta del proyecto utilizando la fórmula correcta
+        $denominator = (1 - $margin - $internalCommissions - $externalCommissions) * (1 - $discount);
+
+        if ($denominator > 0) {
+            $saleValue = $rawValue / $denominator;
+        } else {
+            $saleValue = 0;
+        }
+
+        $this->totalProjectCost = $saleValue;
+
     }
 
+    // Actualizar área necesaria cuando se modifica la potencia
     public function updatedPowerOutput($value): void
     {
-        // Actualiza el área necesaria cuando se modifica la potencia
         // Verificar que el valor es numérico y mayor o igual a cero
         if (is_numeric($value) && $value >= 0) {
             // Calcular el área necesaria si el valor es válido
-            $this->required_area = number_format(($value / 0.55 * (2.6 * 1.1)),  2);
+            $this->required_area = number_format(($value / 0.55 * (2.6 * 1.1)), 2);
 
             // Limpiar el error si existe
             $this->resetErrorBag('power_output'); // Elimina el mensaje de error
@@ -170,208 +227,310 @@ class ProjectEdit extends Component
         }
     }
 
-    public function calculateStandardToolCost(): float
-    {
-        // Obtiene el costo total de la mano de obra
-        return $this->totalLaborCost * 0.05;
-    }
-
     public function updateProject(): void
     {
-        // Definir el valor del costo estándar de herramientas
-        $handToolCost = $this->calculateStandardToolCost();  // Método para calcular este valor
+        $this->validate();
 
-        // Calcular el costo total del proyecto
-        $totalCost = $this->totalLaborCost + $this->totalMaterialCost +
+        // Calcular el costo de las herramientas de mano
+        $handToolCost = $this->calculateHandToolCost();
+
+        // Calcular el valor bruto incluyendo el costo de herramientas de mano
+        $rawValue = $this->totalLaborCost + $this->totalMaterialCost +
             $this->totalToolCost + $this->totalTransportCost +
-            $this->totalAdditionalCost;
+            $this->totalAdditionalCost + $handToolCost;
 
         // Obtener valores para las políticas comerciales
-        $internalCommissions = $totalCost * ($this->internalCommissions / 100);
-        $externalCommissions = $totalCost * ($this->externalCommissions / 100);
-        $margin = $totalCost * ($this->margin / 100);
-        $discount = $totalCost * ($this->discount / 100);
+        $internalCommissions = $this->internalCommissions / 100;
+        $externalCommissions = $this->externalCommissions / 100;
+        $margin = $this->margin / 100;
+        $discount = $this->discount / 100;
 
-        // Calcular el valor de venta usando las políticas comerciales
-        $saleValue = $totalCost + $internalCommissions + $externalCommissions + $margin - $discount;
+        // Calcular el precio de venta del proyecto utilizando la fórmula correcta
+        $denominator = (1 - $margin - $internalCommissions - $externalCommissions) * (1 - $discount);
 
-        // Guarda los datos actualizados del proyecto
-        $isUpdated = $this->project->update([
+        // Verificar que el denominador no sea cero o negativo para evitar divisiones por cero o resultados negativos
+        if ($denominator > 0) {
+            $saleValue = $rawValue / $denominator;
+
+//            dd($saleValue);
+        } else {
+            $saleValue = 0; // O manejar el error apropiadamente
+            dd($saleValue);
+
+        }
+
+        // Update the project
+        $this->project->update([
             'project_category_id' => $this->selectedCategory,
             'zone' => $this->zone,
             'power_output' => $this->power_output,
+            'required_area' => $this->required_area,
             'hand_tool_cost' => $handToolCost,
-            'total' => $totalCost,
+            'raw_value' => $rawValue,
             'sale_value' => $saleValue,
+            'total_labor_cost' => $this->totalLaborCost,
+            'total_tool_cost' => $this->totalToolCost,
+            'total_material_cost' => $this->totalMaterialCost,
+            'total_transport_cost' => $this->totalTransportCost,
+            'total_additional_cost' => $this->totalAdditionalCost,
         ]);
 
-        // Verifica si la actualización fue exitosa
-        if ($isUpdated) {
-            // Recarga el modelo actualizado desde la base de datos
-            $project = $this->project->refresh();
+        // Sync or update pivot table data
+        $this->project->positions()->sync($this->getPositionSyncData());
+        $this->project->materials()->sync($this->getMaterialSyncData());
+        $this->project->tools()->sync($this->getToolSyncData());
+        $this->project->transports()->sync($this->getTransportSyncData());
+        $this->project->additionals()->sync($this->getAdditionalSyncData());
 
-            // Asocia las posiciones y actualiza los costos en la tabla pivote 'position_project'
-            foreach ($this->selectedPositions as $positionId) {
-                $project->positions()->attach($positionId, [
-                    'quantity' => $this->selectedPositionQuantity[$positionId],
-                    'required_days' => $this->selectedPositionRequiredDays[$positionId],
-                    'efficiency' => $this->selectedPositionEfficiencies[$positionId],
-                    'total_cost' => $this->totalLaborCost,
-                ]);
-            }
-
-            // Asocia los materiales y actualiza los costos en la tabla pivote 'material_project'
-            foreach ($this->selectedMaterials as $materialId) {
-                $project->materials()->attach($materialId, [
-                    'quantity' => $this->selectedMaterialQuantity[$materialId],
-                    'efficiency' => $this->selectedMaterialEfficiencies[$materialId],
-                    'total_cost' => $this->totalMaterialCost,
-                ]);
-            }
-
-            // Asocia herramientas y actualiza los costos en la tabla pivote 'project_tool'
-            foreach ($this->selectedTools as $toolId) {
-                $project->tools()->attach($toolId, [
-                    'quantity' => $this->selectedToolQuantity[$toolId],
-                    'required_days' => $this->selectedToolRequiredDays[$toolId],
-                    'efficiency' => $this->selectedToolEfficiencies[$toolId],
-                    'total_cost' => $this->totalToolCost,
-                ]);
-            }
-
-            // Asocia transporte y actualiza los costos en la tabla pivote 'project_transport'
-            foreach ($this->selectedTransports as $transportId) {
-                $project->transports()->attach($transportId, [
-                    'quantity' => $this->selectedTransportQuantity[$transportId],
-                    'required_days' => $this->selectedTransportRequiredDays[$transportId],
-                    'efficiency' => $this->selectedTransportEfficiencies[$transportId],
-                    'total_cost' => $this->totalTransportCost,
-                ]);
-            }
-
-            // Asocia costos adicionales y actualiza los costos en la tabla pivote 'additional_cost_project'
-            foreach ($this->selectedAdditionals as $additionalId) {
-                $project->additionals()->attach($additionalId, [
-                    'quantity' => $this->selectedAdditionalQuantity[$additionalId],
-                    'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
-                    'total_cost' => $this->totalAdditionalCost,
-                ]);
-            }
-
-            // Calcular el costo total del proyecto después de guardar
-            $this->calculateTotalProjectCost();
-
-            // Redirige o muestra un mensaje de éxito
-            $this->openEdit = false;
-            $this->dispatch('updatedProject', $project);
-            $this->dispatch('updatedProjectNotification');
-        }
+        $this->openEdit = false;
+        $this->dispatch('updatedProject', $this->project);
+        $this->dispatch('updatedProjectNotification');
+        $this->dispatch('resetProjectCreateComponent');
     }
 
+// Helper methods to prepare data for syncing pivot tables
+    private function getPositionSyncData(): array
+    {
+        $syncData = [];
+        foreach ($this->selectedPositions as $positionId) {
+            $position = Position::find($positionId);
+            $totalCost = $this->selectedPositionQuantity[$positionId] *
+                $this->selectedPositionRequiredDays[$positionId] *
+                $this->selectedPositionEfficiencies[$positionId] *
+                $position->real_daily_cost;
+
+            $syncData[$positionId] = [
+                'quantity' => $this->selectedPositionQuantity[$positionId],
+                'required_days' => $this->selectedPositionRequiredDays[$positionId],
+                'efficiency' => $this->selectedPositionEfficiencies[$positionId],
+                'total_cost' => $totalCost, // Add the total cost
+            ];
+        }
+        return $syncData;
+    }
+
+    private function getMaterialSyncData(): array
+    {
+        $syncData = [];
+        foreach ($this->selectedMaterials as $materialId) {
+            $material = Material::find($materialId);
+            $totalCost = $this->selectedMaterialQuantity[$materialId] *
+                $this->selectedMaterialEfficiencies[$materialId] *
+                $material->unit_price;
+
+            $syncData[$materialId] = [
+                'quantity' => $this->selectedMaterialQuantity[$materialId],
+                'efficiency' => $this->selectedMaterialEfficiencies[$materialId],
+                'total_cost' => $totalCost, // Add the total cost
+            ];
+        }
+        return $syncData;
+    }
+
+    private function getToolSyncData(): array
+    {
+        $syncData = [];
+        foreach ($this->selectedTools as $toolId) {
+            $tool = Tool::find($toolId);
+            $totalCost = $this->selectedToolQuantity[$toolId] *
+                $this->selectedToolRequiredDays[$toolId] *
+                $this->selectedToolEfficiencies[$toolId] *
+                $tool->unit_price_per_day;
+
+            $syncData[$toolId] = [
+                'quantity' => $this->selectedToolQuantity[$toolId],
+                'required_days' => $this->selectedToolRequiredDays[$toolId],
+                'efficiency' => $this->selectedToolEfficiencies[$toolId],
+                'total_cost' => $totalCost, // Add the total cost
+            ];
+        }
+        return $syncData;
+    }
+
+// ... (getPositionSyncData, getMaterialSyncData, getToolSyncData)
+
+    private function getTransportSyncData(): array
+    {
+        $syncData = [];
+        foreach ($this->selectedTransports as $transportId) {
+            $transport = Transport::find($transportId);
+            $totalCost = $this->selectedTransportQuantity[$transportId] *
+                $this->selectedTransportRequiredDays[$transportId] *
+                $this->selectedTransportEfficiencies[$transportId] *
+                $transport->cost_per_day;
+
+            $syncData[$transportId] = [
+                'quantity' => $this->selectedTransportQuantity[$transportId],
+                'required_days' => $this->selectedTransportRequiredDays[$transportId],
+                'efficiency' => $this->selectedTransportEfficiencies[$transportId],
+                'total_cost' => $totalCost, // Add the total cost
+            ];
+        }
+        return $syncData;
+    }
+
+    private function getAdditionalSyncData(): array
+    {
+        $syncData = [];
+        foreach ($this->selectedAdditionals as $additionalId) {
+            $additional = Additional::find($additionalId);
+            $totalCost = $this->selectedAdditionalQuantity[$additionalId] *
+                $this->selectedAdditionalEfficiencies[$additionalId] *
+                $additional->unit_price;
+
+            $syncData[$additionalId] = [
+                'quantity' => $this->selectedAdditionalQuantity[$additionalId],
+                'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
+                'total_cost' => $totalCost, // Add the total cost
+            ];
+        }
+        return $syncData;
+    }
 
     public function showLaborForm(): void
     {
-        // Muestra el formulario de mano de obra
-        $this->showResource = 'labor';
+        $this->showResource = 'labor'; // Update property based on the selected resource
     }
 
     public function showMaterialsForm(): void
     {
-        // Muestra el formulario de materiales
-        $this->showResource ='materials';
+        $this->showResource = 'materials'; // Update property based on the selected resource
     }
 
     public function showToolsForm(): void
     {
-        // Muestra el formulario de herramientas
-        $this->showResource = 'tools';
+        $this->showResource = 'tools'; // Update property based on the selected resource
     }
 
     public function showTransportForm(): void
     {
-        // Muestra el formulario de transporte
-        $this->showResource = 'transport';
+        $this->showResource = 'transport'; // Update property based on the selected resource
     }
 
     public function showAdditionalForm(): void
     {
-        // Muestra el formulario de costos adicionales
-        $this->showResource = 'additionals';
+        $this->showResource = 'additionals'; // Update property based on the selected resource
     }
 
     #[On('positionSelectionUpdated')]
     public function handlePositionSelectionUpdated($data): void
     {
-        // Maneja la actualización de selección de posiciones
+        // Update relevant properties with received data
         $this->selectedPositions = $data['selectedPositions'];
         $this->selectedPositionQuantity = $data['positionQuantities'];
         $this->selectedPositionRequiredDays = $data['positionRequiredDays'];
         $this->selectedPositionEfficiencies = $data['positionEfficiencies'];
         $this->totalLaborCost = $data['totalLaborCost'];
-        $this->calculateHandToolCost();
-        $this->calculateTotalProjectCost();
-        $this->showResource = '';
-    }
 
-// Agrega otros métodos para manejar la actualización de selección de materiales, herramientas, transporte y costos adicionales
+        // Update the 'position_project' pivot table if the project already exists
+        foreach ($this->selectedPositions as $positionId) {
+            $this->project->positions()->syncWithoutDetaching([
+                $positionId => [
+                    'quantity' => $this->selectedPositionQuantity[$positionId],
+                    'required_days' => $this->selectedPositionRequiredDays[$positionId],
+//                    'efficiencies' => $this->selectedPositionEfficiencies[$positionId],
+                    'total_cost' => $this->totalLaborCost,
+                ]
+            ]);
+        }
+        $this->calculateTotalProjectCost(); // Recalcular el costo total
+    }
 
     #[On('materialSelectionUpdated')]
     public function handleMaterialSelectionUpdated($data): void
     {
-        // Maneja la actualización de selección de materiales
+        // Update relevant properties with received data
         $this->selectedMaterials = $data['selectedMaterials'];
         $this->selectedMaterialQuantity = $data['materialQuantities'];
         $this->selectedMaterialEfficiencies = $data['materialEfficiencies'];
         $this->totalMaterialCost = $data['totalMaterialCost'];
-        $this->calculateTotalProjectCost();
-        $this->showResource = '';
+
+        // Update the 'material_project' pivot table if the project already exists
+        foreach ($this->selectedMaterials as $materialId) {
+            $this->project->materials()->syncWithoutDetaching([
+                $materialId => [
+                    'quantity' => $this->selectedMaterialQuantity[$materialId],
+//                    'efficiencies' => $this->selectedMaterialEfficiencies[$materialId],
+                    'total_cost' => $this->totalMaterialCost,
+                ]
+            ]);
+        }
+        $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
+
     #[On('toolSelectionUpdated')]
     public function handleToolSelectionUpdated($data): void
     {
-        // Maneja la actualización de selección de herramientas
         $this->selectedTools = $data['selectedTools'];
         $this->selectedToolQuantity = $data['toolQuantities'];
-        $this->selectedToolRequiredDays = $data['toolRequiredDays'];
+        $this->selectedToolRequiredDays = $data['toolRequiredDays']; // Actualizar días requeridos
         $this->selectedToolEfficiencies = $data['toolEfficiencies'];
         $this->totalToolCost = $data['totalToolCost'];
-        $this->calculateTotalProjectCost();
-        $this->showResource = '';
+
+        foreach ($this->selectedTools as $toolId) {
+            $this->project->tools()->updateExistingPivot($toolId, [
+                'quantity' => $this->selectedToolQuantity[$toolId],
+                'required_days' => $this->selectedToolRequiredDays[$toolId], // Guardar días requeridos
+//                'efficiency' => $this->selectedToolEfficiencies[$toolId],
+                'total_cost' => $this->totalToolCost,
+            ]);
+        }
+        $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
+
     #[On('transportSelectionUpdated')]
     public function handleTransportSelectionUpdated($data): void
     {
-        // Maneja la actualización de selección de transporte
+        // Actualizar propiedades relevantes con los datos recibidos
         $this->selectedTransports = $data['selectedTransports'];
         $this->selectedTransportQuantity = $data['transportQuantities'];
         $this->selectedTransportRequiredDays = $data['transportRequiredDays'];
         $this->selectedTransportEfficiencies = $data['transportEfficiencies'];
         $this->totalTransportCost = $data['totalTransportCost'];
-        $this->calculateTotalProjectCost();
-        $this->showResource = '';
+
+        // Actualizar los costos totales de transporte en la tabla pivot 'project_transport' si el proyecto ya existe
+        foreach ($this->selectedTransports as $transportId) {
+            $this->project->transports()->updateExistingPivot($transportId, [
+                'quantity' => $this->selectedTransportQuantity[$transportId],
+                'required_days' => $this->selectedTransportRequiredDays[$transportId],
+//                'efficiency' => $this->selectedTransportEfficiencies[$transportId],
+                'total_cost' => $this->totalTransportCost,
+            ]);
+        }
+        $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
+
     #[On('additionalSelectionUpdated')]
     public function handleAdditionalSelectionUpdated($data): void
     {
-        // Maneja la actualización de selección de costos adicionales
+        // Update relevant properties with received data
         $this->selectedAdditionals = $data['selectedAdditionals'];
         $this->selectedAdditionalQuantity = $data['additionalQuantities'];
         $this->selectedAdditionalEfficiencies = $data['additionalEfficiencies'];
         $this->totalAdditionalCost = $data['totalAdditionalCost'];
-        $this->calculateTotalProjectCost();
+
+        // Update the 'additional_cost_project' pivot table if the project already exists
+        foreach ($this->selectedAdditionals as $additionalId) {
+            $this->project->additionals()->syncWithoutDetaching([
+                $additionalId => [
+                    'quantity' => $this->selectedAdditionalQuantity[$additionalId],
+//                    'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
+                    'total_cost' => $this->totalAdditionalCost,
+                ]
+            ]);
+        }
+        $this->calculateTotalProjectCost(); // Recalcular el costo total
+    }
+
+    #[On('hideResourceForm')]  // Listen for the event
+    public function hideResourceForm(): void
+    {
         $this->showResource = '';
     }
 
-    #[On('hideResourceForm')]
-    public function hideResourceForm(): void
-    {
-        // Oculta el formulario de recursos
-    }
-
-
     public function render(): View
     {
-        // Render the view with the data
+        // Renderizar la vista con el costo total del proyecto
         return view('livewire.projects.project-edit', [
             'totalProjectCost' => $this->totalProjectCost,
         ]);

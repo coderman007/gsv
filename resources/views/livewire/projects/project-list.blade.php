@@ -89,6 +89,19 @@
                         @endif
                     </th>
 
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('required_area')">
+                        Area Necesaria
+                        @if ($sortBy == 'required_area')
+                            @if ($sortDirection == 'asc')
+                                <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
+                            @else
+                                <i class="ml-2 fa-solid fa-arrow-down-z-a"></i>
+                            @endif
+                        @else
+                            <i class="ml-2 fa-solid fa-sort"></i>
+                        @endif
+                    </th>
+
                     <th scope="col" class="px-6 py-3">
                         Zona
                     </th>
@@ -111,13 +124,14 @@
 
                         <td class="px-6 py-4 dark:text-lg">{{ $project->projectCategory->name ?? 'N/A' }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->power_output . " kWp" }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $project->required_area . " mts" }}<sup>2</sup></td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->zone }}</td>
                         <td class="px-6 py-4 dark:text-lg"> {{ number_format($project->sale_value, 2) }}</td>
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">
                                 <livewire:projects.project-show :project='$project' wire:key='project-show-{{ $project->id }}'/>
-                                <livewire:projects.project-edit :project='$project->id' wire:key='project-edit-{{ $project->id }}'/>
+                                <livewire:projects.project-edit :project='$project' wire:key='project-edit-{{ $project->id }}'/>
                                 <livewire:projects.project-delete :project='$project->id' wire:key='project-delete-{{ $project->id }}'/>
                             </div>
                         </td>

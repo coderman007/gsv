@@ -8,6 +8,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property mixed $zone
+ * @property mixed $power_output
+ * @property mixed $required_area
+ * @property mixed $total_labor_cost
+ * @property mixed $total_material_cost
+ * @property mixed $hand_tool_cost
+ * @property mixed $total_tool_cost
+ * @property mixed $total_transport_cost
+ * @property mixed $total_additional_cost
+ * @property mixed $sale_value
+ * @property mixed $additionals
+ */
 class Project extends Model
 {
     use HasFactory;
@@ -16,6 +29,7 @@ class Project extends Model
         'project_category_id',
         'zone',
         'power_output',
+        'required_area',
         'hand_tool_cost',
         'raw_value',
         'sale_value',
@@ -35,6 +49,7 @@ class Project extends Model
         'total' => 'decimal:2',
         'sale_value' => 'decimal:2',
         'power_output' => 'decimal:2',
+        'required_area' => 'decimal:2',
         'hand_tool_cost' => 'decimal:2',
         'total_labor_cost' => 'decimal:2',
         'total_tool_cost' => 'decimal:2',

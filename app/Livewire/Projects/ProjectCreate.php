@@ -14,12 +14,13 @@ use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
+/**
+ * @property null $propertyName
+ */
 class ProjectCreate extends Component
 {
     public $openCreate = false;
     public $categories;
-
-
     public $selectedCategory;
     public $project;
     public $zone;
@@ -74,6 +75,7 @@ class ProjectCreate extends Component
         'selectedCategory' => 'required|exists:project_categories,id',
         'zone' => 'required|in:Medellin y Municipios Cercanos,Antioquia Lejana,Caribe,Urabá,Centro,Valle',
         'power_output' => 'required|numeric|min:0',
+        'required_area' => 'required|numeric|min:0',
     ];
 
     // Validation messages
@@ -85,6 +87,9 @@ class ProjectCreate extends Component
         'power_output.required' => 'Debe ingresar la potencia del proyecto.',
         'power_output.numeric' => 'La potencia debe ser un número.',
         'power_output.min' => 'La potencia no puede ser negativa.',
+        'required_area.required' => 'Debe ingresar el area necesaria del proyecto.',
+        'required_area.numeric' => 'El area necesaria debe ser un número.',
+        'required_area.min' => 'El area necesaria no puede ser negativa.',
     ];
 
     public function mount(): void
@@ -214,6 +219,7 @@ class ProjectCreate extends Component
             'project_category_id' => $this->selectedCategory,
             'zone' => $this->zone,
             'power_output' => $this->power_output,
+            'required_area' => $this->required_area,
             'hand_tool_cost' => $handToolCost,
             'raw_value' => $rawValue,
             'sale_value' => $saleValue,
@@ -486,6 +492,12 @@ class ProjectCreate extends Component
     public function hideResourceForm(): void
     {
         $this->showResource = '';
+    }
+
+    #[On('resetProjectCreateComponent')]  // Listen for the event
+    public function resetProjectCreate(): void
+    {
+        $this->reset();
     }
 
     public function render(): View

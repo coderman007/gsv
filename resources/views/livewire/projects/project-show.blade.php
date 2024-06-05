@@ -25,6 +25,10 @@
                         <p id="category_power" class="text-green-800 dark:text-green-200 text-2xl font-bold p-4 bg-green-200 dark:bg-green-600 rounded-lg shadow-md">
                             {{ $project->projectCategory->name }} de {{ rtrim(rtrim(number_format($project->power_output, 2), '0'), '.') }} kWp
                         </p>
+                        <div class="space-y-2">
+                            <label for="required_area" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Área Requerida:</label>
+                            <p id="required_area" class="text-gray-800 dark:text-gray-200 text-lg">{{ rtrim(rtrim(number_format($project->required_area, 2), '0'), '.') }} mts<sup>2</sup></p>
+                        </div>
                     </div>
 
                     <!-- Estado -->
