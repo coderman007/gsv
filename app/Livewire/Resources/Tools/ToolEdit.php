@@ -9,9 +9,6 @@ use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-/**
- * @property mixed|null $tool
- */
 class ToolEdit extends Component
 {
     use WithFileUploads;
@@ -45,10 +42,13 @@ class ToolEdit extends Component
         ]);
 
         if ($this->image) {
-            Storage::delete($tool->image); // Elimina la imagen anterior si existe
+            // Elimina la imagen anterior si existe
+            if ($tool->image) {
+                Storage::disk('public')->delete($tool->image);
+            }
+            // Almacenar la nueva imagen
             $imagePath = $this->image->store('tools', 'public');
-            $tool->image = $imagePath;
-            $tool->save();
+            $tool->update(['image' => $imagePath]);
         }
 
         // Emitir el evento después de actualizar la herramienta

@@ -56,3 +56,5 @@ Route::middleware([
     Route::get('layouts', LayoutList::class)->name('layouts');
     Route::get('irradiances', IrradianceEdit::class)->name('irradiances');
 });
+
+// Hola
