@@ -86,4 +86,5 @@ class ProjectList extends Component
     public function deletedProject($project = null)
     {
     }
+
 }

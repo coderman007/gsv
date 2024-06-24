@@ -108,39 +108,39 @@ class ProjectEdit extends Component
             $this->existingPositionSelections = $project->positions->map(function ($position) {
                 return [
                     'position_id' => $position->id,
-                    'quantity' => $position->pivot->quantity, // Ajusta según tu estructura
-                    'required_days' => $position->pivot->required_days, // Ajusta según tu estructura
-                    'efficiency' => $position->pivot->efficiency // Ajusta según tu estructura
+                    'quantity' => $position->pivot->quantity,
+                    'required_days' => $position->pivot->required_days,
+                    'efficiency' => $position->pivot->efficiency
                 ];
             })->toArray();
             $this->existingMaterialSelections = $project->materials->map(function ($material) {
                 return [
                    'material_id' => $material->id,
-                    'quantity' => $material->pivot->quantity, // Ajusta según tu estructura
-                    'efficiency' => $material->pivot->efficiency // Ajusta según tu estructura
+                    'quantity' => $material->pivot->quantity,
+                    'efficiency' => $material->pivot->efficiency
                 ];
                 })->toArray();
             $this->existingToolSelections = $project->tools->map(function ($tool) {
                 return [
                     'tool_id' => $tool->id,
-                    'quantity' => $tool->pivot->quantity, // Ajusta según tu estructura
-                   'required_days' => $tool->pivot->required_days, // Ajusta según tu estructura
-                    'efficiency' => $tool->pivot->efficiency // Ajusta según tu estructura
+                    'quantity' => $tool->pivot->quantity,
+                   'required_days' => $tool->pivot->required_days,
+                    'efficiency' => $tool->pivot->efficiency
                 ];
                 })->toArray();
             $this->existingTransportSelections = $project->transports->map(function ($transport) {
                 return [
                     'transport_id' => $transport->id,
-                    'quantity' => $transport->pivot->quantity, // Ajusta según tu estructura
-                   'required_days' => $transport->pivot->required_days, // Ajusta según tu estructura
-                    'efficiency' => $transport->pivot->efficiency // Ajusta según tu estructura
+                    'quantity' => $transport->pivot->quantity,
+                   'required_days' => $transport->pivot->required_days,
+                    'efficiency' => $transport->pivot->efficiency
                 ];
                 })->toArray();
             $this->existingAdditionalSelections = $project->additionals->map(function ($additional) {
                 return [
                     'additional_id' => $additional->id,
-                    'quantity' => $additional->pivot->quantity, // Ajusta según tu estructura
-                    'efficiency' => $additional->pivot->efficiency // Ajusta según tu estructura
+                    'quantity' => $additional->pivot->quantity,
+                    'efficiency' => $additional->pivot->efficiency
                 ];
                 })->toArray();
 
@@ -299,7 +299,6 @@ class ProjectEdit extends Component
 //            dd($saleValue);
         } else {
             $saleValue = 0; // O manejar el error apropiadamente
-            dd($saleValue);
 
         }
 
@@ -329,7 +328,6 @@ class ProjectEdit extends Component
         $this->openEdit = false;
         $this->dispatch('updatedProject', $this->project);
         $this->dispatch('updatedProjectNotification');
-        $this->dispatch('resetProjectCreateComponent');
     }
 
 // Helper methods to prepare data for syncing pivot tables
@@ -338,98 +336,121 @@ class ProjectEdit extends Component
         $syncData = [];
         foreach ($this->selectedPositions as $positionId) {
             $position = Position::find($positionId);
+
+            // Obtener la eficiencia; si no está definida, usar 1 por defecto
+            $efficiency = $this->selectedPositionEfficiencies[$positionId] ?? 1;
+
             $totalCost = $this->selectedPositionQuantity[$positionId] *
                 $this->selectedPositionRequiredDays[$positionId] *
-                $this->selectedPositionEfficiencies[$positionId] *
+                $efficiency *
                 $position->real_daily_cost;
 
             $syncData[$positionId] = [
                 'quantity' => $this->selectedPositionQuantity[$positionId],
                 'required_days' => $this->selectedPositionRequiredDays[$positionId],
-                'efficiency' => $this->selectedPositionEfficiencies[$positionId],
-                'total_cost' => $totalCost, // Add the total cost
+                'efficiency' => $efficiency, // Asignar eficiencia (1 por defecto si no está definida)
+                'total_cost' => $totalCost, // Agregar el costo total
             ];
         }
         return $syncData;
     }
+
 
     private function getMaterialSyncData(): array
     {
         $syncData = [];
         foreach ($this->selectedMaterials as $materialId) {
             $material = Material::find($materialId);
+
+            // Obtener la eficiencia; si no está definida, usar 1 por defecto
+            $efficiency = $this->selectedMaterialEfficiencies[$materialId] ?? 1;
+
             $totalCost = $this->selectedMaterialQuantity[$materialId] *
-                $this->selectedMaterialEfficiencies[$materialId] *
+                $efficiency *
                 $material->unit_price;
 
             $syncData[$materialId] = [
                 'quantity' => $this->selectedMaterialQuantity[$materialId],
-                'efficiency' => $this->selectedMaterialEfficiencies[$materialId],
-                'total_cost' => $totalCost, // Add the total cost
+                'efficiency' => $efficiency, // Asignar eficiencia (1 por defecto si no está definida)
+                'total_cost' => $totalCost, // Agregar el costo total
             ];
         }
         return $syncData;
     }
+
 
     private function getToolSyncData(): array
     {
         $syncData = [];
         foreach ($this->selectedTools as $toolId) {
             $tool = Tool::find($toolId);
+
+            // Obtener la eficiencia; si no está definida, usar 1 por defecto
+            $efficiency = $this->selectedToolEfficiencies[$toolId] ?? 1;
+
             $totalCost = $this->selectedToolQuantity[$toolId] *
                 $this->selectedToolRequiredDays[$toolId] *
-                $this->selectedToolEfficiencies[$toolId] *
+                $efficiency *
                 $tool->unit_price_per_day;
 
             $syncData[$toolId] = [
                 'quantity' => $this->selectedToolQuantity[$toolId],
                 'required_days' => $this->selectedToolRequiredDays[$toolId],
-                'efficiency' => $this->selectedToolEfficiencies[$toolId],
-                'total_cost' => $totalCost, // Add the total cost
+                'efficiency' => $efficiency, // Asignar eficiencia (1 por defecto si no está definida)
+                'total_cost' => $totalCost, // Agregar el costo total
             ];
         }
         return $syncData;
     }
 
-// ... (getPositionSyncData, getMaterialSyncData, getToolSyncData)
 
     private function getTransportSyncData(): array
     {
         $syncData = [];
         foreach ($this->selectedTransports as $transportId) {
             $transport = Transport::find($transportId);
+
+            // Obtener la eficiencia; si no está definida, usar 1 por defecto
+            $efficiency = $this->selectedTransportEfficiencies[$transportId] ?? 1;
+
             $totalCost = $this->selectedTransportQuantity[$transportId] *
                 $this->selectedTransportRequiredDays[$transportId] *
-                $this->selectedTransportEfficiencies[$transportId] *
+                $efficiency *
                 $transport->cost_per_day;
 
             $syncData[$transportId] = [
                 'quantity' => $this->selectedTransportQuantity[$transportId],
                 'required_days' => $this->selectedTransportRequiredDays[$transportId],
-                'efficiency' => $this->selectedTransportEfficiencies[$transportId],
-                'total_cost' => $totalCost, // Add the total cost
+                'efficiency' => $efficiency, // Asignar eficiencia (1 por defecto si no está definida)
+                'total_cost' => $totalCost, // Agregar el costo total
             ];
         }
         return $syncData;
     }
+
 
     private function getAdditionalSyncData(): array
     {
         $syncData = [];
         foreach ($this->selectedAdditionals as $additionalId) {
             $additional = Additional::find($additionalId);
+
+            // Obtener la eficiencia; si no está definida, usar 1 por defecto
+            $efficiency = $this->selectedAdditionalEfficiencies[$additionalId] ?? 1;
+
             $totalCost = $this->selectedAdditionalQuantity[$additionalId] *
-                $this->selectedAdditionalEfficiencies[$additionalId] *
+                $efficiency *
                 $additional->unit_price;
 
             $syncData[$additionalId] = [
                 'quantity' => $this->selectedAdditionalQuantity[$additionalId],
-                'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
-                'total_cost' => $totalCost, // Add the total cost
+                'efficiency' => $efficiency, // Asignar eficiencia (1 por defecto si no está definida)
+                'total_cost' => $totalCost, // Agregar el costo total
             ];
         }
         return $syncData;
     }
+
 
     public function showLaborForm(): void
     {

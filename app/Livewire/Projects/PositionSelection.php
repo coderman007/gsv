@@ -5,6 +5,7 @@ namespace App\Livewire\Projects;
 use App\Helpers\DataTypeConverter;
 use App\Models\Position;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class PositionSelection extends Component

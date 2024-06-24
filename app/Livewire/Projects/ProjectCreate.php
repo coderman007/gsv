@@ -232,9 +232,9 @@ class ProjectCreate extends Component
 
         // Associate positions and update costs in the 'position_project' pivot table
         foreach ($this->selectedPositions as $positionId) {
-            $quantity = $this->selectedPositionQuantity[$positionId];
-            $requiredDays = $this->selectedPositionRequiredDays[$positionId];
-            $efficiency = $this->selectedPositionEfficiencies[$positionId];
+            $quantity = $this->selectedPositionQuantity[$positionId] ?? 0;
+            $requiredDays = $this->selectedPositionRequiredDays[$positionId] ?? 0;
+            $efficiency = $this->selectedPositionEfficiencies[$positionId] ?? 1; // Valor por defecto
             $position = Position::find($positionId);
 
             $totalCost = $quantity * $requiredDays * $efficiency * $position->real_daily_cost;
@@ -249,8 +249,8 @@ class ProjectCreate extends Component
 
         // Associate materials and update costs in the 'material_project' pivot table
         foreach ($this->selectedMaterials as $materialId) {
-            $quantity = $this->selectedMaterialQuantity[$materialId];
-            $efficiency = $this->selectedMaterialEfficiencies[$materialId];
+            $quantity = $this->selectedMaterialQuantity[$materialId] ?? 0;
+            $efficiency = $this->selectedMaterialEfficiencies[$materialId] ?? 1; // Valor por defecto
             $material = Material::find($materialId);
 
             $totalCost = $quantity * $efficiency * $material->unit_price;
@@ -264,9 +264,9 @@ class ProjectCreate extends Component
 
         // Associate tools and update costs in the 'project_tool' pivot table
         foreach ($this->selectedTools as $toolId) {
-            $quantity = $this->selectedToolQuantity[$toolId];
-            $requiredDays = $this->selectedToolRequiredDays[$toolId];
-            $efficiency = $this->selectedToolEfficiencies[$toolId];
+            $quantity = $this->selectedToolQuantity[$toolId] ?? 0;
+            $requiredDays = $this->selectedToolRequiredDays[$toolId] ?? 0;
+            $efficiency = $this->selectedToolEfficiencies[$toolId] ?? 1; // Valor por defecto
             $tool = Tool::find($toolId);
 
             $totalCost = $quantity * $requiredDays * $efficiency * $tool->unit_price_per_day;
@@ -281,9 +281,9 @@ class ProjectCreate extends Component
 
         // Associate transports and update costs in the 'project_transport' pivot table
         foreach ($this->selectedTransports as $transportId) {
-            $quantity = $this->selectedTransportQuantity[$transportId];
-            $requiredDays = $this->selectedTransportRequiredDays[$transportId];
-            $efficiency = $this->selectedTransportEfficiencies[$transportId];
+            $quantity = $this->selectedTransportQuantity[$transportId] ?? 0;
+            $requiredDays = $this->selectedTransportRequiredDays[$transportId] ?? 0;
+            $efficiency = $this->selectedTransportEfficiencies[$transportId] ?? 1; // Valor por defecto
             $transport = Transport::find($transportId);
 
             $totalCost = $quantity * $requiredDays * $efficiency * $transport->cost_per_day;
@@ -298,8 +298,8 @@ class ProjectCreate extends Component
 
         // Associate additional costs and update costs in the 'additional_cost_project' pivot table
         foreach ($this->selectedAdditionals as $additionalId) {
-            $quantity = $this->selectedAdditionalQuantity[$additionalId];
-            $efficiency = $this->selectedAdditionalEfficiencies[$additionalId];
+            $quantity = $this->selectedAdditionalQuantity[$additionalId] ?? 0;
+            $efficiency = $this->selectedAdditionalEfficiencies[$additionalId] ?? 1; // Valor por defecto
             $additional = Additional::find($additionalId);
 
             $totalCost = $quantity * $efficiency * $additional->unit_price;
@@ -492,12 +492,6 @@ class ProjectCreate extends Component
     public function hideResourceForm(): void
     {
         $this->showResource = '';
-    }
-
-    #[On('resetProjectCreateComponent')]  // Listen for the event
-    public function resetProjectCreate(): void
-    {
-        $this->reset();
     }
 
     public function render(): View
