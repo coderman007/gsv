@@ -139,15 +139,30 @@
                     <div class="mt-8">
                         <!-- Mostrar componente Livewire correspondiente -->
                         @if ($showResource === 'labor')
-                            <livewire:projects.position-selection/>
+                            <livewire:projects.position-selection
+                                :is-edit="true"
+                                :existing-selections="$existingPositionSelections"
+                            />
                         @elseif ($showResource === 'materials')
-                            <livewire:projects.material-selection/>
+                            <livewire:projects.material-selection
+                                :is-edit="true"
+                                :existing-selections="$existingMaterialSelections"
+                            />
                         @elseif ($showResource === 'tools')
-                            <livewire:projects.tool-selection/>
+                            <livewire:projects.tool-selection
+                                :is-edit="true"
+                                :existing-selections="$existingToolSelections"
+                            />
                         @elseif ($showResource === 'transport')
-                            <livewire:projects.transport-selection/>
+                            <livewire:projects.transport-selection
+                                :is-edit="true"
+                                :existing-selections="$existingTransportSelections"
+                            />
                         @elseif ($showResource === 'additionals')
-                            <livewire:projects.additional-selection/>
+                            <livewire:projects.additional-selection
+                                :is-edit="true"
+                                :existing-selections="$existingAdditionalSelections"
+                            />
                         @endif
                     </div>
                 </div>

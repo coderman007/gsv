@@ -74,6 +74,11 @@ class ProjectEdit extends Component
     public $selectedTransportEfficiencies;
     public $selectedAdditionalQuantity;
     public $selectedAdditionalEfficiencies;
+    public $existingPositionSelections = [];
+    public $existingMaterialSelections = [];
+    public $existingToolSelections = [];
+    public $existingTransportSelections = [];
+    public $existingAdditionalSelections = [];
 
     // Validation rules
     protected $rules = [
@@ -100,6 +105,45 @@ class ProjectEdit extends Component
     public function mount(Project $project): void
     {
         $this->project = $project;
+            $this->existingPositionSelections = $project->positions->map(function ($position) {
+                return [
+                    'position_id' => $position->id,
+                    'quantity' => $position->pivot->quantity, // Ajusta según tu estructura
+                    'required_days' => $position->pivot->required_days, // Ajusta según tu estructura
+                    'efficiency' => $position->pivot->efficiency // Ajusta según tu estructura
+                ];
+            })->toArray();
+            $this->existingMaterialSelections = $project->materials->map(function ($material) {
+                return [
+                   'material_id' => $material->id,
+                    'quantity' => $material->pivot->quantity, // Ajusta según tu estructura
+                    'efficiency' => $material->pivot->efficiency // Ajusta según tu estructura
+                ];
+                })->toArray();
+            $this->existingToolSelections = $project->tools->map(function ($tool) {
+                return [
+                    'tool_id' => $tool->id,
+                    'quantity' => $tool->pivot->quantity, // Ajusta según tu estructura
+                   'required_days' => $tool->pivot->required_days, // Ajusta según tu estructura
+                    'efficiency' => $tool->pivot->efficiency // Ajusta según tu estructura
+                ];
+                })->toArray();
+            $this->existingTransportSelections = $project->transports->map(function ($transport) {
+                return [
+                    'transport_id' => $transport->id,
+                    'quantity' => $transport->pivot->quantity, // Ajusta según tu estructura
+                   'required_days' => $transport->pivot->required_days, // Ajusta según tu estructura
+                    'efficiency' => $transport->pivot->efficiency // Ajusta según tu estructura
+                ];
+                })->toArray();
+            $this->existingAdditionalSelections = $project->additionals->map(function ($additional) {
+                return [
+                    'additional_id' => $additional->id,
+                    'quantity' => $additional->pivot->quantity, // Ajusta según tu estructura
+                    'efficiency' => $additional->pivot->efficiency // Ajusta según tu estructura
+                ];
+                })->toArray();
+
         $this->categories = ProjectCategory::pluck('name', 'id')->toArray();
 
         // Cargar políticas comerciales
@@ -166,7 +210,7 @@ class ProjectEdit extends Component
             'totalMaterialCost',
             'totalToolCost',
             'totalTransportCost',
-            'totalAdditional'
+            'totalAdditionalCost'
         ])) {
             $this->calculateTotalProjectCost();
         }
@@ -530,9 +574,26 @@ class ProjectEdit extends Component
 
     public function render(): View
     {
-        // Renderizar la vista con el costo total del proyecto
         return view('livewire.projects.project-edit', [
             'totalProjectCost' => $this->totalProjectCost,
+            'selectedPositions' => $this->selectedPositions,
+            'selectedPositionQuantity' => $this->selectedPositionQuantity,
+            'selectedPositionRequiredDays' => $this->selectedPositionRequiredDays,
+            'selectedPositionEfficiencies' => $this->selectedPositionEfficiencies,
+            'selectedMaterials' => $this->selectedMaterials,
+            'selectedMaterialQuantity' => $this->selectedMaterialQuantity,
+            'selectedMaterialEfficiencies' => $this->selectedMaterialEfficiencies,
+            'selectedTools' => $this->selectedTools,
+            'selectedToolQuantity' => $this->selectedToolQuantity,
+            'selectedToolRequiredDays' => $this->selectedToolRequiredDays,
+            'selectedToolEfficiencies' => $this->selectedToolEfficiencies,
+            'selectedTransports' => $this->selectedTransports,
+            'selectedTransportQuantity' => $this->selectedTransportQuantity,
+            'selectedTransportRequiredDays' => $this->selectedTransportRequiredDays,
+            'selectedTransportEfficiencies' => $this->selectedTransportEfficiencies,
+            'selectedAdditionals' => $this->selectedAdditionals,
+            'selectedAdditionalQuantity' => $this->selectedAdditionalQuantity,
+            'selectedAdditionalEfficiencies' => $this->selectedAdditionalEfficiencies,
         ]);
     }
 }

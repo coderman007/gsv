@@ -13,41 +13,56 @@ class AdditionalSelection extends Component
     public $additionals = [];
     public $selectedAdditionals = [];
     public $quantities = [];
-    public $efficiencyInputs = []; // Mantenemos las entradas como cadenas de texto
-    public $efficiencies = []; // Almacenamos las eficiencias como valores numéricos
+    public $efficiencyInputs = []; // Se usa para capturar el rendimiento como cadena de texto
+    public $efficiencies = []; // Almacena el rendimiento como valores numéricos
     public $partialCosts = [];
     public $totalAdditionalCost = 0;
+
+    public $isEdit = false;
+    public $existingSelections = []; // Datos existentes en modo edición
 
     protected $rules = [
         'selectedAdditionals' => 'required|array|min:1',
         'selectedAdditionals.*' => 'exists:additionals,id',
         'quantities.*' => 'nullable|numeric|min:0',
-        'efficiencyInputs.*' => 'nullable|string', // Aceptamos cadenas de texto para rendimiento
+        'efficiencyInputs.*' => 'nullable|string', // Aceptamos cadenas para el rendimiento
     ];
 
     public function mount(): void
     {
+        $this->additionals = Additional::all(); // Cargar todos los adicionales
+
+        if ($this->isEdit) {
+            $this->initializeFromExistingSelections();
+        }
+
         $this->updateTotalAdditionalCost(); // Actualizar el costo total
     }
 
-    public function updatedSearch(): void
+    public function initializeFromExistingSelections(): void
     {
-        $this->additionals = Additional::where('name', 'like', '%' . $this->search . '%')->get(); // Actualizar additionales según la búsqueda
+        foreach ($this->existingSelections as $selection) {
+            $additionalId = $selection['additional_id'];
+            $this->selectedAdditionals[] = $additionalId;
+            $this->quantities[$additionalId] = $selection['quantity'];
+            $this->efficiencyInputs[$additionalId] = $selection['efficiency'];
+            $this->efficiencies[$additionalId] = DataTypeConverter::convertToFloat($selection['efficiency']);
+            $this->calculatePartialCost($additionalId);
+        }
     }
 
     public function calculatePartialCost($additionalId): void
     {
         if (in_array($additionalId, $this->selectedAdditionals)) {
             $quantity = $this->quantities[$additionalId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputs[$additionalId] ?? "1"; // Predeterminado a cadena de texto "1"
+            $efficiencyInput = $this->efficiencyInputs[$additionalId] ?? "1"; // Cadena por defecto
 
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput); // Convertir cadena a número
+            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput); // Convertir a número
 
             if ($efficiency === null) {
-                // Establecer el costo parcial en cero si la conversión falla
-                $this->partialCosts[$additionalId] = 0;
-                $this->addError("efficiency_$additionalId", "El rendimiento ingresado es inválido.");
-                return; // Salir temprano si la conversión falla
+                $this->partialCosts[$additionalId] = 0; // Establecer en cero si la conversión falla
+                $this->addError("efficiency_$additionalId", "Rendimiento inválido: '$efficiencyInput'.");
+                return; // Salir temprano si falla la conversión
             }
 
             if (is_numeric($quantity)) {
@@ -62,7 +77,7 @@ class AdditionalSelection extends Component
                 $this->partialCosts[$additionalId] = 0; // Establecer el costo parcial en cero si datos son inválidos
             }
         } else {
-            $this->partialCosts[$additionalId] = 0; // Si la herramienta no está seleccionada, costo parcial es cero
+            $this->partialCosts[$additionalId] = 0; // Si no está seleccionado, el costo parcial es cero
         }
     }
 
@@ -80,16 +95,16 @@ class AdditionalSelection extends Component
 
     public function updatedEfficiencyInputs($value, $additionalId): void
     {
-        $efficiency = DataTypeConverter::convertToFloat($value); // Intentar convertir a número
+        $efficiency = DataTypeConverter::convertToFloat($value); // Convertir cadena a número
 
         if ($efficiency === null) {
             // Emitir error si la conversión falla
-            $this->addError("efficiency_$additionalId", "El valor de rendimiento es inválido.");
-            return; // Salir temprano si no es convertible a número
+            $this->addError("efficiency_$additionalId", "Valor de rendimiento inválido.");
+            return; // Salir temprano si falla la conversión
         }
 
-        $this->efficiencies[$additionalId] = $efficiency; // Actualizar el valor numérico de la eficiencia
-        $this->efficiencyInputs[$additionalId] = $value; // Mantener la cadena original para visualización
+        $this->efficiencies[$additionalId] = $efficiency; // Actualizar con el valor numérico
+        $this->efficiencyInputs[$additionalId] = $value; // Guardar el valor como cadena
 
         // Recalcular el costo parcial y total
         $this->calculatePartialCost($additionalId);
@@ -122,7 +137,7 @@ class AdditionalSelection extends Component
     public function render(): View
     {
         if (!empty($this->search)) {
-            $this->additionals = Additional::where('name', 'like', '%' . $this->search . '%')->get(); // Actualizar additionales según búsqueda
+            $this->additionals = Additional::where('name', 'like', '%' . $this->search . '%')->get(); // Actualizar adicionales según búsqueda
         }
         return view("livewire.projects.additional-selection"); // Renderizar la vista asociada
     }

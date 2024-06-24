@@ -19,6 +19,9 @@ class TransportSelection extends Component
     public $partialCosts = [];
     public $totalTransportCost = 0;
 
+    public $isEdit = false;
+    public $existingSelections = []; // Datos existentes en modo edición
+
     protected $rules = [
         'selectedTransports' => 'required|array|min:1',
         'selectedTransports.*' => 'exists:transports,id',
@@ -30,7 +33,25 @@ class TransportSelection extends Component
     public function mount(): void
     {
         $this->transports = Transport::all(); // Cargar todos los transportes
+
+        if ($this->isEdit) {
+            $this->initializeFromExistingSelections();
+        }
+
         $this->updateTotalTransportCost(); // Actualizar el costo total
+    }
+
+    public function initializeFromExistingSelections(): void
+    {
+        foreach ($this->existingSelections as $selection) {
+            $transportId = $selection['transport_id'];
+            $this->selectedTransports[] = $transportId;
+            $this->quantities[$transportId] = $selection['quantity'];
+            $this->requiredDays[$transportId] = $selection['required_days'];
+            $this->efficiencyInputs[$transportId] = $selection['efficiency'];
+            $this->efficiencies[$transportId] = DataTypeConverter::convertToFloat($selection['efficiency']);
+            $this->calculatePartialCost($transportId);
+        }
     }
 
     public function calculatePartialCost($transportId): void
@@ -77,9 +98,9 @@ class TransportSelection extends Component
     public function updatedRequiredDays($value, $transportId): void
     {
         if (!is_numeric($value)) {
-        $this->requiredDays[$transportId] = null; // Restablecer si no es numérico
-        return; // Salir temprano
-    }
+            $this->requiredDays[$transportId] = null; // Restablecer si no es numérico
+            return; // Salir temprano
+        }
 
         $this->calculatePartialCost($transportId); // Recalcular el costo parcial
         $this->updateTotalTransportCost(); // Actualizar el costo total

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Projects;
 
-use App\Helpers\DataTypeConverter; // Asumo que esto contiene la lógica para convertir cadenas a números
+use App\Helpers\DataTypeConverter;
 use App\Models\Position;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -13,23 +13,42 @@ class PositionSelection extends Component
     public $selectedPositions = [];
     public $quantities = [];
     public $requiredDays = [];
-    public $efficiencyInputs = []; // Ahora vamos a usar esta variable para el input de rendimiento
-    public $efficiencies = []; // Esto almacenará las eficiencias como valores numéricos
+    public $efficiencyInputs = [];
+    public $efficiencies = [];
     public $partialCosts = [];
     public $totalLaborCost = 0;
+
+    public $isEdit = false;
+    public $existingSelections = []; // Datos existentes en modo edición
 
     protected $rules = [
         'selectedPositions' => 'required|array|min:1',
         'selectedPositions.*' => 'exists:positions,id',
         'quantities.*' => 'nullable|numeric|min:0',
         'requiredDays.*' => 'nullable|numeric|min:0',
-        'efficiencyInputs.*' => 'nullable|string', // Aceptamos cualquier cadena para los inputs
+        'efficiencyInputs.*' => 'nullable|string',
     ];
 
     public function mount(): void
     {
         $this->positions = Position::all();
+        if ($this->isEdit) {
+            $this->initializeFromExistingSelections();
+        }
         $this->updateTotalLaborCost();
+    }
+
+    public function initializeFromExistingSelections(): void
+    {
+        foreach ($this->existingSelections as $selection) {
+            $positionId = $selection['position_id'];
+            $this->selectedPositions[] = $positionId;
+            $this->quantities[$positionId] = $selection['quantity'];
+            $this->requiredDays[$positionId] = $selection['required_days'];
+            $this->efficiencyInputs[$positionId] = $selection['efficiency'];
+            $this->efficiencies[$positionId] = DataTypeConverter::convertToFloat($selection['efficiency']);
+            $this->calculatePartialCost($positionId);
+        }
     }
 
     public function calculatePartialCost($positionId): void
@@ -37,74 +56,63 @@ class PositionSelection extends Component
         if (in_array($positionId, $this->selectedPositions)) {
             $quantity = $this->quantities[$positionId] ?? 0;
             $requiredDays = $this->requiredDays[$positionId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputs[$positionId] ?? "1"; // Cadena por defecto
-
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput); // Conversión a número
+            $efficiencyInput = $this->efficiencyInputs[$positionId] ?? "1";
+            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
             if ($efficiency === null) {
-                // Si la conversión falla, establecemos el costo parcial en 0
                 $this->partialCosts[$positionId] = 0;
                 $this->addError('efficiencyInput', "Entrada de rendimiento inválida: '$efficiencyInput'");
             } else {
                 $position = Position::find($positionId);
                 $dailyCost = $position->real_daily_cost;
-
                 $this->partialCosts[$positionId] = $quantity * $requiredDays * $efficiency * $dailyCost;
             }
         } else {
             $this->partialCosts[$positionId] = 0;
         }
-
-        $this->dispatch('efficiencyInputUpdated', $this->efficiencyInputs); // Emitir evento para la vista
     }
 
     public function updatedQuantities($value, $positionId): void
     {
         if (!is_numeric($value)) {
-            $this->quantities[$positionId] = null; // Restablecemos a null si el valor no es numérico
+            $this->quantities[$positionId] = null;
             return;
         }
-
-        $this->calculatePartialCost($positionId); // Recalcula el costo parcial
-        $this->updateTotalLaborCost(); // Actualiza el costo total de mano de obra
+        $this->calculatePartialCost($positionId);
+        $this->updateTotalLaborCost();
     }
 
     public function updatedRequiredDays($value, $positionId): void
     {
         if (!is_numeric($value)) {
-            $this->requiredDays[$positionId] = null; // Restablecemos a null si el valor no es numérico
+            $this->requiredDays[$positionId] = null;
             return;
         }
-
-        $this->calculatePartialCost($positionId); // Recalcula el costo parcial
-        $this->updateTotalLaborCost(); // Actualiza el costo total de mano de obra
+        $this->calculatePartialCost($positionId);
+        $this->updateTotalLaborCost();
     }
 
     public function updatedEfficiencyInputs($value, $positionId): void
     {
-        $efficiency = DataTypeConverter::convertToFloat($value); // Intenta convertir la cadena a un número
-
+        $efficiency = DataTypeConverter::convertToFloat($value);
         if ($efficiency === null) {
-            // Emite un error si la conversión falla
             $this->addError('efficiencyInput', "Entrada de rendimiento inválida: '$value'");
             return;
         }
-
-        $this->efficiencies[$positionId] = $efficiency; // Actualiza la eficiencia como valor numérico
-        $this->efficiencyInputs[$positionId] = $value; // Almacena la cadena de entrada
-        $this->calculatePartialCost($positionId); // Recalcula el costo parcial
-        $this->updateTotalLaborCost(); // Actualiza el costo total
+        $this->efficiencies[$positionId] = $efficiency;
+        $this->efficiencyInputs[$positionId] = $value;
+        $this->calculatePartialCost($positionId);
+        $this->updateTotalLaborCost();
     }
 
     public function updateTotalLaborCost(): void
     {
-        $this->totalLaborCost = array_sum($this->partialCosts); // Suma de todos los costos parciales
+        $this->totalLaborCost = array_sum($this->partialCosts);
     }
 
     public function sendTotalLaborCost(): void
     {
-        $this->dispatch('totalLaborCostUpdated', $this->totalLaborCost); // Emite evento con el costo total
-
+        $this->dispatch('totalLaborCostUpdated', $this->totalLaborCost);
         $this->dispatch('positionSelectionUpdated', [
             'selectedPositions' => $this->selectedPositions,
             'positionQuantities' => $this->quantities,
@@ -124,5 +132,4 @@ class PositionSelection extends Component
             'positions' => $this->positions,
         ]);
     }
-
 }

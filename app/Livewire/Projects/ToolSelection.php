@@ -9,33 +9,48 @@ use Livewire\Component;
 
 class ToolSelection extends Component
 {
-    public $search = '';
     public $tools = [];
     public $selectedTools = [];
     public $quantities = [];
     public $requiredDays = [];
-    public $efficiencyInputs = []; // Mantenemos las entradas como cadenas de texto
-    public $efficiencies = []; // Almacenamos las eficiencias como valores numéricos
+    public $efficiencyInputs = [];
+    public $efficiencies = [];
     public $partialCosts = [];
     public $extraHandToolCost = 0;
     public $totalToolCost = 0;
+
+    public $isEdit = false;
+    public $existingSelections = [];
 
     protected $rules = [
         'selectedTools' => 'required|array|min:1',
         'selectedTools.*' => 'exists:tools,id',
         'quantities.*' => 'nullable|numeric|min:0',
         'requiredDays.*' => 'nullable|numeric|min:0',
-        'efficiencyInputs.*' => 'nullable|string', // Aceptamos cadenas de texto para rendimiento
+        'efficiencyInputs.*' => 'nullable|string',
     ];
 
     public function mount(): void
     {
-        $this->updateTotalToolCost(); // Actualizar el costo total
+        $this->tools = Tool::all(); // Cargar todas las herramientas al montar el componente
+
+        if ($this->isEdit) {
+            $this->initializeFromExistingSelections();
+        }
+        $this->updateTotalToolCost();
     }
 
-    public function updatedSearch(): void
+    public function initializeFromExistingSelections(): void
     {
-        $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get(); // Actualizar herramientas según la búsqueda
+        foreach ($this->existingSelections as $selection) {
+            $toolId = $selection['tool_id'];
+            $this->selectedTools[] = $toolId;
+            $this->quantities[$toolId] = $selection['quantity'];
+            $this->requiredDays[$toolId] = $selection['required_days'];
+            $this->efficiencyInputs[$toolId] = $selection['efficiency'];
+            $this->efficiencies[$toolId] = DataTypeConverter::convertToFloat($selection['efficiency']);
+            $this->calculatePartialCost($toolId);
+        }
     }
 
     public function calculatePartialCost($toolId): void
@@ -43,42 +58,38 @@ class ToolSelection extends Component
         if (in_array($toolId, $this->selectedTools)) {
             $quantity = $this->quantities[$toolId] ?? 0;
             $requiredDays = $this->requiredDays[$toolId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputs[$toolId] ?? "1"; // Predeterminado a cadena de texto "1"
+            $efficiencyInput = $this->efficiencyInputs[$toolId] ?? "1";
 
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput); // Convertir cadena a número
+            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
             if ($efficiency === null) {
-                // Establecer el costo parcial en cero si la conversión falla
                 $this->partialCosts[$toolId] = 0;
                 $this->addError("efficiency_$toolId", "El rendimiento ingresado es inválido.");
-                return; // Salir temprano si la conversión falla
+                return;
             }
 
             if (is_numeric($quantity) && is_numeric($requiredDays)) {
                 $tool = Tool::find($toolId);
                 $dailyCost = $tool->unit_price_per_day;
-
-                // Calcular el costo parcial con la eficiencia convertida
                 $partialCost = $quantity * $requiredDays * $efficiency * $dailyCost;
-                $partialCost += $this->extraHandToolCost; // Sumar costo adicional de herramientas de mano
+                $partialCost += $this->extraHandToolCost;
 
                 $this->partialCosts[$toolId] = $partialCost;
             } else {
-                $this->partialCosts[$toolId] = 0; // Establecer el costo parcial en cero si datos son inválidos
+                $this->partialCosts[$toolId] = 0;
             }
         } else {
-            $this->partialCosts[$toolId] = 0; // Si la herramienta no está seleccionada, costo parcial es cero
+            $this->partialCosts[$toolId] = 0;
         }
     }
 
     public function updatedQuantities($value, $toolId): void
     {
         if (!is_numeric($value)) {
-            $this->quantities[$toolId] = null; // Restablecer si no es numérico
-            return; // Salir temprano si no es numérico
+            $this->quantities[$toolId] = null;
+            return;
         }
 
-        // Recalcular el costo parcial y el total
         $this->calculatePartialCost($toolId);
         $this->updateTotalToolCost();
     }
@@ -86,44 +97,39 @@ class ToolSelection extends Component
     public function updatedRequiredDays($value, $toolId): void
     {
         if (!is_numeric($value)) {
-        $this->requiredDays[$toolId] = null; // Restablecer si no es numérico
-        return; // Salir temprano si no es numérico
-    }
+            $this->requiredDays[$toolId] = null;
+            return;
+        }
 
-        // Recalcular el costo parcial y total
         $this->calculatePartialCost($toolId);
         $this->updateTotalToolCost();
     }
 
     public function updatedEfficiencyInputs($value, $toolId): void
     {
-        $efficiency = DataTypeConverter::convertToFloat($value); // Intentar convertir a número
+        $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            // Emitir error si la conversión falla
             $this->addError("efficiency_$toolId", "El valor de rendimiento es inválido.");
-            return; // Salir temprano si no es convertible a número
+            return;
         }
 
-        $this->efficiencies[$toolId] = $efficiency; // Actualizar el valor numérico de la eficiencia
-        $this->efficiencyInputs[$toolId] = $value; // Mantener la cadena original para visualización
+        $this->efficiencies[$toolId] = $efficiency;
+        $this->efficiencyInputs[$toolId] = $value;
 
-        // Recalcular el costo parcial y total
         $this->calculatePartialCost($toolId);
         $this->updateTotalToolCost();
     }
 
     public function updateTotalToolCost(): void
     {
-        // Suma de todos los costos parciales
         $this->totalToolCost = array_sum($this->partialCosts);
     }
 
     public function sendTotalToolCost(): void
     {
-        $this->dispatch("totalToolCostUpdated", $this->totalToolCost); // Emitir evento para informar cambios
+        $this->dispatch("totalToolCostUpdated", $this->totalToolCost);
 
-        // Detalles del componente para el almacenamiento
         $this->dispatch("toolSelectionUpdated", [
             "selectedTools" => $this->selectedTools,
             "toolQuantities" => $this->quantities,
@@ -133,15 +139,14 @@ class ToolSelection extends Component
         ]);
 
         if ($this->totalToolCost > 0) {
-            $this->dispatch("hideResourceForm"); // Ejemplo de otro evento a despachar
+            $this->dispatch("hideResourceForm");
         }
     }
 
     public function render(): View
     {
-        if (!empty($this->search)) {
-            $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get(); // Actualizar herramientas según búsqueda
-        }
-        return view("livewire.projects.tool-selection"); // Renderizar la vista asociada
+        return view("livewire.projects.tool-selection", [
+            'tools' => $this->tools,
+        ]);
     }
 }
