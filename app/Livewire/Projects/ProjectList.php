@@ -80,8 +80,6 @@ class ProjectList extends Component
     #[On('updatedProject')]
     public function updatedProject($project = null): void
     {
-        // Actualizar el costo total del proyecto
-        $project->updateTotalCost();
     }
 
     #[On('deletedProject')]

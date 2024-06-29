@@ -149,14 +149,19 @@ class Project extends Model
         $discount = CommercialPolicy::where('name', 'like', 'Descuento')->first()?->percentage ?? 0;
 
         // Calcular las políticas comerciales
-        $internalCommissionsValue = $rawValue * ($internalCommissions / 100);
-        $externalCommissionsValue = $rawValue * ($externalCommissions / 100);
-        $marginValue = $rawValue * ($margin / 100);
-        $discountValue = $rawValue * ($discount / 100);
+        $internalCommissionsValue = $internalCommissions / 100;
+        $externalCommissionsValue = $externalCommissions / 100;
+        $marginValue = $margin / 100;
+        $discountValue = $discount / 100;
 
-        // Calcular el valor de venta
-        $saleValue = $rawValue + $internalCommissionsValue + $externalCommissionsValue + $marginValue - $discountValue;
+        // Calcular el precio de venta del proyecto
+        $denominator = (1 - $marginValue - $internalCommissionsValue - $externalCommissionsValue) * (1 - $discountValue);
 
+        if ($denominator > 0) {
+            $saleValue = $rawValue / $denominator;
+        } else {
+            $saleValue = 0;
+        }
         // Actualizar el proyecto con los nuevos valores
         $this->update([
             'hand_tool_cost' => $handToolCost,
