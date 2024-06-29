@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\AdditionalUpdated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -20,6 +21,10 @@ class Additional extends Model
         'name',
         'description',
         'unit_price',
+    ];
+
+    protected $dispatchesEvents = [
+        'updated' => AdditionalUpdated::class,
     ];
 
     public function projects(): BelongsToMany

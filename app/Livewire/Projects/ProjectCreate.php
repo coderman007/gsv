@@ -97,10 +97,10 @@ class ProjectCreate extends Component
         $this->categories = ProjectCategory::pluck('name', 'id')->toArray();
 
         // Cargar políticas comerciales
-        $this->internalCommissions = CommercialPolicy::where('name', 'like', 'internal_commissions')->first()?->percentage ?? 0;
-        $this->externalCommissions = CommercialPolicy::where('name', 'like', 'external_commissions')->first()?->percentage ?? 0;
-        $this->margin = CommercialPolicy::where('name', 'like', 'margin')->first()?->percentage ?? 0;
-        $this->discount = CommercialPolicy::where('name', 'like', 'discount')->first()?->percentage ?? 0;
+        $this->internalCommissions = CommercialPolicy::where('name', 'like', 'Comisiones Internas')->first()?->percentage ?? 0;
+        $this->externalCommissions = CommercialPolicy::where('name', 'like', 'Comisiones Externas')->first()?->percentage ?? 0;
+        $this->margin = CommercialPolicy::where('name', 'like', 'Margen')->first()?->percentage ?? 0;
+        $this->discount = CommercialPolicy::where('name', 'like', 'Descuento')->first()?->percentage ?? 0;
 
         // Initialize selected resources arrays
         $this->selectedPositions = [];
@@ -108,6 +108,7 @@ class ProjectCreate extends Component
         $this->selectedTools = [];
         $this->selectedTransports = [];
         $this->selectedAdditionals = [];
+
         // Initialize selected resource quantities and required days
         $this->selectedPositionQuantity = 0;
         $this->selectedPositionRequiredDays = 0;
@@ -203,6 +204,13 @@ class ProjectCreate extends Component
         $externalCommissions = $this->externalCommissions / 100;
         $margin = $this->margin / 100;
         $discount = $this->discount / 100;
+
+        $policies = [
+            $internalCommissions,
+            $externalCommissions,
+            $margin,
+            $discount
+        ];
 
         // Calcular el precio de venta del proyecto utilizando la fórmula correcta
         $denominator = (1 - $margin - $internalCommissions - $externalCommissions) * (1 - $discount);
@@ -318,6 +326,8 @@ class ProjectCreate extends Component
         $this->openCreate = false;
         $this->dispatch('createdProject', $project);
         $this->dispatch('createdProjectNotification');
+        $this->dispatch('commercialPolicies', $policies);
+
         $this->reset();
     }
 

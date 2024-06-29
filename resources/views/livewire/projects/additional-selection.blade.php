@@ -26,7 +26,7 @@
                                 <label for="quantity_{{ $additional->id }}"
                                        class="text-sm text-gray-700 mb-1">Cantidad:</label>
                                 <input wire:model.live="quantities.{{ $additional->id }}"
-                                       id="quantity_{{ $additional->id }}" min=1 type="number"
+                                       id="quantity_{{ $additional->id }}" type="number" min=0 step=1
                                        class="w-16 px-2 py-1 border-yellow-300 rounded-md focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
                             </div>
 

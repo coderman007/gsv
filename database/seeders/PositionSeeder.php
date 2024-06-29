@@ -80,18 +80,17 @@ class PositionSeeder extends Seeder
                 'monthly_work_hours' => 173,
                 'benefit_factor' => 1.54,
             ],
-
         ];
 
         foreach ($positionsData as &$positionData) {
-            // Calcula el sueldo diario
-            $positionData['real_daily_cost'] = $positionData['basic'] * $positionData['benefit_factor'] * $positionData['working_hours'] / $positionData['monthly_work_hours'];
-
             // Calcula el costo mensual real
-            $positionData['real_monthly_cost'] = $positionData['real_daily_cost'] / $positionData['working_hours'] * $positionData['monthly_work_hours'];
+            $positionData['real_monthly_cost'] = number_format($positionData['basic'] * $positionData['benefit_factor'], 2, '.', '');
+
+            // Calcula el costo diario real
+            $positionData['real_daily_cost'] = number_format((($positionData['basic'] * $positionData['benefit_factor']) / $positionData['monthly_work_hours']) * 8, 2, '.', '');
 
             // Crea el registro en la base de datos
-            (new Position)->create($positionData);
+            Position::create($positionData);
         }
     }
 }

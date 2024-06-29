@@ -11,19 +11,19 @@ class CommercialPolicySeeder extends Seeder
     {
         $commercialPoliciesData = [
             [
-                'name' => 'internal_commissions',
+                'name' => 'Comisiones Internas',
                 'percentage' =>3,
             ],
             [
-                'name' => 'external_commissions',
+                'name' => 'Comisiones Externas',
                 'percentage' => 3,
             ],
             [
-                'name' => 'margin',
+                'name' => 'Margen',
                 'percentage' => 25,
             ],
             [
-                'name' => 'discount',
+                'name' => 'Descuento',
                 'percentage' => 5,
             ],
         ];

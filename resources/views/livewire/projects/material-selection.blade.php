@@ -15,7 +15,7 @@
                         <div class="mb-2">
                             <label for="quantity{{ $material->id }}"
                                    class="block text-sm font-medium text-gray-700">Cantidad</label>
-                            <input wire:model.live="quantities.{{ $material->id }}" type="number"
+                            <input wire:model.live="quantities.{{ $material->id }}" type="number" min=0 step=1
                                    id="quantity{{ $material->id }}" name="quantity{{ $material->id }}"
                                    class="mt-1 p-2 block w-full border-indigo-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
                             @error('quantities.' . $material->id)

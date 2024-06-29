@@ -37,7 +37,7 @@
                                 <label for="basic" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Salario Básico</label>
                                 <input id="basic" placeholder="Salario Básico" wire:model.live="basic"
                                        class="mt-1 p-2 block w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
-                                       type="number" step="0.01">
+                                       type="number" step="10">
                                 <x-input-error for="basic" class="mt-2"/>
                             </div>
                             <div class="col-span-1">
@@ -51,7 +51,7 @@
                                 <label for="monthlyWorkHours" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas Mensuales de Trabajo</label>
                                 <input id="monthlyWorkHours" placeholder="Horas Mensuales de Trabajo" wire:model.live="monthlyWorkHours"
                                        class="mt-1 p-2 block w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
-                                       type="number" step="0.01">
+                                       type="number" step="1">
                                 <x-input-error for="monthlyWorkHours" class="mt-2"/>
                             </div>
                             <div class="col-span-1">

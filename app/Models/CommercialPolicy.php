@@ -16,18 +16,4 @@ class CommercialPolicy extends Model
         'name',
         'percentage',
     ];
-
-    // Mapeo de traducciones para los nombres de las políticas comerciales
-    protected $policyTranslations = [
-        'internal_commissions' => 'Comisiones Internas',
-        'external_commissions' => 'Comisiones Externas',
-        'margin' => 'Margen',
-        'discount' => 'Descuento',
-    ];
-
-    // Accesor para obtener el nombre traducido
-    public function getNameAttribute($value)
-    {
-        return $this->policyTranslations[$value] ?? $value;
-    }
 }

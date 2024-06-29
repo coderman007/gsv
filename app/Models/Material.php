@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\MaterialUpdated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,10 @@ class Material extends Model
         'description',
         'unit_price',
         'image'
+    ];
+
+    protected $dispatchesEvents = [
+        'updated' => MaterialUpdated::class,
     ];
 
     public function projects(): BelongsToMany

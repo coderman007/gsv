@@ -143,10 +143,10 @@ class Project extends Model
         $rawValue = $totalLaborCost + $totalMaterialCost + $totalToolCost + $totalTransportCost + $totalAdditionalCost + $handToolCost;
 
         // Obtener valores para las políticas comerciales
-        $internalCommissions = CommercialPolicy::where('name', 'like', 'internal_commissions')->first()?->percentage ?? 0;
-        $externalCommissions = CommercialPolicy::where('name', 'like', 'external_commissions')->first()?->percentage ?? 0;
-        $margin = CommercialPolicy::where('name', 'like', 'margin')->first()?->percentage ?? 0;
-        $discount = CommercialPolicy::where('name', 'like', 'discount')->first()?->percentage ?? 0;
+        $internalCommissions = CommercialPolicy::where('name', 'like', 'Comisiones Internas')->first()?->percentage ?? 0;
+        $externalCommissions = CommercialPolicy::where('name', 'like', 'Comisiones Externas')->first()?->percentage ?? 0;
+        $margin = CommercialPolicy::where('name', 'like', 'Margen')->first()?->percentage ?? 0;
+        $discount = CommercialPolicy::where('name', 'like', 'Descuento')->first()?->percentage ?? 0;
 
         // Calcular las políticas comerciales
         $internalCommissionsValue = $rawValue * ($internalCommissions / 100);

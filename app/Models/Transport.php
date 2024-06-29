@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\TransportUpdated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -22,6 +23,11 @@ class Transport extends Model
         'capacity',
         'fuel_type'
     ];
+
+    protected $dispatchesEvents = [
+        'updated' => TransportUpdated::class,
+    ];
+
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class)->

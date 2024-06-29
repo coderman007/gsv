@@ -18,7 +18,7 @@
                         <div class="mb-2">
                             <label for="quantity{{ $transport->id }}"
                                    class="block text-sm font-medium text-gray-700">Cantidad</label>
-                            <input wire:model.live="quantities.{{ $transport->id }}" type="number"
+                            <input wire:model.live="quantities.{{ $transport->id }}" type="number" min=0 step=1
                                    id="quantity{{ $transport->id }}" name="quantity{{ $transport->id }}"
                                    class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
 
@@ -34,7 +34,7 @@
                         <div class="mb-2">
                             <label for="requiredDays{{ $transport->id }}"
                                    class="block text-sm font-medium text-gray-700">Días</label>
-                            <input wire:model.live="requiredDays.{{ $transport->id }}" type="number"
+                            <input wire:model.live="requiredDays.{{ $transport->id }}" type="number" min=0 step=1
                                    id="requiredDays{{ $transport->id }}" name="requiredDays{{ $transport->id }}"
                                    class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
 

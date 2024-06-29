@@ -45,14 +45,16 @@ class PositionEdit extends Component
         $this->realDailyCost = $position->real_daily_cost;
     }
 
+
+
     public function updated($propertyName): void
     {
         $this->validateOnly($propertyName);
 
         if ($this->basic && $this->monthlyWorkHours && $this->benefitFactor) {
             // Ajustar el cálculo al proporcionado
-            $this->realDailyCost = number_format((($this->basic * (1 + $this->benefitFactor)) / $this->monthlyWorkHours) * 8, 2, '.', '');
-            $this->realMonthlyCost = number_format($this->basic * (1 + $this->benefitFactor), 2, '.', ''); // Mantener el cálculo mensual
+            $this->realDailyCost = number_format((($this->basic * ($this->benefitFactor)) / $this->monthlyWorkHours) * 8, 2, '.', '');
+            $this->realMonthlyCost = number_format($this->basic * ($this->benefitFactor), 2, '.', ''); // Mantener el cálculo mensual
         }
     }
 
