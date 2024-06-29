@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\CommercialPolicyUpdated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,5 +16,9 @@ class CommercialPolicy extends Model
     protected $fillable = [
         'name',
         'percentage',
+    ];
+
+    protected $dispatchesEvents = [
+        'updated' => CommercialPolicyUpdated::class,
     ];
 }

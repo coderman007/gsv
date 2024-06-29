@@ -2,35 +2,22 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Foundation\Events\Dispatchable;
+use App\Models\CommercialPolicy;
 use Illuminate\Queue\SerializesModels;
 
 class CommercialPolicyUpdated
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use SerializesModels;
+
+    public CommercialPolicy $commercialPolicy;
 
     /**
      * Create a new event instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
      *
-     * @return array<int, Channel>
+     * @param CommercialPolicy $commercialPolicy
      */
-    public function broadcastOn(): array
+    public function __construct(CommercialPolicy $commercialPolicy)
     {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
+        $this->commercialPolicy = $commercialPolicy;
     }
 }

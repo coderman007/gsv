@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\AdditionalUpdated;
+use App\Events\CommercialPolicyUpdated;
 use App\Events\MaterialUpdated;
 use App\Events\PositionUpdated;
 use App\Events\ToolUpdated;
@@ -10,6 +11,7 @@ use App\Events\TransportUpdated;
 use App\Listeners\RecalculateAdditionalCosts;
 use App\Listeners\RecalculateMaterialCosts;
 use App\Listeners\RecalculatePositionCosts;
+use App\Listeners\RecalculateProjectSaleValue;
 use App\Listeners\RecalculateToolCosts;
 use App\Listeners\RecalculateTransportCosts;
 use App\Models\Project;
@@ -43,6 +45,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         AdditionalUpdated::class => [
             RecalculateAdditionalCosts::class,
+        ],
+        CommercialPolicyUpdated::class => [
+            RecalculateProjectSaleValue::class,
         ],
     ];
 
