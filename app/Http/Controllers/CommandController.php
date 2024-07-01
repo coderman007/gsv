@@ -20,7 +20,7 @@ class CommandController extends Controller
         }
     }
 
-    public function clearCache(Request $request)
+    public function clearCache()
     {
         Artisan::call('cache:clear');
         Artisan::call('config:clear');
