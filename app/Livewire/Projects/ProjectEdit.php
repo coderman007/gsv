@@ -330,6 +330,7 @@ class ProjectEdit extends Component
         $this->dispatch('updatedProject', $this->project);
         $this->dispatch('updatedProjectNotification');
         $this->dispatch('resetProjectCreateComponent');
+        $this->dispatch('reloadPage');  // Despachar evento para recargar la página
     }
 
 // Helper methods to prepare data for syncing pivot tables

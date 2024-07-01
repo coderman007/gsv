@@ -9,6 +9,7 @@ use Livewire\Component;
 
 class ToolSelection extends Component
 {
+    public $search = '';
     public $tools = [];
     public $selectedTools = [];
     public $quantities = [];
@@ -16,7 +17,6 @@ class ToolSelection extends Component
     public $efficiencyInputs = [];
     public $efficiencies = [];
     public $partialCosts = [];
-    public $extraHandToolCost = 0;
     public $totalToolCost = 0;
 
     public $isEdit = false;
@@ -32,8 +32,6 @@ class ToolSelection extends Component
 
     public function mount(): void
     {
-        $this->tools = Tool::all(); // Cargar todas las herramientas al montar el componente
-
         if ($this->isEdit) {
             $this->initializeFromExistingSelections();
         }
@@ -51,6 +49,28 @@ class ToolSelection extends Component
             $this->efficiencies[$toolId] = DataTypeConverter::convertToFloat($selection['efficiency']);
             $this->calculatePartialCost($toolId);
         }
+        // Cargar todas las herramientas seleccionadas en la búsqueda inicial
+        $this->tools = Tool::whereIn('id', $this->selectedTools)->get();
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get();
+    }
+
+    public function updatedSelectedTools(): void
+    {
+        foreach ($this->tools as $tool) {
+            $toolId = $tool->id;
+            if (!in_array($toolId, $this->selectedTools)) {
+                $this->quantities[$toolId] = null;
+                $this->requiredDays[$toolId] = null;
+                $this->efficiencyInputs[$toolId] = null;
+                $this->efficiencies[$toolId] = null;
+                $this->partialCosts[$toolId] = 0;
+            }
+        }
+        $this->updateTotalToolCost();
     }
 
     public function calculatePartialCost($toolId): void
@@ -59,7 +79,6 @@ class ToolSelection extends Component
             $quantity = $this->quantities[$toolId] ?? 0;
             $requiredDays = $this->requiredDays[$toolId] ?? 0;
             $efficiencyInput = $this->efficiencyInputs[$toolId] ?? "1";
-
             $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
             if ($efficiency === null) {
@@ -72,8 +91,6 @@ class ToolSelection extends Component
                 $tool = Tool::find($toolId);
                 $dailyCost = $tool->unit_price_per_day;
                 $partialCost = $quantity * $requiredDays * $efficiency * $dailyCost;
-                $partialCost += $this->extraHandToolCost;
-
                 $this->partialCosts[$toolId] = $partialCost;
             } else {
                 $this->partialCosts[$toolId] = 0;
@@ -116,7 +133,6 @@ class ToolSelection extends Component
 
         $this->efficiencies[$toolId] = $efficiency;
         $this->efficiencyInputs[$toolId] = $value;
-
         $this->calculatePartialCost($toolId);
         $this->updateTotalToolCost();
     }
@@ -129,7 +145,6 @@ class ToolSelection extends Component
     public function sendTotalToolCost(): void
     {
         $this->dispatch("totalToolCostUpdated", $this->totalToolCost);
-
         $this->dispatch("toolSelectionUpdated", [
             "selectedTools" => $this->selectedTools,
             "toolQuantities" => $this->quantities,
@@ -145,8 +160,9 @@ class ToolSelection extends Component
 
     public function render(): View
     {
-        return view("livewire.projects.tool-selection", [
-            'tools' => $this->tools,
-        ]);
+        if (!empty($this->search)) {
+            $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get();
+        }
+        return view("livewire.projects.tool-selection");
     }
 }

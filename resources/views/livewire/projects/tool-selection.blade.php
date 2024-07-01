@@ -1,93 +1,85 @@
-<div class="bg-gray-50 p-6 rounded-lg">
-    <label class="text-lg font-semibold text-gray-600 py-2">
-        <h3 class="mb-2">Herramientas</h3>
-        <div class="mb-4 grid grid-cols-7 gap-4">
-            @foreach ($tools as $tool)
-                <div class="flex items-center col-span-2">
-                    <input wire:model.live="selectedTools" type="checkbox" value="{{ $tool->id }}"
-                           id="tool{{ $tool->id }}"
-                           class="cursor-pointer mr-2 border-sky-300 rounded shadow-sm text-sky-500 focus:border-sky-300 focus:ring focus:ring-sky-200 focus:ring-opacity-50">
-                    <label for="tool{{ $tool->id }}"
-                           class="block text-sm font-medium cursor-pointer text-gray-700">{{ $tool->name }}</label>
-                </div>
-                <div class="col-span-1">
-                    @if (in_array($tool->id, $selectedTools))
-                        <div class="mb-2">
-                            <label for="quantity{{ $tool->id }}"
-                                   class="block text-sm font-medium text-gray-700">Cantidad</label>
-                            <input wire:model.live="quantities.{{ $tool->id }}" type="number" min=0 step=1
-                                   id="quantity{{ $tool->id }}" name="quantity{{ $tool->id }}"
-                                   class="mt-1 p-2 block w-full border-sky-300 rounded-md focus:ring-sky-500 focus:border-sky-500">
-                            @error('quantities.' . $tool->id)
-                            <span class="text-red-500">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    @endif
-                </div>
-                <div class="col-span-1">
-                    @if (in_array($tool->id, $selectedTools))
-                        <div class="mb-2">
-                            <label for="requiredDays{{ $tool->id }}"
-                                   class="block text-sm font-medium text-gray-700">Días</label>
-                            <input wire:model.live="requiredDays.{{ $tool->id }}" type="number" min=0 step=1
-                                   id="requiredDays{{ $tool->id }}" name="requiredDays{{ $tool->id }}"
-                                   class="mt-1 p-2 block w-full border-sky-300 rounded-md focus:ring-sky-500 focus:border-sky-500">
-                            @error('requiredDays.' . $tool->id)
-                            <span class="text-red-500">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    @endif
-                </div>
-                <div class="col-span-1">
-                    @if (in_array($tool->id, $selectedTools))
-                        <div class="mb-2">
-                            <label for="efficiency{{ $tool->id }}"
-                                   class="block text-sm font-medium text-gray-700">Rendimiento</label>
-                            <input wire:model.live="efficiencyInputs.{{ $tool->id }}" type="text"
-                                   id="efficiency{{ $tool->id }}"
-                                   class="mt-1 p-2 block w-full border-sky-300 rounded-md focus:ring-sky-500 focus:border-sky-500">
-                            @error("efficiencyInputs.{{ $tool->id }}")
-                            <span class="text-red-500">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    @endif
-                </div>
-                <div class="col-span-2">
-                    @if (in_array($tool->id, $selectedTools))
-                        <div class="mb-2">
-                            <label for="partialCost{{ $tool->id }}"
-                                   class="block text-sm font-medium text-gray-700">Costo Parcial</label>
-                            <input type="text" readonly
-                                   value="{{ isset($partialCosts[$tool->id]) ? number_format($partialCosts[$tool->id], 2) : 0 }}"
-                                   id="partialCost{{ $tool->id }}"
-                                   class="mt-1 p-2 block w-full border-sky-300 rounded-md bg-sky-100 focus:ring-sky-500 focus:border-sky-500">
-                        </div>
-                    @endif
-                </div>
-            @endforeach
-            @error('selectedTools')
-            <span class="col-span-7 text-red-500">{{ $message }}</span>
-            @enderror
+<div class="flex flex-col w-full">
+    <div class="flex flex-row mb-4">
+        <div class="w-full mr-2">
+            <input wire:model.live="search" type="text"
+                   class="appearance-none block w-full px-3 py-2 border-2 border-sky-500 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500"
+                   placeholder="Buscar herramientas...">
         </div>
+    </div>
 
-        <div class="col-span-2 flex items-center">
-            <label for="totalToolCost" class="block text-lg font-medium mr-4 text-gray-700">Total Herramientas</label>
-            <div class="relative rounded-md shadow-sm flex-1">
-                <input type="text" readonly value="{{ number_format($totalToolCost, 2) }}" id="totalToolCost"
-                       class="text-right mt-1 p-2 pl-10 block w-full border-sky-500 rounded-md bg-sky-100 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-md">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                    <span class="text-gray-500 sm:text-sm">
-                        <i class="fas fa-coins ml-1 text-yellow-500 mr-2"></i>COP
-                    </span>
+    <!-- Lista de herramientas -->
+    <ul class="overflow-y-auto max-h-96">
+        @forelse ($tools as $tool)
+            <li class="flex items-center py-2 hover:bg-gray-100">
+                <input type="checkbox" wire:model.live="selectedTools" value="{{ $tool->id }}"
+                       class="mr-2 border-sky-300 rounded shadow-sm text-sky-500 focus:border-sky-300 focus:ring-sky-200 focus:ring-opacity-50">
+                <div class="w-full flex justify-between items-center">
+                    <div>
+                        <span class="text-gray-800 font-medium">{{ $tool->name }}</span>
+                    </div>
+
+                    @if (in_array($tool->id, $selectedTools))
+                        <div class="flex items-center space-x-4 pr-4">
+                            <!-- Cantidad -->
+                            <div class="flex flex-col">
+                                <label for="quantity_{{ $tool->id }}"
+                                       class="text-sm text-gray-700 mb-1">Cantidad:</label>
+                                <input wire:model.live="quantities.{{ $tool->id }}"
+                                       id="quantity_{{ $tool->id }}" min=1 type="number"
+                                       class="w-16 px-2 py-1 border-sky-300 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500">
+                            </div>
+
+                            <!-- Días requeridos -->
+                            <div class="flex flex-col">
+                                <label for="required_days_{{ $tool->id }}"
+                                       class="text-sm text-gray-700 mb-1">Días:</label>
+                                <input wire:model.live="requiredDays.{{ $tool->id }}"
+                                       id="required_days_{{ $tool->id }}" min=1 type="number"
+                                       class="w-16 px-2 py-1 border-sky-300 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500">
+                            </div>
+
+                            <!-- Rendimiento -->
+                            <div class="flex flex-col">
+                                <label for="efficiency_{{ $tool->id }}"
+                                       class="text-sm text-gray-700 mb-1">Rendimiento:</label>
+                                <input wire:model.live="efficiencyInputs.{{ $tool->id }}"
+                                       id="efficiency_{{ $tool->id }}" type="text"
+                                       class="w-16 px-2 py-1 border-sky-300 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500">
+                            </div>
+
+                            <!-- Costo parcial -->
+                            <div class="flex flex-col">
+                                <label for="partialCost_{{ $tool->id }}" class="text-sm text-gray-700 mb-1">Costo:</label>
+                                <input type="text" readonly
+                                       value="{{ isset($partialCosts[$tool->id]) ? number_format($partialCosts[$tool->id], 2) : 0 }}"
+                                       id="partialCost_{{ $tool->id }}"
+                                       class="w-32 px-2 py-1 border border-sky-300 rounded-md bg-slate-100 focus:outline-none focus:ring-sky-500 focus:border-sky-500">
+                            </div>
+                        </div>
+                    @endif
                 </div>
-            </div>
+            </li>
+        @empty
+            <li class="text-gray-500 text-center py-2">No se encontraron herramientas.</li>
+        @endforelse
+    </ul>
 
-            <div class="ml-4">
-                <button wire:click="sendTotalToolCost" type="button"
-                        class="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full">
-                    Enviar
-                </button>
+    <!-- Total de herramientas -->
+    <div class="bg-gray-50 p-2 rounded-lg mb-4 flex items-center">
+        <label for="totalToolCost" class="block text-lg mr-4 font-medium text-gray-700">Total Herramientas:</label>
+        <div class="relative rounded-md shadow-sm flex-1">
+            <input type="text" readonly value="{{ number_format($totalToolCost, 2) }}" id="totalToolCost"
+                   class="text-right mt-1 p-2 pl-10 block w-full border-sky-500 rounded-md bg-sky-100 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-md">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                <span class="text-gray-500 sm:text-sm"><i class="fas fa-coins ml-1 text-yellow-500"></i> COP</span>
             </div>
         </div>
-    </label>
+
+        <div class="ml-4">
+            <button wire:click="sendTotalToolCost" type="button"
+                    class="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full">
+                Enviar
+            </button>
+        </div>
+    </div>
 </div>

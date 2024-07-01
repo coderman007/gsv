@@ -81,7 +81,8 @@
                     <div class="grid grid-cols-2 gap-4">
 
                         <div class="col-span-1">
-                            <label for="internalCommissions" class="text-md font-semibold text-gray-600 py-2">Comisiones Internas (%)</label>
+                            <label for="internalCommissions" class="text-md font-semibold text-gray-600 py-2">Comisiones
+                                Internas (%)</label>
                             <input wire:model="internalCommissions" readonly type="number" step="1" min="0" max="100"
                                    id="internalCommissions" name="internalCommissions"
                                    class="mt-1 p-2 block w-full border-gray-300 rounded-md">
@@ -227,6 +228,22 @@
                 </x-button-edit>
             </div>
         </x-slot>
+
     </x-dialog-modal>
+    @push('js')
+        <script>
+            document.addEventListener('livewire:init', function () {
+                let reloadPageListener = Livewire.on('reloadPage', () => {
+                    console.log('Evento reloadPage recibido. Recargando en 3 segundos...');
+
+                    setTimeout(() => {
+                        window.location.reload();
+                        reloadPageListener(); // Limpiar el listener si es necesario
+                    }, 1500); // 3000 milisegundos = 3 segundos
+                });
+            });
+
+        </script>
+    @endpush
 </div>
 

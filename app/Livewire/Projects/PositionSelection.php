@@ -5,7 +5,6 @@ namespace App\Livewire\Projects;
 use App\Helpers\DataTypeConverter;
 use App\Models\Position;
 use Illuminate\View\View;
-use Livewire\Attributes\On;
 use Livewire\Component;
 
 class PositionSelection extends Component
@@ -20,7 +19,7 @@ class PositionSelection extends Component
     public $totalLaborCost = 0;
 
     public $isEdit = false;
-    public $existingSelections = []; // Datos existentes en modo edición
+    public $existingSelections = [];
 
     protected $rules = [
         'selectedPositions' => 'required|array|min:1',
@@ -50,6 +49,21 @@ class PositionSelection extends Component
             $this->efficiencies[$positionId] = DataTypeConverter::convertToFloat($selection['efficiency']);
             $this->calculatePartialCost($positionId);
         }
+    }
+
+    public function updatedSelectedPositions(): void
+    {
+        foreach ($this->positions as $position) {
+            $positionId = $position->id;
+            if (!in_array($positionId, $this->selectedPositions)) {
+                $this->quantities[$positionId] = null;
+                $this->requiredDays[$positionId] = null;
+                $this->efficiencyInputs[$positionId] = null;
+                $this->efficiencies[$positionId] = null;
+                $this->partialCosts[$positionId] = 0;
+            }
+        }
+        $this->updateTotalLaborCost();
     }
 
     public function calculatePartialCost($positionId): void

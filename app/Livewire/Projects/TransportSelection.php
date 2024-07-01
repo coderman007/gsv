@@ -9,36 +9,35 @@ use Livewire\Component;
 
 class TransportSelection extends Component
 {
-    // Propiedades para transporte
     public $transports = [];
     public $selectedTransports = [];
     public $quantities = [];
     public $requiredDays = [];
-    public $efficiencyInputs = []; // Se usa para capturar el rendimiento como cadena de texto
-    public $efficiencies = []; // Almacena el rendimiento como valores numéricos
+    public $efficiencyInputs = [];
+    public $efficiencies = [];
     public $partialCosts = [];
     public $totalTransportCost = 0;
 
     public $isEdit = false;
-    public $existingSelections = []; // Datos existentes en modo edición
+    public $existingSelections = [];
 
     protected $rules = [
         'selectedTransports' => 'required|array|min:1',
         'selectedTransports.*' => 'exists:transports,id',
         'quantities.*' => 'nullable|numeric|min:0',
         'requiredDays.*' => 'nullable|numeric|min:0',
-        'efficiencyInputs.*' => 'nullable|string', // Aceptamos cadenas para el rendimiento
+        'efficiencyInputs.*' => 'nullable|string',
     ];
 
     public function mount(): void
     {
-        $this->transports = Transport::all(); // Cargar todos los transportes
+        $this->transports = Transport::all();
 
         if ($this->isEdit) {
             $this->initializeFromExistingSelections();
         }
 
-        $this->updateTotalTransportCost(); // Actualizar el costo total
+        $this->updateTotalTransportCost();
     }
 
     public function initializeFromExistingSelections(): void
@@ -54,85 +53,97 @@ class TransportSelection extends Component
         }
     }
 
+    public function updatedSelectedTransports(): void
+    {
+        foreach ($this->transports as $transport) {
+            $transportId = $transport->id;
+            if (!in_array($transportId, $this->selectedTransports)) {
+                $this->quantities[$transportId] = null;
+                $this->requiredDays[$transportId] = null;
+                $this->efficiencyInputs[$transportId] = null;
+                $this->efficiencies[$transportId] = null;
+                $this->partialCosts[$transportId] = 0;
+            }
+        }
+        $this->updateTotalTransportCost();
+    }
+
     public function calculatePartialCost($transportId): void
     {
         if (in_array($transportId, $this->selectedTransports)) {
             $quantity = $this->quantities[$transportId] ?? 0;
             $requiredDays = $this->requiredDays[$transportId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputs[$transportId] ?? "1"; // Cadena por defecto
+            $efficiencyInput = $this->efficiencyInputs[$transportId] ?? "1";
 
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput); // Convertir a número
+            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
             if ($efficiency === null) {
-                $this->partialCosts[$transportId] = 0; // Establecer en cero si la conversión falla
+                $this->partialCosts[$transportId] = 0;
                 $this->addError("efficiency_$transportId", "Rendimiento inválido: '$efficiencyInput'.");
-                return; // Salir temprano si falla la conversión
+                return;
             }
 
             if (is_numeric($quantity) && is_numeric($requiredDays)) {
                 $transport = Transport::find($transportId);
                 $dailyCost = $transport->cost_per_day;
 
-                // Calcular el costo parcial con la eficiencia numérica
                 $partialCost = $quantity * $requiredDays * $efficiency * $dailyCost;
                 $this->partialCosts[$transportId] = $partialCost;
             } else {
-                $this->partialCosts[$transportId] = 0; // Establecer en cero si los datos son inválidos
+                $this->partialCosts[$transportId] = 0;
             }
         } else {
-            $this->partialCosts[$transportId] = 0; // Si no está seleccionado, el costo parcial es cero
+            $this->partialCosts[$transportId] = 0;
         }
     }
 
     public function updatedQuantities($value, $transportId): void
     {
         if (!is_numeric($value)) {
-            $this->quantities[$transportId] = null; // Restablecer si no es numérico
-            return; // Salir temprano
+            $this->quantities[$transportId] = null;
+            return;
         }
 
-        $this->calculatePartialCost($transportId); // Recalcular el costo parcial
-        $this->updateTotalTransportCost(); // Actualizar el costo total
+        $this->calculatePartialCost($transportId);
+        $this->updateTotalTransportCost();
     }
 
     public function updatedRequiredDays($value, $transportId): void
     {
         if (!is_numeric($value)) {
-            $this->requiredDays[$transportId] = null; // Restablecer si no es numérico
-            return; // Salir temprano
+            $this->requiredDays[$transportId] = null;
+            return;
         }
 
-        $this->calculatePartialCost($transportId); // Recalcular el costo parcial
-        $this->updateTotalTransportCost(); // Actualizar el costo total
+        $this->calculatePartialCost($transportId);
+        $this->updateTotalTransportCost();
     }
 
     public function updatedEfficiencyInputs($value, $transportId): void
     {
-        $efficiency = DataTypeConverter::convertToFloat($value); // Convertir cadena a número
+        $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            // Emitir error si la conversión falla
             $this->addError("efficiency_$transportId", "Valor de rendimiento inválido.");
-            return; // Salir temprano si falla la conversión
+            return;
         }
 
-        $this->efficiencies[$transportId] = $efficiency; // Actualizar con el valor numérico
-        $this->efficiencyInputs[$transportId] = $value; // Guardar el valor como cadena
+        $this->efficiencies[$transportId] = $efficiency;
+        $this->efficiencyInputs[$transportId] = $value;
 
-        $this->calculatePartialCost($transportId); // Recalcular el costo parcial
-        $this->updateTotalTransportCost(); // Actualizar el costo total
+        $this->calculatePartialCost($transportId);
+        $this->updateTotalTransportCost();
     }
 
     public function updateTotalTransportCost(): void
     {
-        $this->totalTransportCost = array_sum($this->partialCosts); // Suma de todos los costos parciales
+        $this->totalTransportCost = array_sum($this->partialCosts);
     }
 
     public function sendTotalTransportCost(): void
     {
-        $this->dispatch("totalTransportCostUpdated", $this->totalTransportCost); // Emitir evento para informar cambios
+        $this->dispatch("totalTransportCostUpdated", $this->totalTransportCost);
 
-        // Detalles para despachar evento de actualización
         $this->dispatch("transportSelectionUpdated", [
             "selectedTransports" => $this->selectedTransports,
             "transportQuantities" => $this->quantities,
@@ -142,12 +153,12 @@ class TransportSelection extends Component
         ]);
 
         if ($this->totalTransportCost > 0) {
-            $this->dispatch("hideResourceForm"); // Otro evento para despachar
+            $this->dispatch("hideResourceForm");
         }
     }
 
     public function render(): View
     {
-        return view("livewire.projects.transport-selection"); // Renderizar la vista
+        return view("livewire.projects.transport-selection");
     }
 }

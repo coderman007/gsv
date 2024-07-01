@@ -13,30 +13,30 @@ class AdditionalSelection extends Component
     public $additionals = [];
     public $selectedAdditionals = [];
     public $quantities = [];
-    public $efficiencyInputs = []; // Se usa para capturar el rendimiento como cadena de texto
-    public $efficiencies = []; // Almacena el rendimiento como valores numéricos
+    public $efficiencyInputs = [];
+    public $efficiencies = [];
     public $partialCosts = [];
     public $totalAdditionalCost = 0;
 
     public $isEdit = false;
-    public $existingSelections = []; // Datos existentes en modo edición
+    public $existingSelections = [];
 
     protected $rules = [
         'selectedAdditionals' => 'required|array|min:1',
         'selectedAdditionals.*' => 'exists:additionals,id',
         'quantities.*' => 'nullable|numeric|min:0',
-        'efficiencyInputs.*' => 'nullable|string', // Aceptamos cadenas para el rendimiento
+        'efficiencyInputs.*' => 'nullable|string',
     ];
 
     public function mount(): void
     {
-        $this->additionals = Additional::all(); // Cargar todos los adicionales
+        $this->additionals = Additional::all();
 
         if ($this->isEdit) {
             $this->initializeFromExistingSelections();
         }
 
-        $this->updateTotalAdditionalCost(); // Actualizar el costo total
+        $this->updateTotalAdditionalCost();
     }
 
     public function initializeFromExistingSelections(): void
@@ -51,77 +51,74 @@ class AdditionalSelection extends Component
         }
     }
 
+    public function updatedSelectedAdditionals(): void
+    {
+        foreach ($this->additionals as $additional) {
+            $additionalId = $additional->id;
+            if (!in_array($additionalId, $this->selectedAdditionals)) {
+                $this->quantities[$additionalId] = null;
+                $this->efficiencyInputs[$additionalId] = null;
+                $this->efficiencies[$additionalId] = null;
+                $this->partialCosts[$additionalId] = 0;
+            }
+        }
+        $this->updateTotalAdditionalCost();
+    }
+
     public function calculatePartialCost($additionalId): void
     {
         if (in_array($additionalId, $this->selectedAdditionals)) {
             $quantity = $this->quantities[$additionalId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputs[$additionalId] ?? "1"; // Cadena por defecto
-
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput); // Convertir a número
+            $efficiencyInput = $this->efficiencyInputs[$additionalId] ?? "1";
+            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
             if ($efficiency === null) {
-                $this->partialCosts[$additionalId] = 0; // Establecer en cero si la conversión falla
+                $this->partialCosts[$additionalId] = 0;
                 $this->addError("efficiency_$additionalId", "Rendimiento inválido: '$efficiencyInput'.");
-                return; // Salir temprano si falla la conversión
-            }
-
-            if (is_numeric($quantity)) {
+            } else {
                 $additional = Additional::find($additionalId);
                 $dailyCost = $additional->unit_price;
-
-                // Calcular el costo parcial con la eficiencia convertida
-                $partialCost = $quantity * $efficiency * $dailyCost;
-
-                $this->partialCosts[$additionalId] = $partialCost;
-            } else {
-                $this->partialCosts[$additionalId] = 0; // Establecer el costo parcial en cero si datos son inválidos
+                $this->partialCosts[$additionalId] = $quantity * $efficiency * $dailyCost;
             }
         } else {
-            $this->partialCosts[$additionalId] = 0; // Si no está seleccionado, el costo parcial es cero
+            $this->partialCosts[$additionalId] = 0;
         }
     }
 
     public function updatedQuantities($value, $additionalId): void
     {
         if (!is_numeric($value)) {
-            $this->quantities[$additionalId] = null; // Restablecer si no es numérico
-            return; // Salir temprano si no es numérico
+            $this->quantities[$additionalId] = null;
+            return;
         }
-
-        // Recalcular el costo parcial y el total
         $this->calculatePartialCost($additionalId);
         $this->updateTotalAdditionalCost();
     }
 
     public function updatedEfficiencyInputs($value, $additionalId): void
     {
-        $efficiency = DataTypeConverter::convertToFloat($value); // Convertir cadena a número
+        $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            // Emitir error si la conversión falla
             $this->addError("efficiency_$additionalId", "Valor de rendimiento inválido.");
-            return; // Salir temprano si falla la conversión
+            return;
         }
 
-        $this->efficiencies[$additionalId] = $efficiency; // Actualizar con el valor numérico
-        $this->efficiencyInputs[$additionalId] = $value; // Guardar el valor como cadena
-
-        // Recalcular el costo parcial y total
+        $this->efficiencies[$additionalId] = $efficiency;
+        $this->efficiencyInputs[$additionalId] = $value;
         $this->calculatePartialCost($additionalId);
         $this->updateTotalAdditionalCost();
     }
 
     public function updateTotalAdditionalCost(): void
     {
-        // Suma de todos los costos parciales
         $this->totalAdditionalCost = array_sum($this->partialCosts);
     }
 
     public function sendTotalAdditionalCost(): void
     {
-        $this->dispatch("totalAdditionalCostUpdated", $this->totalAdditionalCost); // Emitir evento para informar cambios
+        $this->dispatch("totalAdditionalCostUpdated", $this->totalAdditionalCost);
 
-        // Detalles del componente para el almacenamiento
         $this->dispatch("additionalSelectionUpdated", [
             "selectedAdditionals" => $this->selectedAdditionals,
             "additionalQuantities" => $this->quantities,
@@ -130,15 +127,15 @@ class AdditionalSelection extends Component
         ]);
 
         if ($this->totalAdditionalCost > 0) {
-            $this->dispatch("hideResourceForm"); // Ejemplo de otro evento a despachar
+            $this->dispatch("hideResourceForm");
         }
     }
 
     public function render(): View
     {
         if (!empty($this->search)) {
-            $this->additionals = Additional::where('name', 'like', '%' . $this->search . '%')->get(); // Actualizar adicionales según búsqueda
+            $this->additionals = Additional::where('name', 'like', '%' . $this->search . '%')->get();
         }
-        return view("livewire.projects.additional-selection"); // Renderizar la vista asociada
+        return view("livewire.projects.additional-selection");
     }
 }
