@@ -16,7 +16,7 @@
                 </h1>
             </div>
             <div class="">
-                <h1 class="my-[-3px] text-[10px]">con ingeniería</h1>
+                <h1 class="my-[-3px] text-[9px]">con ingeniería</h1>
             </div>
         </div>
     </div>
