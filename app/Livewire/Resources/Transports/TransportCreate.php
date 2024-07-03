@@ -17,7 +17,7 @@ class TransportCreate extends Component
 
 
     protected $rules = [
-        'vehicle_type' => 'required|in:motocicleta,automóvil,camión,autobús,van,otro',
+        'vehicle_type' => 'required|string', // Validar que el tipo de vehículo sea requerido y una cadena
         'capacity' => 'nullable|numeric|min:0',
         'cost_per_day' => 'required|numeric|min:0',
         'fuel_type' => 'nullable|string',

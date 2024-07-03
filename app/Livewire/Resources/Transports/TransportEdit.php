@@ -21,7 +21,7 @@ class TransportEdit extends Component
     public $showVehicleTypeDropdown = false;
 
     protected $rules = [
-        'vehicle_type' => 'required|in:motocicleta,automóvil,camión,autobús,van,otro',
+        'vehicle_type' => 'required|string', // Modificar la validación para aceptar cualquier cadena
         'capacity' => 'nullable|numeric|min:0',
         'cost_per_day' => 'required|numeric|min:0',
         'fuel_type' => 'nullable|string',

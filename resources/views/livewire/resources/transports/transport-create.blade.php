@@ -23,16 +23,8 @@
                 <div>
                     <x-label class="text-left text-lg text-gray-700" value="Tipo de Vehículo" />
                     <!-- Menú desplegable para seleccionar el tipo de vehículo -->
-                    <select wire:model="vehicle_type"
-                            class="text-gray-800 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Selecciona un tipo de vehículo</option>
-                        <option value="motocicleta">Motocicleta</option>
-                        <option value="automóvil">Automóvil</option>
-                        <option value="camión">Camión</option>
-                        <option value="autobús">Autobús</option>
-                        <option value="van">Van</option>
-                        <option value="otro">Otro</option>
-                    </select>
+                    <input wire:model="vehicle_type"
+                           class="text-gray-800 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     <!-- Muestra errores de validación, si existen -->
                     <x-input-error for="vehicle_type" />
                 </div>
