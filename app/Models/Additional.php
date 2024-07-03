@@ -29,7 +29,7 @@ class Additional extends Model
 
     public function projects(): BelongsToMany
     {
-        return $this->belongsToMany(project::class, 'additional_project')
+        return $this->belongsToMany(Project::class, 'additional_project')
             ->withPivot('quantity', 'efficiency', 'total_cost')
             ->withTimestamps();
     }
