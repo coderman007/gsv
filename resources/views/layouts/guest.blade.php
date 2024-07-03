@@ -11,6 +11,19 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        <style>
+            @font-face{
+                font-family: "Comfortaa-Regular";
+                src: url("{{asset('fonts/Comfortaa-Regular.ttf')}}");
+            }
+
+            .slogan {
+                font-family: "Comfortaa-Regular", serif;
+                color: purple;
+                font-size: 0.8em;
+            }
+        </style>
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 

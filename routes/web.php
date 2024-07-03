@@ -57,4 +57,3 @@ Route::middleware([
     Route::get('irradiances', IrradianceEdit::class)->name('irradiances');
 });
 
-// Hola
