@@ -26,6 +26,7 @@ class ProjectCreate extends Component
     public $zone;
     public $zoneOptions = [
         'Medellin y Municipios Cercanos',
+        'Antioquia Cercana',
         'Antioquia Lejana',
         'Caribe',
         'Urabá',
@@ -73,7 +74,7 @@ class ProjectCreate extends Component
     // Validation rules
     protected $rules = [
         'selectedCategory' => 'required|exists:project_categories,id',
-        'zone' => 'required|in:Medellin y Municipios Cercanos,Antioquia Lejana,Caribe,Urabá,Centro,Valle',
+        'zone' => 'required|in:Medellin y Municipios Cercanos,Antioquia Cercana,Antioquia Lejana,Caribe,Urabá,Centro,Valle',
         'power_output' => 'required|numeric|min:0',
         'required_area' => 'required|numeric|min:0',
     ];
