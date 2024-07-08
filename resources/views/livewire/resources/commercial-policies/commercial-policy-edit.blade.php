@@ -28,7 +28,7 @@
                 <div>
                     <x-label class="text-left text-lg text-gray-700" value="Nombre de la Política" />
                     <input wire:model="name"
-                           class="text-gray-800 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                           class="text-gray-800 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500" readonly>
                     <x-input-error for="name" />
                 </div>
 
