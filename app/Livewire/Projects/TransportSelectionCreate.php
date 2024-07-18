@@ -9,8 +9,7 @@ use Livewire\Component;
 
 class TransportSelectionCreate extends Component
 {
-    public $search = '';
-    public $transports = [];
+    public $availableTransportsCreate = [];
     public $selectedTransportsCreate = [];
     public $quantitiesCreate = [];
     public $requiredDaysCreate = [];
@@ -29,17 +28,13 @@ class TransportSelectionCreate extends Component
 
     public function mount(): void
     {
+        $this->availableTransportsCreate = Transport::all();
         $this->updateTotalTransportCostCreate();
-    }
-
-    public function updatedSearch(): void
-    {
-        $this->transports = Transport::where('name', 'like', '%' . $this->search . '%')->get();
     }
 
     public function updatedSelectedTransportsCreate(): void
     {
-        foreach ($this->transports as $transport) {
+        foreach ($this->availableTransportsCreate as $transport) {
             $transportId = $transport->id;
             if (!in_array($transportId, $this->selectedTransportsCreate)) {
                 $this->quantitiesCreate[$transportId] = null;
@@ -52,6 +47,7 @@ class TransportSelectionCreate extends Component
         $this->updateTotalTransportCostCreate();
     }
 
+
     public function calculatePartialCostCreate($transportId): void
     {
         if (in_array($transportId, $this->selectedTransportsCreate)) {
@@ -62,7 +58,7 @@ class TransportSelectionCreate extends Component
 
             if ($efficiency === null) {
                 $this->partialCostsCreate[$transportId] = 0;
-                $this->addError("efficiencyInputsCreate_$transportId", "El rendimiento ingresado es inválido.");
+                $this->addError("efficiencyInputsCreate_$transportId", "Entrada de rendimiento inválida: '$efficiencyInput'");
                 return;
             }
 
@@ -106,7 +102,7 @@ class TransportSelectionCreate extends Component
         $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            $this->addError("efficiencyInputsCreate_$transportId", "El valor de rendimiento es inválido.");
+            $this->addError("efficiencyInputsCreate_$transportId", "Entrada de rendimiento inválida: '$value'");
             return;
         }
 
@@ -123,7 +119,7 @@ class TransportSelectionCreate extends Component
 
     public function sendTotalTransportCostCreate(): void
     {
-        $this->dispatch("totalTransportCostCreateUpdated", $this->totalTransportCostCreate);
+//        $this->dispatch("totalTransportCostCreateUpdated", $this->totalTransportCostCreate);
         $this->dispatch("transportSelectionCreateUpdated", [
             "selectedTransportsCreate" => $this->selectedTransportsCreate,
             "transportQuantitiesCreate" => $this->quantitiesCreate,
@@ -139,11 +135,8 @@ class TransportSelectionCreate extends Component
 
     public function render(): View
     {
-        if (!empty($this->search)) {
-            $this->transports = Transport::where('name', 'like', '%' . $this->search . '%')->get();
-        }
         return view("livewire.projects.transport-selection-create", [
-            'transports' => $this->transports,
+            'transports' => $this->availableTransportsCreate,
         ]);
     }
 }

@@ -57,7 +57,7 @@ class PositionSelectionCreate extends Component
 
             if ($efficiency === null) {
                 $this->partialCostsCreate[$positionId] = 0;
-                $this->addError('efficiencyInputsCreate', "Entrada de rendimiento inválida: '$efficiencyInput'");
+                $this->addError("efficiencyInputsCreate_$positionId", "Entrada de rendimiento inválida: '$efficiencyInput'");
             } else {
                 $position = Position::find($positionId);
                 $dailyCost = $position->real_daily_cost;
@@ -91,8 +91,9 @@ class PositionSelectionCreate extends Component
     public function updatedEfficiencyInputsCreate($value, $positionId): void
     {
         $efficiency = DataTypeConverter::convertToFloat($value);
+
         if ($efficiency === null) {
-            $this->addError('efficiencyInputsCreate', "Entrada de rendimiento inválida: '$value'");
+            $this->addError("efficiencyInputsCreate_$positionId", "Entrada de rendimiento inválida: '$value'");
             return;
         }
         $this->efficienciesCreate[$positionId] = $efficiency;
@@ -109,7 +110,6 @@ class PositionSelectionCreate extends Component
     public function sendTotalLaborCostCreate(): void
     {
 //        $this->dispatch('totalLaborCostCreateUpdated', $this->totalLaborCostCreate);
-//        dd($this->totalLaborCostCreate);
         $this->dispatch('positionSelectionCreateUpdated', [
             'selectedPositionsCreate' => $this->selectedPositionsCreate,
             'positionQuantitiesCreate' => $this->quantitiesCreate,

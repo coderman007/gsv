@@ -9,8 +9,7 @@ use Livewire\Component;
 
 class TransportSelectionEdit extends Component
 {
-    public $search = '';
-    public $transports = [];
+    public $availableTransportsEdit = [];
     public $selectedTransportsEdit = [];
     public $quantitiesEdit = [];
     public $requiredDaysEdit = [];
@@ -18,7 +17,6 @@ class TransportSelectionEdit extends Component
     public $efficienciesEdit = [];
     public $partialCostsEdit = [];
     public $totalTransportCostEdit = 0;
-
     public $existingSelections = [];
 
     protected $rules = [
@@ -31,6 +29,7 @@ class TransportSelectionEdit extends Component
 
     public function mount(): void
     {
+        $this->availableTransportsEdit = Transport::all();
         $this->initializeFromExistingSelections();
         $this->updateTotalTransportCostEdit();
     }
@@ -46,18 +45,11 @@ class TransportSelectionEdit extends Component
             $this->efficienciesEdit[$transportId] = DataTypeConverter::convertToFloat($selection['efficiency']);
             $this->calculatePartialCostEdit($transportId);
         }
-
-        $this->transports = Transport::whereIn('id', $this->selectedTransportsEdit)->get();
-    }
-
-    public function updatedSearch(): void
-    {
-        $this->transports = Transport::where('name', 'like', '%' . $this->search . '%')->get();
     }
 
     public function updatedSelectedTransportsEdit(): void
     {
-        foreach ($this->transports as $transport) {
+        foreach ($this->availableTransportsEdit as $transport) {
             $transportId = $transport->id;
             if (!in_array($transportId, $this->selectedTransportsEdit)) {
                 $this->quantitiesEdit[$transportId] = null;
@@ -70,6 +62,7 @@ class TransportSelectionEdit extends Component
         $this->updateTotalTransportCostEdit();
     }
 
+
     public function calculatePartialCostEdit($transportId): void
     {
         if (in_array($transportId, $this->selectedTransportsEdit)) {
@@ -80,7 +73,7 @@ class TransportSelectionEdit extends Component
 
             if ($efficiency === null) {
                 $this->partialCostsEdit[$transportId] = 0;
-                $this->addError("efficiencyInputsEdit_$transportId", "El rendimiento ingresado es inválido.");
+                $this->addError("efficiencyInputsEdit_$transportId", "Entrada de rendimiento inválida: '$efficiencyInput'");
                 return;
             }
 
@@ -124,7 +117,7 @@ class TransportSelectionEdit extends Component
         $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            $this->addError("efficiencyInputsEdit_$transportId", "El valor de rendimiento es inválido.");
+            $this->addError("efficiencyInputsEdit_$transportId", "Entrada de rendimiento inválida: '$value'");
             return;
         }
 
@@ -141,7 +134,7 @@ class TransportSelectionEdit extends Component
 
     public function sendTotalTransportCostEdit(): void
     {
-        $this->dispatch("totalTransportCostEditUpdated", $this->totalTransportCostEdit);
+//        $this->dispatch("totalTransportCostEditUpdated", $this->totalTransportCostEdit);
         $this->dispatch("transportSelectionEditUpdated", [
             "selectedTransportsEdit" => $this->selectedTransportsEdit,
             "transportQuantitiesEdit" => $this->quantitiesEdit,
@@ -157,11 +150,9 @@ class TransportSelectionEdit extends Component
 
     public function render(): View
     {
-        if (!empty($this->search)) {
-            $this->transports = Transport::where('name', 'like', '%' . $this->search . '%')->get();
-        }
         return view("livewire.projects.transport-selection-edit", [
-            'transports' => $this->transports,
+            'transports' => $this->availableTransportsEdit,
         ]);
     }
 }
+

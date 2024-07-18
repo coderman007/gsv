@@ -17,7 +17,6 @@ class PositionSelectionEdit extends Component
     public $efficienciesEdit = [];
     public $partialCostsEdit = [];
     public $totalLaborCostEdit = 0;
-
     public $existingSelections = [];
 
     protected $rules = [
