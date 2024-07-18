@@ -384,97 +384,100 @@ class ProjectCreate extends Component
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
-    #[On('materialSelectionUpdated')]
+    #[On('materialSelectionCreateUpdated')]
     public function handleMaterialSelectionUpdated($data): void
     {
         // Update relevant properties with received data
-        $this->selectedMaterials = $data['selectedMaterials'];
-        $this->selectedMaterialQuantity = $data['materialQuantities'];
-        $this->selectedMaterialEfficiencies = $data['materialEfficiencies'];
-        $this->totalMaterialCost = $data['totalMaterialCost'];
+        $this->selectedMaterials = $data['selectedMaterialsCreate'];
+        $this->selectedMaterialQuantity = $data['materialQuantitiesCreate'];
+        $this->selectedMaterialEfficiencies = $data['materialEfficienciesCreate'];
+        $this->totalMaterialCost = $data['totalMaterialCostCreate'];
 
         // Update the 'material_project' pivot table if the project already exists
-        if ($this->project) {
-            foreach ($this->selectedMaterials as $materialId) {
-                $this->project->materials()->syncWithoutDetaching([
-                    $materialId => [
-                        'quantity' => $this->selectedMaterialQuantity[$materialId],
-                        'efficiencies' => $this->selectedMaterialEfficiencies[$materialId],
-                        'total_cost' => $this->totalMaterialCost,
-                    ]
-                ]);
-            }
-        }
+//        if ($this->project) {
+//            foreach ($this->selectedMaterials as $materialId) {
+//                $this->project->materials()->syncWithoutDetaching([
+//                    $materialId => [
+//                        'quantity' => $this->selectedMaterialQuantity[$materialId],
+//                        'efficiencies' => $this->selectedMaterialEfficiencies[$materialId],
+//                        'total_cost' => $this->totalMaterialCost,
+//                    ]
+//                ]);
+//            }
+//        }
+
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
-    #[On('toolSelectionUpdated')]
+    #[On('toolSelectionCreateUpdated')]
     public function handleToolSelectionUpdated($data): void
     {
-        $this->selectedTools = $data['selectedTools'];
-        $this->selectedToolQuantity = $data['toolQuantities'];
-        $this->selectedToolRequiredDays = $data['toolRequiredDays']; // Actualizar días requeridos
-        $this->selectedToolEfficiencies = $data['toolEfficiencies'];
-        $this->totalToolCost = $data['totalToolCost'];
+        $this->selectedTools = $data['selectedToolsCreate'];
+        $this->selectedToolQuantity = $data['toolQuantitiesCreate'];
+        $this->selectedToolRequiredDays = $data['toolRequiredDaysCreate']; // Actualizar días requeridos
+        $this->selectedToolEfficiencies = $data['toolEfficienciesCreate'];
+        $this->totalToolCost = $data['totalToolCostCreate'];
 
-        if ($this->project) {
-            foreach ($this->selectedTools as $toolId) {
-                $this->project->tools()->updateExistingPivot($toolId, [
-                    'quantity' => $this->selectedToolQuantity[$toolId],
-                    'required_days' => $this->selectedToolRequiredDays[$toolId], // Guardar días requeridos
-                    'efficiency' => $this->selectedToolEfficiencies[$toolId],
-                    'total_cost' => $this->totalToolCost,
-                ]);
-            }
-        }
+//        if ($this->project) {
+//            foreach ($this->selectedTools as $toolId) {
+//                $this->project->tools()->updateExistingPivot($toolId, [
+//                    'quantity' => $this->selectedToolQuantity[$toolId],
+//                    'required_days' => $this->selectedToolRequiredDays[$toolId], // Guardar días requeridos
+//                    'efficiency' => $this->selectedToolEfficiencies[$toolId],
+//                    'total_cost' => $this->totalToolCost,
+//                ]);
+//            }
+//        }
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
-    #[On('transportSelectionUpdated')]
+    #[On('transportSelectionCreateUpdated')]
     public function handleTransportSelectionUpdated($data): void
     {
         // Actualizar propiedades relevantes con los datos recibidos
-        $this->selectedTransports = $data['selectedTransports'];
-        $this->selectedTransportQuantity = $data['transportQuantities'];
-        $this->selectedTransportRequiredDays = $data['transportRequiredDays'];
-        $this->selectedTransportEfficiencies = $data['transportEfficiencies'];
-        $this->totalTransportCost = $data['totalTransportCost'];
+        $this->selectedTransports = $data['selectedTransportsCreate'];
+        $this->selectedTransportQuantity = $data['transportQuantitiesCreate'];
+        $this->selectedTransportRequiredDays = $data['transportRequiredDaysCreate'];
+        $this->selectedTransportEfficiencies = $data['transportEfficienciesCreate'];
+        $this->totalTransportCost = $data['totalTransportCostCreate'];
 
         // Actualizar los costos totales de transporte en la tabla pivot 'project_transport' si el proyecto ya existe
-        if ($this->project) {
-            foreach ($this->selectedTransports as $transportId) {
-                $this->project->transports()->updateExistingPivot($transportId, [
-                    'quantity' => $this->selectedTransportQuantity[$transportId],
-                    'required_days' => $this->selectedTransportRequiredDays[$transportId],
-                    'efficiency' => $this->selectedTransportEfficiencies[$transportId],
-                    'total_cost' => $this->totalTransportCost,
-                ]);
-            }
-            $this->calculateTotalProjectCost(); // Recalcular el costo total
-        }
+//        if ($this->project) {
+//            foreach ($this->selectedTransports as $transportId) {
+//                $this->project->transports()->updateExistingPivot($transportId, [
+//                    'quantity' => $this->selectedTransportQuantity[$transportId],
+//                    'required_days' => $this->selectedTransportRequiredDays[$transportId],
+//                    'efficiency' => $this->selectedTransportEfficiencies[$transportId],
+//                    'total_cost' => $this->totalTransportCost,
+//                ]);
+//            }
+//        }
+
+        $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
-    #[On('additionalSelectionUpdated')]
+    #[On('additionalSelectionCreateUpdated')]
     public function handleAdditionalSelectionUpdated($data): void
     {
         // Update relevant properties with received data
-        $this->selectedAdditionals = $data['selectedAdditionals'];
-        $this->selectedAdditionalQuantity = $data['additionalQuantities'];
-        $this->selectedAdditionalEfficiencies = $data['additionalEfficiencies'];
-        $this->totalAdditionalCost = $data['totalAdditionalCost'];
+        $this->selectedAdditionals = $data['selectedAdditionalsCreate'];
+        $this->selectedAdditionalQuantity = $data['additionalQuantitiesCreate'];
+        $this->selectedAdditionalEfficiencies = $data['additionalEfficienciesCreate'];
+        $this->totalAdditionalCost = $data['totalAdditionalCostCreate'];
 
         // Update the 'additional_cost_project' pivot table if the project already exists
-        if ($this->project) {
-            foreach ($this->selectedAdditionals as $additionalId) {
-                $this->project->additionals()->syncWithoutDetaching([
-                    $additionalId => [
-                        'quantity' => $this->selectedAdditionalQuantity[$additionalId],
-                        'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
-                        'total_cost' => $this->totalAdditionalCost,
-                    ]
-                ]);
-            }
-        }
+//        if ($this->project) {
+//            foreach ($this->selectedAdditionals as $additionalId) {
+//                $this->project->additionals()->syncWithoutDetaching([
+//                    $additionalId => [
+//                        'quantity' => $this->selectedAdditionalQuantity[$additionalId],
+//                        'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
+//                        'total_cost' => $this->totalAdditionalCost,
+//                    ]
+//                ]);
+//            }
+//        }
+
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
