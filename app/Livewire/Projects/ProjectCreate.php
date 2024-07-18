@@ -120,6 +120,7 @@ class ProjectCreate extends Component
         $this->selectedTransportRequiredDays = 0;
         $this->selectedAdditionalQuantity = 0;
     }
+
     public function updated($name): void
     {
         if (in_array($name, [
@@ -132,6 +133,7 @@ class ProjectCreate extends Component
             $this->calculateTotalProjectCost();
         }
     }
+
     public function calculateHandToolCost(): float
     {
         $this->extraHandToolCost = $this->totalLaborCost * 0.05;  // 5% del costo de la mano de obra
@@ -167,14 +169,13 @@ class ProjectCreate extends Component
         }
     }
 
-
     // Actualizar área necesaria cuando se modifica la potencia
     public function updatedPowerOutput($value): void
     {
         // Verificar que el valor es numérico y mayor o igual a cero
         if (is_numeric($value) && $value >= 0) {
             // Calcular el área necesaria si el valor es válido
-            $this->required_area = number_format(($value / 0.55 * (2.6 * 1.1)),  2);
+            $this->required_area = number_format(($value / 0.55 * (2.6 * 1.1)), 2);
 
             // Limpiar el error si existe
             $this->resetErrorBag('power_output'); // Elimina el mensaje de error
@@ -328,31 +329,9 @@ class ProjectCreate extends Component
         $this->dispatch('createdProject', $project);
         $this->dispatch('createdProjectNotification');
         $this->dispatch('commercialPolicies', $policies);
-
+        $this->dispatch('reloadPage');
         $this->reset();
     }
-
-// Métodos adicionales para obtener el costo unitario de cada recurso
-    protected function getPositionUnitCost($positionId) {
-        // Implementar la lógica para obtener el costo unitario de una posición
-    }
-
-    protected function getMaterialUnitCost($materialId) {
-        // Implementar la lógica para obtener el costo unitario de un material
-    }
-
-    protected function getToolUnitCost($toolId) {
-        // Implementar la lógica para obtener el costo unitario de una herramienta
-    }
-
-    protected function getTransportUnitCost($transportId) {
-        // Implementar la lógica para obtener el costo unitario de un transporte
-    }
-
-    protected function getAdditionalUnitCost($additionalId) {
-        // Implementar la lógica para obtener el costo unitario de un costo adicional
-    }
-
 
     public function showLaborForm(): void
     {
@@ -379,29 +358,29 @@ class ProjectCreate extends Component
         $this->showResource = 'additionals'; // Update property based on the selected resource
     }
 
-    #[On('positionSelectionUpdated')]
+    #[On('positionSelectionCreateUpdated')]
     public function handlePositionSelectionUpdated($data): void
     {
         // Update relevant properties with received data
-        $this->selectedPositions = $data['selectedPositions'];
-        $this->selectedPositionQuantity = $data['positionQuantities'];
-        $this->selectedPositionRequiredDays = $data['positionRequiredDays'];
-        $this->selectedPositionEfficiencies = $data['positionEfficiencies'];
-        $this->totalLaborCost = $data['totalLaborCost'];
+        $this->selectedPositions = $data['selectedPositionsCreate'];
+        $this->selectedPositionQuantity = $data['positionQuantitiesCreate'];
+        $this->selectedPositionRequiredDays = $data['positionRequiredDaysCreate'];
+        $this->selectedPositionEfficiencies = $data['positionEfficienciesCreate'];
+        $this->totalLaborCost = $data['totalLaborCostCreate'];
 
         // Update the 'position_project' pivot table if the project already exists
-        if ($this->project) {
-            foreach ($this->selectedPositions as $positionId) {
-                $this->project->positions()->syncWithoutDetaching([
-                    $positionId => [
-                        'quantity' => $this->selectedPositionQuantity[$positionId],
-                        'required_days' => $this->selectedPositionRequiredDays[$positionId],
-                        'efficiencies' => $this->selectedPositionEfficiencies[$positionId],
-                        'total_cost' => $this->totalLaborCost,
-                    ]
-                ]);
-            }
-        }
+//        if ($this->project) {
+//            foreach ($this->selectedPositions as $positionId) {
+//                $this->project->positions()->syncWithoutDetaching([
+//                    $positionId => [
+//                        'quantity' => $this->selectedPositionQuantity[$positionId],
+//                        'required_days' => $this->selectedPositionRequiredDays[$positionId],
+//                        'efficiencies' => $this->selectedPositionEfficiencies[$positionId],
+//                        'total_cost' => $this->totalLaborCost,
+//                    ]
+//                ]);
+//            }
+//        }
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
@@ -499,7 +478,7 @@ class ProjectCreate extends Component
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
-    #[On('hideResourceForm')]  // Listen for the event
+    #[On('hideResourceFormCreate')]  // Listen for the event
     public function hideResourceForm(): void
     {
         $this->showResource = '';

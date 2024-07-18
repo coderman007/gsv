@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->double('power_output', 20, 2)->default(0);
             $table->enum('zone', [
                 'Medellin y Municipios Cercanos',
+                'Antioquia Cercana',
                 'Antioquia Lejana',
                 'Caribe',
                 'Urabá',

@@ -185,8 +185,7 @@
                     <div class="mt-8">
                         <!-- Mostrar componente Livewire correspondiente -->
                         @if ($showResource === 'labor')
-                            <livewire:projects.position-selection
-                                :is-edit="true"
+                            <livewire:projects.position-selection-edit
                                 :existing-selections="$existingPositionSelections"
                             />
                         @elseif ($showResource === 'materials')

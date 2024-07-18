@@ -481,27 +481,28 @@ class ProjectEdit extends Component
         $this->showResource = 'additionals'; // Update property based on the selected resource
     }
 
-    #[On('positionSelectionUpdated')]
+    #[On('positionSelectionEditUpdated')]
     public function handlePositionSelectionUpdated($data): void
     {
         // Update relevant properties with received data
-        $this->selectedPositions = $data['selectedPositions'];
-        $this->selectedPositionQuantity = $data['positionQuantities'];
-        $this->selectedPositionRequiredDays = $data['positionRequiredDays'];
-        $this->selectedPositionEfficiencies = $data['positionEfficiencies'];
-        $this->totalLaborCost = $data['totalLaborCost'];
+        $this->selectedPositions = $data['selectedPositionsEdit'];
+        $this->selectedPositionQuantity = $data['positionQuantitiesEdit'];
+        $this->selectedPositionRequiredDays = $data['positionRequiredDaysEdit'];
+        $this->selectedPositionEfficiencies = $data['positionEfficienciesEdit'];
+        $this->totalLaborCost = $data['totalLaborCostEdit'];
 
         // Update the 'position_project' pivot table if the project already exists
-        foreach ($this->selectedPositions as $positionId) {
-            $this->project->positions()->syncWithoutDetaching([
-                $positionId => [
-                    'quantity' => $this->selectedPositionQuantity[$positionId],
-                    'required_days' => $this->selectedPositionRequiredDays[$positionId],
-//                    'efficiencies' => $this->selectedPositionEfficiencies[$positionId],
-                    'total_cost' => $this->totalLaborCost,
-                ]
-            ]);
-        }
+//        foreach ($this->selectedPositions as $positionId) {
+//            $this->project->positions()->syncWithoutDetaching([
+//                $positionId => [
+//                    'quantity' => $this->selectedPositionQuantity[$positionId],
+//                    'required_days' => $this->selectedPositionRequiredDays[$positionId],
+////                    'efficiencies' => $this->selectedPositionEfficiencies[$positionId],
+//                    'total_cost' => $this->totalLaborCost,
+//                ]
+//            ]);
+//        }
+
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
@@ -591,7 +592,7 @@ class ProjectEdit extends Component
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
-    #[On('hideResourceForm')]  // Listen for the event
+    #[On('hideResourceFormEdit')]  // Listen for the event
     public function hideResourceForm(): void
     {
         $this->showResource = '';
@@ -600,25 +601,25 @@ class ProjectEdit extends Component
     public function render(): View
     {
         return view('livewire.projects.project-edit', [
-            'totalProjectCost' => $this->totalProjectCost,
-            'selectedPositions' => $this->selectedPositions,
-            'selectedPositionQuantity' => $this->selectedPositionQuantity,
-            'selectedPositionRequiredDays' => $this->selectedPositionRequiredDays,
-            'selectedPositionEfficiencies' => $this->selectedPositionEfficiencies,
-            'selectedMaterials' => $this->selectedMaterials,
-            'selectedMaterialQuantity' => $this->selectedMaterialQuantity,
-            'selectedMaterialEfficiencies' => $this->selectedMaterialEfficiencies,
-            'selectedTools' => $this->selectedTools,
-            'selectedToolQuantity' => $this->selectedToolQuantity,
-            'selectedToolRequiredDays' => $this->selectedToolRequiredDays,
-            'selectedToolEfficiencies' => $this->selectedToolEfficiencies,
-            'selectedTransports' => $this->selectedTransports,
-            'selectedTransportQuantity' => $this->selectedTransportQuantity,
-            'selectedTransportRequiredDays' => $this->selectedTransportRequiredDays,
-            'selectedTransportEfficiencies' => $this->selectedTransportEfficiencies,
-            'selectedAdditionals' => $this->selectedAdditionals,
-            'selectedAdditionalQuantity' => $this->selectedAdditionalQuantity,
-            'selectedAdditionalEfficiencies' => $this->selectedAdditionalEfficiencies,
+//            'totalProjectCost' => $this->totalProjectCost,
+//            'selectedPositions' => $this->selectedPositions,
+//            'selectedPositionQuantity' => $this->selectedPositionQuantity,
+//            'selectedPositionRequiredDays' => $this->selectedPositionRequiredDays,
+//            'selectedPositionEfficiencies' => $this->selectedPositionEfficiencies,
+//            'selectedMaterials' => $this->selectedMaterials,
+//            'selectedMaterialQuantity' => $this->selectedMaterialQuantity,
+//            'selectedMaterialEfficiencies' => $this->selectedMaterialEfficiencies,
+//            'selectedTools' => $this->selectedTools,
+//            'selectedToolQuantity' => $this->selectedToolQuantity,
+//            'selectedToolRequiredDays' => $this->selectedToolRequiredDays,
+//            'selectedToolEfficiencies' => $this->selectedToolEfficiencies,
+//            'selectedTransports' => $this->selectedTransports,
+//            'selectedTransportQuantity' => $this->selectedTransportQuantity,
+//            'selectedTransportRequiredDays' => $this->selectedTransportRequiredDays,
+//            'selectedTransportEfficiencies' => $this->selectedTransportEfficiencies,
+//            'selectedAdditionals' => $this->selectedAdditionals,
+//            'selectedAdditionalQuantity' => $this->selectedAdditionalQuantity,
+//            'selectedAdditionalEfficiencies' => $this->selectedAdditionalEfficiencies,
         ]);
     }
 }
