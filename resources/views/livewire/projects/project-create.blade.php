@@ -187,13 +187,13 @@
                         @if ($showResource === 'labor')
                             <livewire:projects.position-selection-create/>
                         @elseif ($showResource === 'materials')
-                            <livewire:projects.material-selection/>
+                            <livewire:projects.material-selection-create/>
                         @elseif ($showResource === 'tools')
-                            <livewire:projects.tool-selection/>
+                            <livewire:projects.tool-selection-create/>
                         @elseif ($showResource === 'transport')
-                            <livewire:projects.transport-selection/>
+                            <livewire:projects.transport-selection-create/>
                         @elseif ($showResource === 'additionals')
-                            <livewire:projects.additional-selection/>
+                            <livewire:projects.additional-selection-create/>
                         @endif
                     </div>
                 </div>

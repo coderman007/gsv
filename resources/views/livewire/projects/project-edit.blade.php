@@ -189,23 +189,19 @@
                                 :existing-selections="$existingPositionSelections"
                             />
                         @elseif ($showResource === 'materials')
-                            <livewire:projects.material-selection
-                                :is-edit="true"
+                            <livewire:projects.material-selection-edit
                                 :existing-selections="$existingMaterialSelections"
                             />
                         @elseif ($showResource === 'tools')
-                            <livewire:projects.tool-selection
-                                :is-edit="true"
+                            <livewire:projects.tool-selection-edit
                                 :existing-selections="$existingToolSelections"
                             />
                         @elseif ($showResource === 'transport')
-                            <livewire:projects.transport-selection
-                                :is-edit="true"
+                            <livewire:projects.transport-selection-edit
                                 :existing-selections="$existingTransportSelections"
                             />
                         @elseif ($showResource === 'additionals')
-                            <livewire:projects.additional-selection
-                                :is-edit="true"
+                            <livewire:projects.additional-selection-edit
                                 :existing-selections="$existingAdditionalSelections"
                             />
                         @endif
