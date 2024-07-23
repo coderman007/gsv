@@ -17,6 +17,7 @@ class PositionSelectionCreate extends Component
     public $efficienciesCreate = [];
     public $partialCostsCreate = [];
     public $totalLaborCostCreate = 0;
+    public $search = ''; // Nueva propiedad para manejar el valor de búsqueda
 
     protected $rules = [
         'selectedPositionsCreate' => 'required|array|min:1',
@@ -30,42 +31,65 @@ class PositionSelectionCreate extends Component
     {
         $this->availablePositionsCreate = Position::all();
         $this->updateTotalLaborCostCreate();
+
+        $this->selectedPositionsCreate = session()->get('selectedPositionsCreate', []);
+        $this->quantitiesCreate = session()->get('quantitiesCreate', []);
+        $this->requiredDaysCreate = session()->get('requiredDaysCreate', []);
+        $this->efficiencyInputsCreate = session()->get('efficiencyInputsCreate', []);
+        $this->efficienciesCreate = session()->get('efficienciesCreate', []);
+        $this->partialCostsCreate = session()->get('partialCostsCreate', []);
+        $this->totalLaborCostCreate = session()->get('totalLaborCostCreate', 0);
+        $this->search = ''; // Inicializa el valor de búsqueda
     }
 
-    public function updatedSelectedPositionsCreate(): void
+    public function dehydrate(): void
     {
-        foreach ($this->availablePositionsCreate as $position) {
-            $positionId = $position->id;
-            if (!in_array($positionId, $this->selectedPositionsCreate)) {
-                $this->quantitiesCreate[$positionId] = null;
-                $this->requiredDaysCreate[$positionId] = null;
-                $this->efficiencyInputsCreate[$positionId] = null;
-                $this->efficienciesCreate[$positionId] = null;
-                $this->partialCostsCreate[$positionId] = 0;
-            }
+        session()->put('selectedPositionsCreate', $this->selectedPositionsCreate);
+        session()->put('quantitiesCreate', $this->quantitiesCreate);
+        session()->put('requiredDaysCreate', $this->requiredDaysCreate);
+        session()->put('efficiencyInputsCreate', $this->efficiencyInputsCreate);
+        session()->put('efficienciesCreate', $this->efficienciesCreate);
+        session()->put('partialCostsCreate', $this->partialCostsCreate);
+        session()->put('totalLaborCostCreate', $this->totalLaborCostCreate);
+    }
+
+    public function addPosition($positionId): void
+    {
+        if (!in_array($positionId, $this->selectedPositionsCreate)) {
+            $this->selectedPositionsCreate[] = $positionId;
         }
+        $this->search = ''; // Limpia el campo de búsqueda
+        $this->updateTotalLaborCostCreate();
+    }
+
+    public function removePosition($positionId): void
+    {
+        $this->selectedPositionsCreate = array_diff($this->selectedPositionsCreate, [$positionId]);
+        unset($this->quantitiesCreate[$positionId]);
+        unset($this->requiredDaysCreate[$positionId]);
+        unset($this->efficiencyInputsCreate[$positionId]);
+        unset($this->efficienciesCreate[$positionId]);
+        unset($this->partialCostsCreate[$positionId]);
         $this->updateTotalLaborCostCreate();
     }
 
     public function calculatePartialCostCreate($positionId): void
     {
-        if (in_array($positionId, $this->selectedPositionsCreate)) {
-            $quantity = $this->quantitiesCreate[$positionId] ?? 0;
-            $requiredDays = $this->requiredDaysCreate[$positionId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputsCreate[$positionId] ?? "1";
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
+        $quantity = $this->quantitiesCreate[$positionId] ?? 0;
+        $requiredDays = $this->requiredDaysCreate[$positionId] ?? 0;
+        $efficiencyInput = $this->efficiencyInputsCreate[$positionId] ?? "1";
+        $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
-            if ($efficiency === null) {
-                $this->partialCostsCreate[$positionId] = 0;
-                $this->addError("efficiencyInputsCreate_$positionId", "Entrada de rendimiento inválida: '$efficiencyInput'");
-            } else {
-                $position = Position::find($positionId);
-                $dailyCost = $position->real_daily_cost;
-                $this->partialCostsCreate[$positionId] = $quantity * $requiredDays * $efficiency * $dailyCost;
-            }
-        } else {
+        if ($efficiency === null) {
             $this->partialCostsCreate[$positionId] = 0;
+            $this->addError("efficiencyInputsCreate_$positionId", "Entrada de rendimiento inválida: '$efficiencyInput'");
+        } else {
+            $position = Position::find($positionId);
+            $dailyCost = $position->real_daily_cost;
+            $this->partialCostsCreate[$positionId] = $quantity * $requiredDays * $efficiency * $dailyCost;
         }
+
+        $this->updateTotalLaborCostCreate();
     }
 
     public function updatedQuantitiesCreate($value, $positionId): void
@@ -109,7 +133,6 @@ class PositionSelectionCreate extends Component
 
     public function sendTotalLaborCostCreate(): void
     {
-//        $this->dispatch('totalLaborCostCreateUpdated', $this->totalLaborCostCreate);
         $this->dispatch('positionSelectionCreateUpdated', [
             'selectedPositionsCreate' => $this->selectedPositionsCreate,
             'positionQuantitiesCreate' => $this->quantitiesCreate,
@@ -125,8 +148,13 @@ class PositionSelectionCreate extends Component
 
     public function render(): View
     {
+        $filteredPositions = Position::query()
+            ->where('name', 'like', "%{$this->search}%")
+            ->get();
+
         return view('livewire.projects.position-selection-create', [
-            'positions' => $this->availablePositionsCreate,
+            'positions' => $filteredPositions,
         ]);
     }
 }
+

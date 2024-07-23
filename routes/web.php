@@ -28,6 +28,8 @@ Route::get('/services', [HomeController::class, 'services'])->name('services');
 Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
 Route::get('/manual',    [HomeController::class, 'manual'])->name('manual');
 
+Route::get('/proof',    \App\Livewire\Proof::class)->name('proof');
+
 
 
 Route::middleware([

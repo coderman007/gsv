@@ -20,6 +20,7 @@ use Livewire\Component;
 class ProjectCreate extends Component
 {
     public $openCreate = false;
+    public $openCloseConfirmation = false;
     public $categories;
     public $selectedCategory;
     public $project;
@@ -70,6 +71,9 @@ class ProjectCreate extends Component
     public $selectedTransportEfficiencies;
     public $selectedAdditionalQuantity;
     public $selectedAdditionalEfficiencies;
+    public $categoryErrorMessage;
+    public $powerErrorMessage;
+    public $zoneErrorMessage;
 
     // Validation rules
     protected $rules = [
@@ -120,6 +124,32 @@ class ProjectCreate extends Component
         $this->selectedTransportRequiredDays = 0;
         $this->selectedAdditionalQuantity = 0;
     }
+
+    public function closeForm(): void
+    {
+        $this->openCreate = false;
+        session()->forget('selectedPositionsCreate');
+        session()->forget('quantitiesCreate');
+        session()->forget('requiredDaysCreate');
+        session()->forget('efficiencyInputsCreate');
+        session()->forget('efficienciesCreate');
+        session()->forget('partialCostsCreate');
+        session()->forget('totalLaborCostCreate');
+        $this->dispatch('reloadPage');
+    }
+
+    public function validateSelections(): void
+    {
+        $this->categoryErrorMessage = $this->selectedCategory ? '' : 'Por favor, seleccione una categoría.';
+        $this->powerErrorMessage = $this->power_output ? '' : 'Por favor, ingrese la potencia.';
+        $this->zoneErrorMessage = $this->zone ? '' : 'Por favor, seleccione una zona.';
+    }
+
+    public function canShowResources(): bool
+    {
+        return $this->selectedCategory && $this->power_output && $this->zone;
+    }
+
 
     public function updated($name): void
     {
@@ -331,31 +361,55 @@ class ProjectCreate extends Component
         $this->dispatch('commercialPolicies', $policies);
         $this->dispatch('reloadPage');
         $this->reset();
+
+        session()->forget('selectedPositionsCreate');
+        session()->forget('quantitiesCreate');
+        session()->forget('requiredDaysCreate');
+        session()->forget('efficiencyInputsCreate');
+        session()->forget('efficienciesCreate');
+        session()->forget('partialCostsCreate');
+        session()->forget('totalLaborCostCreate');
     }
 
     public function showLaborForm(): void
     {
-        $this->showResource = 'labor'; // Update property based on the selected resource
+        $this->showResource = 'labor';
+//        $this->validateSelections();
+//        if ($this->canShowResources()) {
+//            $this->showResource = 'labor'; // Update property based on the selected resource
+//        }
     }
 
     public function showMaterialsForm(): void
     {
-        $this->showResource = 'materials'; // Update property based on the selected resource
+        $this->validateSelections();
+        if ($this->canShowResources()) {
+            $this->showResource = 'materials'; // Update property based on the selected resource
+        }
     }
 
     public function showToolsForm(): void
     {
-        $this->showResource = 'tools'; // Update property based on the selected resource
+        $this->validateSelections();
+        if ($this->canShowResources()) {
+            $this->showResource = 'tools'; // Update property based on the selected resource
+        }
     }
 
     public function showTransportForm(): void
     {
-        $this->showResource = 'transport'; // Update property based on the selected resource
+        $this->validateSelections();
+        if ($this->canShowResources()) {
+            $this->showResource = 'transport'; // Update property based on the selected resource
+        }
     }
 
     public function showAdditionalForm(): void
     {
-        $this->showResource = 'additionals'; // Update property based on the selected resource
+        $this->validateSelections();
+        if ($this->canShowResources()) {
+            $this->showResource = 'additionals'; // Update property based on the selected resource
+        }
     }
 
     #[On('positionSelectionCreateUpdated')]
@@ -368,19 +422,6 @@ class ProjectCreate extends Component
         $this->selectedPositionEfficiencies = $data['positionEfficienciesCreate'];
         $this->totalLaborCost = $data['totalLaborCostCreate'];
 
-        // Update the 'position_project' pivot table if the project already exists
-//        if ($this->project) {
-//            foreach ($this->selectedPositions as $positionId) {
-//                $this->project->positions()->syncWithoutDetaching([
-//                    $positionId => [
-//                        'quantity' => $this->selectedPositionQuantity[$positionId],
-//                        'required_days' => $this->selectedPositionRequiredDays[$positionId],
-//                        'efficiencies' => $this->selectedPositionEfficiencies[$positionId],
-//                        'total_cost' => $this->totalLaborCost,
-//                    ]
-//                ]);
-//            }
-//        }
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
@@ -392,19 +433,6 @@ class ProjectCreate extends Component
         $this->selectedMaterialQuantity = $data['materialQuantitiesCreate'];
         $this->selectedMaterialEfficiencies = $data['materialEfficienciesCreate'];
         $this->totalMaterialCost = $data['totalMaterialCostCreate'];
-
-        // Update the 'material_project' pivot table if the project already exists
-//        if ($this->project) {
-//            foreach ($this->selectedMaterials as $materialId) {
-//                $this->project->materials()->syncWithoutDetaching([
-//                    $materialId => [
-//                        'quantity' => $this->selectedMaterialQuantity[$materialId],
-//                        'efficiencies' => $this->selectedMaterialEfficiencies[$materialId],
-//                        'total_cost' => $this->totalMaterialCost,
-//                    ]
-//                ]);
-//            }
-//        }
 
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
@@ -418,16 +446,6 @@ class ProjectCreate extends Component
         $this->selectedToolEfficiencies = $data['toolEfficienciesCreate'];
         $this->totalToolCost = $data['totalToolCostCreate'];
 
-//        if ($this->project) {
-//            foreach ($this->selectedTools as $toolId) {
-//                $this->project->tools()->updateExistingPivot($toolId, [
-//                    'quantity' => $this->selectedToolQuantity[$toolId],
-//                    'required_days' => $this->selectedToolRequiredDays[$toolId], // Guardar días requeridos
-//                    'efficiency' => $this->selectedToolEfficiencies[$toolId],
-//                    'total_cost' => $this->totalToolCost,
-//                ]);
-//            }
-//        }
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
@@ -441,18 +459,6 @@ class ProjectCreate extends Component
         $this->selectedTransportEfficiencies = $data['transportEfficienciesCreate'];
         $this->totalTransportCost = $data['totalTransportCostCreate'];
 
-        // Actualizar los costos totales de transporte en la tabla pivot 'project_transport' si el proyecto ya existe
-//        if ($this->project) {
-//            foreach ($this->selectedTransports as $transportId) {
-//                $this->project->transports()->updateExistingPivot($transportId, [
-//                    'quantity' => $this->selectedTransportQuantity[$transportId],
-//                    'required_days' => $this->selectedTransportRequiredDays[$transportId],
-//                    'efficiency' => $this->selectedTransportEfficiencies[$transportId],
-//                    'total_cost' => $this->totalTransportCost,
-//                ]);
-//            }
-//        }
-
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
@@ -464,19 +470,6 @@ class ProjectCreate extends Component
         $this->selectedAdditionalQuantity = $data['additionalQuantitiesCreate'];
         $this->selectedAdditionalEfficiencies = $data['additionalEfficienciesCreate'];
         $this->totalAdditionalCost = $data['totalAdditionalCostCreate'];
-
-        // Update the 'additional_cost_project' pivot table if the project already exists
-//        if ($this->project) {
-//            foreach ($this->selectedAdditionals as $additionalId) {
-//                $this->project->additionals()->syncWithoutDetaching([
-//                    $additionalId => [
-//                        'quantity' => $this->selectedAdditionalQuantity[$additionalId],
-//                        'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
-//                        'total_cost' => $this->totalAdditionalCost,
-//                    ]
-//                ]);
-//            }
-//        }
 
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }

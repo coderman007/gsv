@@ -126,7 +126,7 @@
 
                             <!-- Texto que muestra el costo total -->
                             <span class="p-3 rounded-lg text-2xl font-bold">
-                                ${{ number_format($totalProjectCost, 2) }}
+                                $ {{ number_format($totalProjectCost, 0, ',') }}
                             </span>
                         </div>
                     </div>
@@ -145,7 +145,8 @@
                                     type="button">Mano de obra
                             </button>
                             <div
-                                class="text-teal-500 font-bold text-center ">{{ number_format($totalLaborCost, 2) }}</div>
+                                class="text-teal-500 font-bold text-center ">
+                                $ {{ number_format($totalLaborCost, 0, ',') }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showMaterialsForm"
@@ -153,7 +154,8 @@
                                     type="button">Materiales
                             </button>
                             <div
-                                class="text-indigo-500 font-bold text-center ">{{ number_format($totalMaterialCost, 2) }}</div>
+                                class="text-indigo-500 font-bold text-center ">
+                                $ {{ number_format($totalMaterialCost, 0, ',') }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showToolsForm"
@@ -161,7 +163,8 @@
                                     type="button">Herramientas
                             </button>
                             <div
-                                class="text-sky-500 font-bold text-center ">{{ number_format($totalToolCost, 2) }}</div>
+                                class="text-sky-500 font-bold text-center ">
+                                $ {{ number_format($totalToolCost, 0, ',') }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showTransportForm"
@@ -169,7 +172,8 @@
                                     type="button">Transporte
                             </button>
                             <div
-                                class="text-slate-500 font-bold text-center ">{{ number_format($totalTransportCost, 2) }}</div>
+                                class="text-slate-500 font-bold text-center ">
+                                $ {{ number_format($totalTransportCost, 0, ',') }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showAdditionalForm"
@@ -177,7 +181,8 @@
                                     type="button">Adicionales
                             </button>
                             <div
-                                class="text-yellow-500 font-bold text-center">{{ number_format($totalAdditionalCost, 2) }}</div>
+                                class="text-yellow-500 font-bold text-center">
+                                $ {{ number_format($totalAdditionalCost, 0, ',') }}</div>
                         </div>
                     </div>
 
@@ -186,16 +191,27 @@
                         <!-- Mostrar componente Livewire correspondiente -->
                         @if ($showResource === 'labor')
                             <livewire:projects.position-selection-create/>
-                        @elseif ($showResource === 'materials')
+                        @elseif ($showResource === 'materials' && $this->canShowResources())
                             <livewire:projects.material-selection-create/>
-                        @elseif ($showResource === 'tools')
+                        @elseif ($showResource === 'tools' && $this->canShowResources())
                             <livewire:projects.tool-selection-create/>
-                        @elseif ($showResource === 'transport')
+                        @elseif ($showResource === 'transport' && $this->canShowResources())
                             <livewire:projects.transport-selection-create/>
-                        @elseif ($showResource === 'additionals')
+                        @elseif ($showResource === 'additionals' && $this->canShowResources())
                             <livewire:projects.additional-selection-create/>
                         @endif
                     </div>
+
+                    <!-- Mensajes de error -->
+                    @if ($categoryErrorMessage)
+                        <div class="mb-2 text-red-500 px-2 py-1 rounded-md">{{ $categoryErrorMessage }}</div>
+                    @endif
+                    @if ($powerErrorMessage)
+                        <div class="mb-2 text-red-500 px-2 py-1 rounded-md">{{ $powerErrorMessage }}</div>
+                    @endif
+                    @if ($zoneErrorMessage)
+                        <div class="mb-2 text-red-500 px-2 py-1 rounded-md">{{ $zoneErrorMessage }}</div>
+                    @endif
                 </div>
             </div>
 
@@ -203,7 +219,7 @@
         <x-slot name="footer">
             <div class="mt-4 text-center flex justify-center space-x-2">
                 <!-- Botón para cancelar/ cerrar el modal -->
-                <x-button-exit wire:click="$set('openCreate', false)">
+                <x-button-exit wire:click="$set('openCloseConfirmation', true)">
                     Cancelar
                 </x-button-exit>
 
@@ -214,6 +230,45 @@
             </div>
         </x-slot>
     </x-dialog-modal>
+
+    @if ($openCloseConfirmation)
+        <div wire:model="openCloseConfirmation">
+            <div class="fixed inset-0 z-50 flex items-center justify-center"
+                 wire:click="$set('openCloseConfirmation', false)">
+                <div class="absolute inset-0 z-40 bg-black opacity-70 modal-overlay"></div>
+                <div
+                    class="z-50 w-11/12 mx-auto overflow-y-auto bg-white border border-blue-500 rounded-xl modal-container md:max-w-md">
+
+                    <!-- Contenido del modal -->
+                    <div class="flex gap-3 py-2 bg-blue-500 border border-blue-500">
+                        <h3 class="w-full text-2xl text-center text-gray-100 ">
+                            <i class="fa-solid fa-triangle-exclamation text-white"></i> Cerrar Formulario</h3>
+                    </div>
+
+                    <div class="px-6 py-4 text-left modal-content">
+                        <p class="text-xl text-gray-500">
+                            Si cierra el formulario se perderán todos los cambios no guardados.
+                        </p>
+                        <div class="mt-4 text-center">
+                            <x-secondary-button wire:click="$set('openCloseConfirmation', false)"
+                                                class="mr-4 text-gray-500 border border-gray-500 shadow-lg hover:text-gray-50 hover:shadow-gray-400 hover:bg-gray-400">
+                                Cancelar
+                            </x-secondary-button>
+
+                            <button wire:click="closeForm"
+                                    class='inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 dark:border-gray-500 rounded-md font-semibold text-xs dark:text-gray-300 uppercase tracking-widest dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150 mr-4 text-blue-500 border border-blue-500 shadow-lg hover:text-gray-50 hover:shadow-gray-400 hover:bg-blue-500'>
+                                Aceptar
+                            </button>
+
+{{--                            <x-secondary-button wire:click="closeForm" class="mr-4 text-blue-500 border border-blue-500 shadow-lg hover:text-gray-50 hover:shadow-blue-400 hover:bg-blue-400">--}}
+{{--                                Cerrar--}}
+{{--                            </x-secondary-button>--}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
     @push('js')
         <script>

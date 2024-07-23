@@ -22,7 +22,7 @@
                     <!-- Categoría y Potencia del Proyecto -->
                     <div class="space-y-2 md:col-span-2">
                         <label for="category_power" class="font-semibold text-gray-700 dark:text-gray-300 text-xl"></label>
-                        <p id="category_power" class="text-green-800 dark:text-green-200 text-2xl font-bold p-4 bg-green-200 dark:bg-green-600 rounded-lg shadow-md">
+                        <p id="category_power" class="text-sky-800 dark:text-sky-200 text-2xl font-bold p-4 bg-sky-200 dark:bg-sky-600 rounded-lg shadow-md">
                             {{ $project->projectCategory->name }} de {{ rtrim(rtrim(number_format($project->power_output, 2), '0'), '.') }} kWp
                         </p>
                         <div class="space-y-2">
@@ -54,35 +54,35 @@
                             <!-- Mano de Obra -->
                             <div class="space-y-2">
                                 <label for="total_labor_cost" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Mano de Obra:</label>
-                                <p id="total_labor_cost" class="text-gray-800 dark:text-gray-200 text-lg">{{ $project->total_labor_cost }}</p>
+                                <p id="total_labor_cost" class="text-gray-800 dark:text-gray-200 text-lg">$ {{ number_format($project->total_labor_cost, 0, ',') }}</p>
                             </div>
 
                             <!-- Materiales -->
                             <div class="space-y-2">
                                 <label for="total_material_cost" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Materiales:</label>
-                                <p id="total_material_cost" class="text-gray-800 dark:text-gray-200 text-lg">{{ $project->total_material_cost }}</p>
+                                <p id="total_material_cost" class="text-gray-800 dark:text-gray-200 text-lg">$ {{ number_format($project->total_material_cost, 0, ',') }}</p>
                             </div>
 
                             <!-- Herramientas -->
                             <div class="space-y-2">
                                 <label for="hand_tools" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Herramientas de Mano:</label>
-                                <p id="hand_tools" class="text-gray-800 dark:text-gray-200 text-lg">{{ $project->hand_tool_cost }}</p>
+                                <p id="hand_tools" class="text-gray-800 dark:text-gray-200 text-lg">$ {{ number_format($project->hand_tool_cost, 0, ',') }}</p>
                             </div>
                             <div class="space-y-2">
                                 <label for="standard_tools" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Herramientas Especializada:</label>
-                                <p id="standard_tools" class="text-gray-800 dark:text-gray-200 text-lg">{{ $project->total_tool_cost }}</p>
+                                <p id="standard_tools" class="text-gray-800 dark:text-gray-200 text-lg">$ {{ number_format($project->total_tool_cost, 0, ',') }}</p>
                             </div>
 
                             <!-- Transporte -->
                             <div class="space-y-2">
                                 <label for="total_transport_cost" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Transporte:</label>
-                                <p id="total_transport_cost" class="text-gray-800 dark:text-gray-200 text-lg">{{ $project->total_transport_cost }}</p>
+                                <p id="total_transport_cost" class="text-gray-800 dark:text-gray-200 text-lg">$ {{ number_format($project->total_transport_cost, 0, ',') }}</p>
                             </div>
 
                             <!-- Costos Adicionales -->
                             <div class="space-y-2">
                                 <label for="total_additional_cost" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Costos Adicionales:</label>
-                                <p id="total_additional_cost" class="text-gray-800 dark:text-gray-200 text-lg">{{ $project->total_additional_cost }}</p>
+                                <p id="total_additional_cost" class="text-gray-800 dark:text-gray-200 text-lg">$ {{ number_format($project->total_additional_cost, 0, ',') }}</p>
                             </div>
                         </div>
                     </div>
@@ -90,13 +90,13 @@
                     <!-- Valor Bruto -->
                     <div class="space-y-2 md:col-span-2">
                         <label for="raw_value" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Valor Bruto:</label>
-                        <p id="raw_value" class="text-gray-800 dark:text-gray-200 text-2xl font-bold p-4 bg-gray-100 dark:bg-gray-600 rounded-lg shadow-md">{{ $project->raw_value }}</p>
+                        <p id="raw_value" class="text-green-800 dark:text-gray-200 text-2xl font-bold p-4 bg-green-100 dark:bg-gray-600 rounded-lg shadow-md">$ {{ number_format($project->raw_value, 0, ',') }}</p>
                     </div>
 
                     <!-- Valor de Venta -->
                     <div class="space-y-2 md:col-span-2">
                         <label for="sale_value" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Valor de Venta:</label>
-                        <p id="sale_value" class="text-gray-800 dark:text-gray-200 text-2xl font-bold p-4 bg-gray-100 dark:bg-gray-600 rounded-lg shadow-md">{{ $project->sale_value }}</p>
+                        <p id="sale_value" class="text-green-800 dark:text-gray-200 text-2xl font-bold p-4 bg-green-100 dark:bg-gray-600 rounded-lg shadow-md">$ {{ number_format($project->sale_value, 0, ',') }}</p>
                     </div>
                 </div>
             </x-slot>

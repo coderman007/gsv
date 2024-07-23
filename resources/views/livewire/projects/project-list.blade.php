@@ -126,8 +126,13 @@
                         <td class="px-6 py-4 dark:text-lg">{{ $project->power_output . " kWp" }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->required_area . " mts" }}<sup>2</sup></td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->zone }}</td>
-                        <td class="px-6 py-4 dark:text-lg"> {{ number_format($project->sale_value, 2) }}</td>
-
+                        <td class="px-6 py-4 dark:text-lg">
+                            <div class="bg-sky-100 p-2 rounded-sm font-semibold text-right">
+                                <span class="">$</span>
+                                <span
+                                    class="">{{ number_format($project->sale_value, 0, ',') }}</span>
+                            </div>
+                        </td>
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">
                                 <livewire:projects.project-show :project='$project' wire:key='project-show-{{ $project->id }}'/>

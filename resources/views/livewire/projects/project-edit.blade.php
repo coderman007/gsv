@@ -129,7 +129,7 @@
                             <span class="text-gray-500 sm:text-sm"><i class="fas fa-coins ml-1 text-yellow-500"></i> COP</span>
 
                             <span class="p-3 rounded-lg text-2xl font-bold">
-                                ${{ number_format($totalProjectCost, 2) }}
+                                $ {{ number_format($totalProjectCost) }}
                             </span>
                         </div>
                     </div>
@@ -146,7 +146,7 @@
                                     type="button">Mano de obra
                             </button>
                             <div
-                                class="text-teal-500 font-bold text-center ">{{ number_format($totalLaborCost, 2) }}</div>
+                                class="text-teal-500 font-bold text-center ">$ {{ number_format($totalLaborCost) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showMaterialsForm"
@@ -154,7 +154,7 @@
                                     type="button">Materiales
                             </button>
                             <div
-                                class="text-indigo-500 font-bold text-center ">{{ number_format($totalMaterialCost, 2) }}</div>
+                                class="text-indigo-500 font-bold text-center ">$ {{ number_format($totalMaterialCost) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showToolsForm"
@@ -162,7 +162,7 @@
                                     type="button">Herramientas
                             </button>
                             <div
-                                class="text-sky-500 font-bold text-center ">{{ number_format($totalToolCost, 2) }}</div>
+                                class="text-sky-500 font-bold text-center ">$ {{ number_format($totalToolCost) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showTransportForm"
@@ -170,7 +170,7 @@
                                     type="button">Transporte
                             </button>
                             <div
-                                class="text-slate-500 font-bold text-center ">{{ number_format($totalTransportCost, 2) }}</div>
+                                class="text-slate-500 font-bold text-center ">$ {{ number_format($totalTransportCost) }}</div>
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showAdditionalForm"
@@ -178,7 +178,7 @@
                                     type="button">Adicionales
                             </button>
                             <div
-                                class="text-yellow-500 font-bold text-center">{{ number_format($totalAdditionalCost, 2) }}</div>
+                                class="text-yellow-500 font-bold text-center">$ {{ number_format($totalAdditionalCost) }}</div>
                         </div>
                     </div>
 

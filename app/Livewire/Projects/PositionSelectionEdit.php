@@ -47,6 +47,25 @@ class PositionSelectionEdit extends Component
         }
     }
 
+    public function addPosition($positionId): void
+    {
+        if (!in_array($positionId, $this->selectedPositionsEdit)) {
+            $this->selectedPositionsEdit[] = $positionId;
+        }
+        $this->updateTotalLaborCostEdit();
+    }
+
+    public function removePosition($positionId): void
+    {
+        $this->selectedPositionsEdit = array_diff($this->selectedPositionsEdit, [$positionId]);
+        unset($this->quantitiesEdit[$positionId]);
+        unset($this->requiredDaysEdit[$positionId]);
+        unset($this->efficiencyInputsEdit[$positionId]);
+        unset($this->efficienciesEdit[$positionId]);
+        unset($this->partialCostsEdit[$positionId]);
+        $this->updateTotalLaborCostEdit();
+    }
+
     public function updatedSelectedPositionsEdit(): void
     {
         foreach ($this->availablePositionsEdit as $position) {

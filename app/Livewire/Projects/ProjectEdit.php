@@ -491,18 +491,6 @@ class ProjectEdit extends Component
         $this->selectedPositionEfficiencies = $data['positionEfficienciesEdit'];
         $this->totalLaborCost = $data['totalLaborCostEdit'];
 
-        // Update the 'position_project' pivot table if the project already exists
-//        foreach ($this->selectedPositions as $positionId) {
-//            $this->project->positions()->syncWithoutDetaching([
-//                $positionId => [
-//                    'quantity' => $this->selectedPositionQuantity[$positionId],
-//                    'required_days' => $this->selectedPositionRequiredDays[$positionId],
-////                    'efficiencies' => $this->selectedPositionEfficiencies[$positionId],
-//                    'total_cost' => $this->totalLaborCost,
-//                ]
-//            ]);
-//        }
-
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
@@ -515,17 +503,6 @@ class ProjectEdit extends Component
         $this->selectedMaterialEfficiencies = $data['materialEfficienciesEdit'];
         $this->totalMaterialCost = $data['totalMaterialCostEdit'];
 
-        // Update the 'material_project' pivot table if the project already exists
-//        foreach ($this->selectedMaterials as $materialId) {
-//            $this->project->materials()->syncWithoutDetaching([
-//                $materialId => [
-//                    'quantity' => $this->selectedMaterialQuantity[$materialId],
-////                    'efficiencies' => $this->selectedMaterialEfficiencies[$materialId],
-//                    'total_cost' => $this->totalMaterialCost,
-//                ]
-//            ]);
-//        }
-
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
@@ -537,15 +514,6 @@ class ProjectEdit extends Component
         $this->selectedToolRequiredDays = $data['toolRequiredDaysEdit']; // Actualizar días requeridos
         $this->selectedToolEfficiencies = $data['toolEfficienciesEdit'];
         $this->totalToolCost = $data['totalToolCostEdit'];
-
-//        foreach ($this->selectedTools as $toolId) {
-//            $this->project->tools()->updateExistingPivot($toolId, [
-//                'quantity' => $this->selectedToolQuantity[$toolId],
-//                'required_days' => $this->selectedToolRequiredDays[$toolId], // Guardar días requeridos
-////                'efficiency' => $this->selectedToolEfficiencies[$toolId],
-//                'total_cost' => $this->totalToolCost,
-//            ]);
-//        }
 
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
@@ -560,16 +528,6 @@ class ProjectEdit extends Component
         $this->selectedTransportEfficiencies = $data['transportEfficienciesEdit'];
         $this->totalTransportCost = $data['totalTransportCostEdit'];
 
-        // Actualizar los costos totales de transporte en la tabla pivot 'project_transport' si el proyecto ya existe
-//        foreach ($this->selectedTransports as $transportId) {
-//            $this->project->transports()->updateExistingPivot($transportId, [
-//                'quantity' => $this->selectedTransportQuantity[$transportId],
-//                'required_days' => $this->selectedTransportRequiredDays[$transportId],
-////                'efficiency' => $this->selectedTransportEfficiencies[$transportId],
-//                'total_cost' => $this->totalTransportCost,
-//            ]);
-//        }
-
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
@@ -582,17 +540,6 @@ class ProjectEdit extends Component
         $this->selectedAdditionalEfficiencies = $data['additionalEfficienciesEdit'];
         $this->totalAdditionalCost = $data['totalAdditionalCostEdit'];
 
-        // Update the 'additional_cost_project' pivot table if the project already exists
-//        foreach ($this->selectedAdditionals as $additionalId) {
-//            $this->project->additionals()->syncWithoutDetaching([
-//                $additionalId => [
-//                    'quantity' => $this->selectedAdditionalQuantity[$additionalId],
-////                    'efficiency' => $this->selectedAdditionalEfficiencies[$additionalId],
-//                    'total_cost' => $this->totalAdditionalCost,
-//                ]
-//            ]);
-//        }
-
         $this->calculateTotalProjectCost(); // Recalcular el costo total
     }
 
@@ -604,26 +551,6 @@ class ProjectEdit extends Component
 
     public function render(): View
     {
-        return view('livewire.projects.project-edit', [
-//            'totalProjectCost' => $this->totalProjectCost,
-//            'selectedPositions' => $this->selectedPositions,
-//            'selectedPositionQuantity' => $this->selectedPositionQuantity,
-//            'selectedPositionRequiredDays' => $this->selectedPositionRequiredDays,
-//            'selectedPositionEfficiencies' => $this->selectedPositionEfficiencies,
-//            'selectedMaterials' => $this->selectedMaterials,
-//            'selectedMaterialQuantity' => $this->selectedMaterialQuantity,
-//            'selectedMaterialEfficiencies' => $this->selectedMaterialEfficiencies,
-//            'selectedTools' => $this->selectedTools,
-//            'selectedToolQuantity' => $this->selectedToolQuantity,
-//            'selectedToolRequiredDays' => $this->selectedToolRequiredDays,
-//            'selectedToolEfficiencies' => $this->selectedToolEfficiencies,
-//            'selectedTransports' => $this->selectedTransports,
-//            'selectedTransportQuantity' => $this->selectedTransportQuantity,
-//            'selectedTransportRequiredDays' => $this->selectedTransportRequiredDays,
-//            'selectedTransportEfficiencies' => $this->selectedTransportEfficiencies,
-//            'selectedAdditionals' => $this->selectedAdditionals,
-//            'selectedAdditionalQuantity' => $this->selectedAdditionalQuantity,
-//            'selectedAdditionalEfficiencies' => $this->selectedAdditionalEfficiencies,
-        ]);
+        return view('livewire.projects.project-edit');
     }
 }
