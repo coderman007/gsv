@@ -475,13 +475,6 @@ class ProjectCreate extends Component
         $this->showResource = '';
     }
 
-    public function render(): View
-    {
-        // Renderizar la vista con el costo total del proyecto
-        return view('livewire.projects.project-create', [
-            'totalProjectCost' => $this->totalProjectCost,
-        ]);
-    }
 
     /**
      * @return void
@@ -489,45 +482,54 @@ class ProjectCreate extends Component
     protected function forgetSessionVariables(): void
     {
         session()->forget('selectedPositionsCreate');
-        session()->forget('quantitiesCreate');
-        session()->forget('requiredDaysCreate');
-        session()->forget('efficiencyInputsCreate');
-        session()->forget('efficienciesCreate');
-        session()->forget('partialCostsCreate');
+        session()->forget('quantitiesPositionCreate');
+        session()->forget('requiredDaysPositionCreate');
+        session()->forget('efficiencyInputsPositionCreate');
+        session()->forget('efficienciesPositionCreate');
+        session()->forget('partialCostsPositionCreate');
         session()->forget('totalLaborCostCreate');
 
         // Olvidar variables de sesión para materiales
         session()->forget('selectedMaterialsCreate');
-        session()->forget('quantitiesCreate');
-        session()->forget('efficiencyInputsCreate');
-        session()->forget('efficienciesCreate');
-        session()->forget('partialCostsCreate');
+        session()->forget('quantitiesMaterialCreate');
+        session()->forget('efficiencyInputsMaterialCreate');
+        session()->forget('efficienciesMaterialCreate');
+        session()->forget('partialCostsMaterialCreate');
         session()->forget('totalMaterialCostCreate');
 
         // Olvidar variables de sesión para herramientas manuales
         session()->forget('selectedToolsCreate');
-        session()->forget('quantitiesCreate');
-        session()->forget('requiredDaysCreate');
-        session()->forget('efficiencyInputsCreate');
-        session()->forget('efficienciesCreate');
-        session()->forget('partialCostsCreate');
+        session()->forget('quantitiesToolCreate');
+        session()->forget('requiredDaysToolCreate');
+        session()->forget('efficiencyInputsToolCreate');
+        session()->forget('efficienciesToolCreate');
+        session()->forget('partialCostsToolCreate');
         session()->forget('totalToolCostCreate');
 
         // Olvidar variables de sesión para transportes
         session()->forget('selectedTransportsCreate');
-        session()->forget('quantitiesCreate');
-        session()->forget('requiredDaysCreate');
-        session()->forget('efficiencyInputsCreate');
-        session()->forget('efficienciesCreate');
-        session()->forget('partialCostsCreate');
+        session()->forget('quantitiesTransportCreate');
+        session()->forget('requiredDaysTransportCreate');
+        session()->forget('efficiencyInputsTransportCreate');
+        session()->forget('efficienciesTransportCreate');
+        session()->forget('partialCostsTransportCreate');
         session()->forget('totalTransportCostCreate');
 
         // Olvidar variables de sesión para adicionales
         session()->forget('selectedAdditionalsCreate');
-        session()->forget('quantitiesCreate');
-        session()->forget('efficiencyInputsCreate');
-        session()->forget('efficienciesCreate');
-        session()->forget('partialCostsCreate');
+        session()->forget('quantitiesAdditionalsCreate');
+        session()->forget('efficiencyInputsAdditionalsCreate');
+        session()->forget('efficienciesAdditionalsCreate');
+        session()->forget('partialCostsAdditionalsCreate');
         session()->forget('totalAdditionalCostCreate');
+
+    }
+
+    public function render(): View
+    {
+        // Renderizar la vista con el costo total del proyecto
+        return view('livewire.projects.project-create', [
+            'totalProjectCost' => $this->totalProjectCost,
+        ]);
     }
 }

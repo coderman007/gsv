@@ -13,18 +13,18 @@ class AdditionalSelectionCreate extends Component
 {
     public $availableAdditionalsCreate = [];
     public $selectedAdditionalsCreate = [];
-    public $quantitiesCreate = [];
-    public $efficiencyInputsCreate = [];
-    public $efficienciesCreate = [];
-    public $partialCostsCreate = [];
+    public $quantitiesAdditionalsCreate = [];
+    public $efficiencyInputsAdditionalsCreate = [];
+    public $efficienciesAdditionalsCreate = [];
+    public $partialCostsAdditionalsCreate = [];
     public $totalAdditionalCostCreate = 0;
-    public $search = '';
+    public $additionalSearch = '';
 
     protected $rules = [
         'selectedAdditionalsCreate' => 'required|array|min:1',
         'selectedAdditionalsCreate.*' => 'exists:additionals,id',
-        'quantitiesCreate.*' => 'nullable|numeric|min:0',
-        'efficiencyInputsCreate.*' => 'nullable|string',
+        'quantitiesAdditionalsCreate.*' => 'nullable|numeric|min:0',
+        'efficiencyInputsAdditionalsCreate.*' => 'nullable|string',
     ];
 
     /**
@@ -37,25 +37,25 @@ class AdditionalSelectionCreate extends Component
         $this->updateTotalAdditionalCostCreate();
 
         $this->selectedAdditionalsCreate = session()->get('selectedAdditionalsCreate', []);
-        $this->quantitiesCreate = session()->get('quantitiesCreate', []);
-        $this->efficiencyInputsCreate = session()->get('efficiencyInputsCreate', []);
-        $this->efficienciesCreate = session()->get('efficienciesCreate', []);
-        $this->partialCostsCreate = session()->get('partialCostsCreate', []);
+        $this->quantitiesAdditionalsCreate = session()->get('quantitiesAdditionalsCreate', []);
+        $this->efficiencyInputsAdditionalsCreate = session()->get('efficiencyInputsAdditionalsCreate', []);
+        $this->efficienciesAdditionalsCreate = session()->get('efficienciesAdditionalsCreate', []);
+        $this->partialCostsAdditionalsCreate = session()->get('partialCostsAdditionalsCreate', []);
         $this->totalAdditionalCostCreate = session()->get('totalAdditionalCostCreate', 0);
-        $this->search = '';
+        $this->additionalSearch = '';
     }
 
     public function dehydrate(): void
     {
         session()->put('selectedAdditionalsCreate', $this->selectedAdditionalsCreate);
-        session()->put('quantitiesCreate', $this->quantitiesCreate);
-        session()->put('efficiencyInputsCreate', $this->efficiencyInputsCreate);
-        session()->put('efficienciesCreate', $this->efficienciesCreate);
-        session()->put('partialCostsCreate', $this->partialCostsCreate);
+        session()->put('quantitiesAdditionalsCreate', $this->quantitiesAdditionalsCreate);
+        session()->put('efficiencyInputsAdditionalsCreate', $this->efficiencyInputsAdditionalsCreate);
+        session()->put('efficienciesAdditionalsCreate', $this->efficienciesAdditionalsCreate);
+        session()->put('partialCostsAdditionalsCreate', $this->partialCostsAdditionalsCreate);
         session()->put('totalAdditionalCostCreate', $this->totalAdditionalCostCreate);
     }
 
-    public function addAdditional($additionalId): void
+    public function addAdditionalCreate($additionalId): void
     {
         if (!in_array($additionalId, $this->selectedAdditionalsCreate)) {
             $this->selectedAdditionalsCreate[] = $additionalId;
@@ -63,73 +63,73 @@ class AdditionalSelectionCreate extends Component
             // Move the additional to the end of the array to ensure it is displayed last
             $this->selectedAdditionalsCreate = array_merge(array_diff($this->selectedAdditionalsCreate, [$additionalId]), [$additionalId]);
         }
-        $this->search = '';
+        $this->additionalSearch = '';
         $this->updateTotalAdditionalCostCreate();
     }
 
-    public function removeAdditional($additionalId): void
+    public function removeAdditionalCreate($additionalId): void
     {
         $this->selectedAdditionalsCreate = array_diff($this->selectedAdditionalsCreate, [$additionalId]);
-        unset($this->quantitiesCreate[$additionalId]);
-        unset($this->efficiencyInputsCreate[$additionalId]);
-        unset($this->efficienciesCreate[$additionalId]);
-        unset($this->partialCostsCreate[$additionalId]);
+        unset($this->quantitiesAdditionalsCreate[$additionalId]);
+        unset($this->efficiencyInputsAdditionalsCreate[$additionalId]);
+        unset($this->efficienciesAdditionalsCreate[$additionalId]);
+        unset($this->partialCostsAdditionalsCreate[$additionalId]);
         $this->updateTotalAdditionalCostCreate();
     }
 
-    public function calculatePartialCostCreate($additionalId): void
+    public function calculatePartialCostAdditionalCreate($additionalId): void
     {
-        $quantity = $this->quantitiesCreate[$additionalId] ?? 0;
-        $efficiencyInput = $this->efficiencyInputsCreate[$additionalId] ?? "1";
+        $quantity = $this->quantitiesAdditionalsCreate[$additionalId] ?? 0;
+        $efficiencyInput = $this->efficiencyInputsAdditionalsCreate[$additionalId] ?? "1";
         $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
         if ($efficiency === null) {
-            $this->partialCostsCreate[$additionalId] = 0;
-            $this->addError("efficiencyInputsCreate_$additionalId", "Entrada de rendimiento inválida: '$efficiencyInput'");
+            $this->partialCostsAdditionalsCreate[$additionalId] = 0;
+            $this->addError("efficiencyInputsAdditionalsCreate_$additionalId", "Entrada de rendimiento inválida: '$efficiencyInput'");
         } else {
             $additional = Additional::find($additionalId);
             $unitPrice = $additional->unit_price;
-            $this->partialCostsCreate[$additionalId] = $quantity * $efficiency * $unitPrice;
+            $this->partialCostsAdditionalsCreate[$additionalId] = $quantity * $efficiency * $unitPrice;
         }
 
         $this->updateTotalAdditionalCostCreate();
     }
 
-    public function updatedQuantitiesCreate($value, $additionalId): void
+    public function updatedQuantitiesAdditionalsCreate($value, $additionalId): void
     {
         if (!is_numeric($value)) {
-            $this->quantitiesCreate[$additionalId] = null;
+            $this->quantitiesAdditionalsCreate[$additionalId] = null;
             return;
         }
-        $this->calculatePartialCostCreate($additionalId);
+        $this->calculatePartialCostAdditionalCreate($additionalId);
         $this->updateTotalAdditionalCostCreate();
     }
 
-    public function updatedEfficiencyInputsCreate($value, $additionalId): void
+    public function updatedEfficiencyInputsAdditionalsCreate($value, $additionalId): void
     {
         $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            $this->addError("efficiencyInputsCreate_$additionalId", "Entrada de rendimiento inválida: '$value'");
+            $this->addError("efficiencyInputsAdditionalsCreate_$additionalId", "Entrada de rendimiento inválida: '$value'");
             return;
         }
-        $this->efficienciesCreate[$additionalId] = $efficiency;
-        $this->efficiencyInputsCreate[$additionalId] = $value;
-        $this->calculatePartialCostCreate($additionalId);
+        $this->efficienciesAdditionalsCreate[$additionalId] = $efficiency;
+        $this->efficiencyInputsAdditionalsCreate[$additionalId] = $value;
+        $this->calculatePartialCostAdditionalCreate($additionalId);
         $this->updateTotalAdditionalCostCreate();
     }
 
     public function updateTotalAdditionalCostCreate(): void
     {
-        $this->totalAdditionalCostCreate = array_sum($this->partialCostsCreate);
+        $this->totalAdditionalCostCreate = array_sum($this->partialCostsAdditionalsCreate);
     }
 
     public function sendTotalAdditionalCostCreate(): void
     {
         $this->dispatch('additionalSelectionCreateUpdated', [
             'selectedAdditionalsCreate' => $this->selectedAdditionalsCreate,
-            'additionalQuantitiesCreate' => $this->quantitiesCreate,
-            'additionalEfficienciesCreate' => $this->efficienciesCreate,
+            'additionalQuantitiesCreate' => $this->quantitiesAdditionalsCreate,
+            'additionalEfficienciesCreate' => $this->efficienciesAdditionalsCreate,
             'totalAdditionalCostCreate' => $this->totalAdditionalCostCreate,
         ]);
 
@@ -141,7 +141,7 @@ class AdditionalSelectionCreate extends Component
     public function render(): View
     {
         $filteredAdditionals = Additional::query()
-            ->where('name', 'like', "%$this->search%")
+            ->where('name', 'like', "%$this->additionalSearch%")
             ->get();
 
         // Reverse the selected additionals array to show the last selected at the top

@@ -78,7 +78,7 @@
             @endforeach
         </div>
         <div class="flex gap-2 mt-6">
-            <label for="totalToolCostCreate" class="block text-lg font-semibold text-gray-600">Costo Total de Herramientas</label>
+            <label for="totalToolCostCreate" class="block text-lg font-semibold text-gray-600">Total Herramientas</label>
             <div class="relative mt-1 px-2 w-full bg-gray-100 border border-sky-300 font-bold text-lg rounded-md focus:ring-teal-500 focus:border-teal-500 flex items-center">
                 <i class="fas fa-coins ml-1 text-yellow-500"></i>
                 <input type="text" id="totalToolCostCreate" name="totalToolCostCreate"

@@ -1,13 +1,13 @@
 <div class="bg-gray-50 p-6 rounded-lg">
     <label class="text-lg font-semibold text-gray-600 py-2">
         <div class="mb-4">
-            <input wire:model.live="search"
-                   id="searchInput"
+            <input wire:model.live="additionalSearch"
+                   id="additionalSearchInput"
                    type="text"
                    placeholder="Buscar adicionales ..."
                    class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 text-sm font-medium text-gray-700">
 
-            @if(strlen($search) > 0)
+            @if(strlen($additionalSearch) > 0)
                 @if($additionals->isEmpty())
                     <p class="mt-2 text-sm text-gray-500">No se encontraron adicionales que coincidan con la
                         búsqueda.</p>
@@ -16,7 +16,7 @@
                         @foreach ($additionals as $additional)
                             @if (!in_array($additional->id, $selectedAdditionalsCreate))
                                 <li class="p-2 hover:bg-yellow-100 cursor-pointer"
-                                    wire:click="addAdditional({{ $additional->id }})">
+                                    wire:click="addAdditionalCreate({{ $additional->id }})">
                                     {{ $additional->name }}
                                 </li>
                             @endif
@@ -30,7 +30,7 @@
             @foreach ($selectedAdditionals as $additional)
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                        <button wire:click="removeAdditional({{ $additional->id }})"
+                        <button wire:click="removeAdditionalCreate({{ $additional->id }})"
                                 class="ml-5 bg-red-100 text-sm hover:bg-red-200 text-red-500 hover:text-red-800 rounded-md px-3 py-1">
                             x
                         </button>
@@ -41,35 +41,41 @@
                 </div>
                 <div class="ml-6 grid grid-cols-3 gap-4 mt-2">
                     <div>
-                        <label for="quantityCreate{{ $additional->id }}" class="block text-sm font-medium text-gray-700">Cantidad</label>
-                        <input wire:model.live="quantitiesCreate.{{ $additional->id }}" type="number" min=0 step=1
-                               id="quantityCreate{{ $additional->id }}" name="quantityCreate{{ $additional->id }}"
-                               class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500">
-                        @error('quantitiesCreate.' . $additional->id)
+                        <label for="quantityAdditionalsCreate{{ $additional->id }}"
+                               class="block text-sm font-medium text-gray-700">Cantidad</label>
+                        <input wire:model.live="quantitiesAdditionalsCreate.{{ $additional->id }}" type="number" min=0
+                               step=1
+                               id="quantityAdditionalsCreate{{ $additional->id }}"
+                               name="quantityAdditionalsCreate{{ $additional->id }}"
+                               class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 text-sm font-medium text-gray-700">
+                        @error('quantitiesAdditionalsCreate.' . $additional->id)
                         <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
-                        <label for="efficiencyCreate{{ $additional->id }}"
-                               class="block text-sm font-medium text-gray-700">Eficiencia</label>
-                        <input wire:model.live="efficiencyInputsCreate.{{ $additional->id }}" type="text"
-                               id="efficiencyCreate{{ $additional->id }}" name="efficiencyCreate{{ $additional->id }}"
-                               class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500">
-                        @error('efficiencyInputsCreate.' . $additional->id)
+                        <label for="efficiencyInputsAdditionalsCreate{{ $additional->id }}"
+                               class="block text-sm font-medium text-gray-700">Rendimiento</label>
+                        <input wire:model.live="efficiencyInputsAdditionalsCreate.{{ $additional->id }}" type="text"
+                               id="efficiencyInputsAdditionalsCreate{{ $additional->id }}"
+                               name="efficiencyInputsAdditionalsCreate{{ $additional->id }}"
+                               class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 text-sm font-medium text-gray-700">
+                        @error('efficiencyInputsAdditionalsCreate.' . $additional->id)
                         <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
-                        <label for="partialCostCreate{{ $additional->id }}"
-                               class="block text-sm font-medium text-gray-700">Costo Parcial</label>
-                        <input type="text" id="partialCostCreate{{ $additional->id }}" name="partialCostCreate{{ $additional->id }}"
-                               value="{{ number_format($partialCostsCreate[$additional->id] ?? 0, 0, ',') }}"
-                               class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500"
-                               readonly>
+                        <label for="partialCostsAdditionalsCreate{{ $additional->id }}"
+                               class="block text-sm font-medium text-gray-700">Costo parcial</label>
+                        <input type="text" disabled
+                               id="partialCostsAdditionalsCreate{{ $additional->id }}"
+                               name="partialCostsAdditionalsCreate{{ $additional->id }}"
+                               value="${{ number_format($partialCostsAdditionalsCreate[$additional->id] ?? 0, 0) }}"
+                               class="mt-1 p-2 block w-full border-gray-300 rounded-md text-sm font-medium text-gray-700">
                     </div>
                 </div>
             @endforeach
         </div>
+
         <div class="flex gap-2 mt-6">
             <label for="totalAdditionalCostCreate" class="block text-lg font-semibold text-gray-600">
                 Total Adicionales

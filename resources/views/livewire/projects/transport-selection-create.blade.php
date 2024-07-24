@@ -1,15 +1,16 @@
 <div class="bg-gray-50 p-6 rounded-lg">
     <label class="text-lg font-semibold text-gray-600 py-2">
         <div class="mb-4">
-            <input wire:model.live="search"
+            <input wire:model.live="transportSearch"
                    id="searchInput"
                    type="text"
                    placeholder="Buscar transportes ..."
                    class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
 
-            @if(strlen($search) > 0)
+            @if(strlen($transportSearch) > 0)
                 @if($transports->isEmpty())
-                    <p class="mt-2 text-sm text-gray-500">No se encontraron transportes que coincidan con la búsqueda.</p>
+                    <p class="mt-2 text-sm text-gray-500">No se encontraron transportes que coincidan con la
+                        búsqueda.</p>
                 @else
                     <ul class="mt-2 border border-slate-300 rounded-md max-h-60 overflow-y-auto text-sm">
                         @foreach ($transports as $transport)
@@ -37,48 +38,52 @@
                         </span>
                     </div>
                 </div>
-                <div class="ml-6 grid grid-cols-4 gap-4 mt-2">
+                <div class="grid grid-cols-4 gap-4 mb-4 mt-2">
                     <div>
-                        <label for="quantitiesCreate{{ $transport->id }}" class="block text-sm font-medium text-gray-700">Cantidad</label>
-                        <input wire:model.live="quantitiesCreate.{{ $transport->id }}" type="number" min=0 step=1
-                               id="quantitiesCreate{{ $transport->id }}"
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
-                        @error('quantitiesCreate.' . $transport->id)
+                        <label for="quantity_{{ $transport->id }}" class="block text-sm font-medium text-gray-700">
+                            Cantidad
+                        </label>
+                        <input type="number" wire:model.live="quantitiesTransportCreate.{{ $transport->id }}" min="0"
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
+                        @error('quantitiesTransportCreate.' . $transport->id)
                         <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
-                        <label for="requiredDaysCreate{{ $transport->id }}" class="block text-sm font-medium text-gray-700">Días Requeridos</label>
-                        <input wire:model.live="requiredDaysCreate.{{ $transport->id }}" type="number" min=0 step=1
-                               id="requiredDaysCreate{{ $transport->id }}"
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
-                        @error('requiredDaysCreate.' . $transport->id)
+                        <label for="requiredDays_{{ $transport->id }}" class="block text-sm font-medium text-gray-700">
+                            Días requeridos
+                        </label>
+                        <input type="number" wire:model.live="requiredDaysTransportCreate.{{ $transport->id }}" min="0"
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
+                        @error('requiredDaysTransportCreate.' . $transport->id)
                         <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
-                        <label for="efficiencyInputCreate{{ $transport->id }}" class="block text-sm font-medium text-gray-700">Rendimiento</label>
-                        <input wire:model.live="efficiencyInputsCreate.{{ $transport->id }}" type="text"
-                               id="efficiencyInputCreate{{ $transport->id }}"
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
-                        @error('efficiencyInputsCreate.' . $transport->id)
+                        <label for="efficiency_{{ $transport->id }}" class="block text-sm font-medium text-gray-700">
+                            Rendimiento
+                        </label>
+                        <input type="text" wire:model.live="efficiencyInputsTransportCreate.{{ $transport->id }}"
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
+                        @error('efficiencyInputsTransportCreate.' . $transport->id)
                         <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
-                        <label for="partialCostCreate{{ $transport->id }}"
-                               class="block text-sm font-medium text-gray-700">Costo Parcial</label>
-                        <input type="text" id="partialCostCreate{{ $transport->id }}" name="partialCostCreate{{ $transport->id }}"
-                               value="{{ number_format($partialCostsCreate[$transport->id] ?? 0, 0, ',') }}"
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
-                               readonly>
+                        <label for="partialCost_{{ $transport->id }}" class="block text-sm font-medium text-gray-700">
+                            Costo parcial
+                        </label>
+                        <input type="text" wire:model.live="partialCostsTransportCreate.{{ $transport->id }}" disabled
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md bg-gray-100 text-sm font-medium text-gray-700">
                     </div>
                 </div>
             @endforeach
         </div>
         <div class="flex gap-2 mt-6">
-            <label for="totalTransportCostCreate" class="block text-lg font-semibold text-gray-600">Costo Total de Transportes</label>
-            <div class="relative mt-1 px-2 w-full bg-gray-100 border border-slate-300 font-bold text-lg rounded-md focus:ring-teal-500 focus:border-teal-500 flex items-center">
+            <label for="totalTransportCostCreate" class="block text-lg font-semibold text-gray-600">Total
+                Transporte</label>
+            <div
+                class="relative mt-1 px-2 w-full bg-gray-100 border border-slate-300 font-bold text-lg rounded-md focus:ring-teal-500 focus:border-teal-500 flex items-center">
                 <i class="fas fa-coins ml-1 text-yellow-500"></i>
                 <input type="text" id="totalTransportCostCreate" name="totalTransportCostCreate"
                        value="$ {{ number_format($totalTransportCostCreate, 0, ',') }}" readonly

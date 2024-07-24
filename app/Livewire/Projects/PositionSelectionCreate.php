@@ -13,20 +13,20 @@ class PositionSelectionCreate extends Component
 {
     public $availablePositionsCreate = [];
     public $selectedPositionsCreate = [];
-    public $quantitiesCreate = [];
-    public $requiredDaysCreate = [];
-    public $efficiencyInputsCreate = [];
-    public $efficienciesCreate = [];
-    public $partialCostsCreate = [];
+    public $quantitiesPositionCreate = [];
+    public $requiredDaysPositionCreate = [];
+    public $efficiencyInputsPositionCreate = [];
+    public $efficienciesPositionCreate = [];
+    public $partialCostsPositionCreate = [];
     public $totalLaborCostCreate = 0;
-    public $search = '';
+    public $positionSearch = '';
 
     protected $rules = [
         'selectedPositionsCreate' => 'required|array|min:1',
         'selectedPositionsCreate.*' => 'exists:positions,id',
-        'quantitiesCreate.*' => 'nullable|numeric|min:0',
-        'requiredDaysCreate.*' => 'nullable|numeric|min:0',
-        'efficiencyInputsCreate.*' => 'nullable|string',
+        'quantitiesPositionCreate.*' => 'nullable|numeric|min:0',
+        'requiredDaysPositionCreate.*' => 'nullable|numeric|min:0',
+        'efficiencyInputsPositionCreate.*' => 'nullable|string',
     ];
 
     /**
@@ -39,23 +39,23 @@ class PositionSelectionCreate extends Component
         $this->updateTotalLaborCostCreate();
 
         $this->selectedPositionsCreate = session()->get('selectedPositionsCreate', []);
-        $this->quantitiesCreate = session()->get('quantitiesCreate', []);
-        $this->requiredDaysCreate = session()->get('requiredDaysCreate', []);
-        $this->efficiencyInputsCreate = session()->get('efficiencyInputsCreate', []);
-        $this->efficienciesCreate = session()->get('efficienciesCreate', []);
-        $this->partialCostsCreate = session()->get('partialCostsCreate', []);
+        $this->quantitiesPositionCreate = session()->get('quantitiesPositionCreate', []);
+        $this->requiredDaysPositionCreate = session()->get('requiredDaysPositionCreate', []);
+        $this->efficiencyInputsPositionCreate = session()->get('efficiencyInputsPositionCreate', []);
+        $this->efficienciesPositionCreate = session()->get('efficienciesPositionCreate', []);
+        $this->partialCostsPositionCreate = session()->get('partialCostsPositionCreate', []);
         $this->totalLaborCostCreate = session()->get('totalLaborCostCreate', 0);
-        $this->search = '';
+        $this->positionSearch = '';
     }
 
     public function dehydrate(): void
     {
         session()->put('selectedPositionsCreate', $this->selectedPositionsCreate);
-        session()->put('quantitiesCreate', $this->quantitiesCreate);
-        session()->put('requiredDaysCreate', $this->requiredDaysCreate);
-        session()->put('efficiencyInputsCreate', $this->efficiencyInputsCreate);
-        session()->put('efficienciesCreate', $this->efficienciesCreate);
-        session()->put('partialCostsCreate', $this->partialCostsCreate);
+        session()->put('quantitiesPositionCreate', $this->quantitiesPositionCreate);
+        session()->put('requiredDaysPositionCreate', $this->requiredDaysPositionCreate);
+        session()->put('efficiencyInputsPositionCreate', $this->efficiencyInputsPositionCreate);
+        session()->put('efficienciesPositionCreate', $this->efficienciesPositionCreate);
+        session()->put('partialCostsPositionCreate', $this->partialCostsPositionCreate);
         session()->put('totalLaborCostCreate', $this->totalLaborCostCreate);
     }
 
@@ -66,86 +66,86 @@ class PositionSelectionCreate extends Component
         } else {
             $this->selectedPositionsCreate = array_merge(array_diff($this->selectedPositionsCreate, [$positionId]), [$positionId]);
         }
-        $this->search = '';
+        $this->positionSearch = '';
         $this->updateTotalLaborCostCreate();
     }
 
     public function removePosition($positionId): void
     {
         $this->selectedPositionsCreate = array_diff($this->selectedPositionsCreate, [$positionId]);
-        unset($this->quantitiesCreate[$positionId]);
-        unset($this->requiredDaysCreate[$positionId]);
-        unset($this->efficiencyInputsCreate[$positionId]);
-        unset($this->efficienciesCreate[$positionId]);
-        unset($this->partialCostsCreate[$positionId]);
+        unset($this->quantitiesPositionCreate[$positionId]);
+        unset($this->requiredDaysPositionCreate[$positionId]);
+        unset($this->efficiencyInputsPositionCreate[$positionId]);
+        unset($this->efficienciesPositionCreate[$positionId]);
+        unset($this->partialCostsPositionCreate[$positionId]);
         $this->updateTotalLaborCostCreate();
     }
 
     public function calculatePartialCostCreate($positionId): void
     {
-        $quantity = $this->quantitiesCreate[$positionId] ?? 0;
-        $requiredDays = $this->requiredDaysCreate[$positionId] ?? 0;
-        $efficiencyInput = $this->efficiencyInputsCreate[$positionId] ?? "1";
+        $quantity = $this->quantitiesPositionCreate[$positionId] ?? 0;
+        $requiredDays = $this->requiredDaysPositionCreate[$positionId] ?? 0;
+        $efficiencyInput = $this->efficiencyInputsPositionCreate[$positionId] ?? "1";
         $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
         if ($efficiency === null) {
-            $this->partialCostsCreate[$positionId] = 0;
-            $this->addError("efficiencyInputsCreate_$positionId", "Entrada de rendimiento inválida: '$efficiencyInput'");
+            $this->partialCostsPositionCreate[$positionId] = 0;
+            $this->addError("efficiencyInputsPositionCreate_$positionId", "Entrada de rendimiento inválida: '$efficiencyInput'");
         } else {
             $position = Position::find($positionId);
             $dailyCost = $position->real_daily_cost;
-            $this->partialCostsCreate[$positionId] = $quantity * $requiredDays * $efficiency * $dailyCost;
+            $this->partialCostsPositionCreate[$positionId] = $quantity * $requiredDays * $efficiency * $dailyCost;
         }
 
         $this->updateTotalLaborCostCreate();
     }
 
-    public function updatedQuantitiesCreate($value, $positionId): void
+    public function updatedQuantitiesPositionCreate($value, $positionId): void
     {
         if (!is_numeric($value)) {
-            $this->quantitiesCreate[$positionId] = null;
+            $this->quantitiesPositionCreate[$positionId] = null;
             return;
         }
         $this->calculatePartialCostCreate($positionId);
         $this->updateTotalLaborCostCreate();
     }
 
-    public function updatedRequiredDaysCreate($value, $positionId): void
+    public function updatedRequiredDaysPositionCreate($value, $positionId): void
     {
         if (!is_numeric($value)) {
-            $this->requiredDaysCreate[$positionId] = null;
+            $this->requiredDaysPositionCreate[$positionId] = null;
             return;
         }
         $this->calculatePartialCostCreate($positionId);
         $this->updateTotalLaborCostCreate();
     }
 
-    public function updatedEfficiencyInputsCreate($value, $positionId): void
+    public function updatedEfficiencyInputsPositionCreate($value, $positionId): void
     {
         $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            $this->addError("efficiencyInputsCreate_$positionId", "Entrada de rendimiento inválida: '$value'");
+            $this->addError("efficiencyInputsPositionCreate_$positionId", "Entrada de rendimiento inválida: '$value'");
             return;
         }
-        $this->efficienciesCreate[$positionId] = $efficiency;
-        $this->efficiencyInputsCreate[$positionId] = $value;
+        $this->efficienciesPositionCreate[$positionId] = $efficiency;
+        $this->efficiencyInputsPositionCreate[$positionId] = $value;
         $this->calculatePartialCostCreate($positionId);
         $this->updateTotalLaborCostCreate();
     }
 
     public function updateTotalLaborCostCreate(): void
     {
-        $this->totalLaborCostCreate = array_sum($this->partialCostsCreate);
+        $this->totalLaborCostCreate = array_sum($this->partialCostsPositionCreate);
     }
 
     public function sendTotalLaborCostCreate(): void
     {
         $this->dispatch('positionSelectionCreateUpdated', [
             'selectedPositionsCreate' => $this->selectedPositionsCreate,
-            'positionQuantitiesCreate' => $this->quantitiesCreate,
-            'positionRequiredDaysCreate' => $this->requiredDaysCreate,
-            'positionEfficienciesCreate' => $this->efficienciesCreate,
+            'positionQuantitiesCreate' => $this->quantitiesPositionCreate,
+            'positionRequiredDaysCreate' => $this->requiredDaysPositionCreate,
+            'positionEfficienciesCreate' => $this->efficienciesPositionCreate,
             'totalLaborCostCreate' => $this->totalLaborCostCreate,
         ]);
 
@@ -157,7 +157,7 @@ class PositionSelectionCreate extends Component
     public function render(): View
     {
         $filteredPositions = Position::query()
-            ->where('name', 'like', "%$this->search%")
+            ->where('name', 'like', "%$this->positionSearch%")
             ->get();
 
         // Reverse the selected positions array to show the last selected at the top
