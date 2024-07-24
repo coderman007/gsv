@@ -1,22 +1,20 @@
 <div class="bg-gray-50 p-6 rounded-lg">
     <label class="text-lg font-semibold text-gray-600 py-2">
         <div class="mb-4">
-            <input wire:model.live="search"
+            <input wire:model.live="materialSearch"
                    id="searchInput"
                    type="text"
                    placeholder="Buscar materiales ..."
                    class="mt-1 p-2 block w-full border-indigo-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium text-gray-700">
 
-            @if(strlen($search) > 0)
+            @if(strlen($materialSearch) > 0)
                 @if($materials->isEmpty())
-                    <p class="mt-2 text-sm text-gray-500">No se encontraron materiales que coincidan con la
-                        búsqueda.</p>
+                    <p class="mt-2 text-sm text-gray-500">No se encontraron materiales que coincidan con la búsqueda.</p>
                 @else
                     <ul class="mt-2 border border-indigo-300 rounded-md max-h-60 overflow-y-auto text-sm">
                         @foreach ($materials as $material)
                             @if (!in_array($material->id, $selectedMaterialsCreate))
-                                <li class="p-2 hover:bg-indigo-100 cursor-pointer"
-                                    wire:click="addMaterial({{ $material->id }})">
+                                <li class="p-2 hover:bg-indigo-100 cursor-pointer" wire:click="addMaterial({{ $material->id }})">
                                     {{ $material->reference }}
                                 </li>
                             @endif
@@ -41,29 +39,28 @@
                 </div>
                 <div class="ml-6 grid grid-cols-3 gap-4 mt-2">
                     <div>
-                        <label for="quantityCreate{{ $material->id }}" class="block text-sm font-medium text-gray-700">Cantidad</label>
-                        <input wire:model.live="quantitiesCreate.{{ $material->id }}" type="number" min=0 step=1
-                               id="quantityCreate{{ $material->id }}" name="quantityCreate{{ $material->id }}"
+                        <label for="quantityMaterialCreate{{ $material->id }}" class="block text-sm font-medium text-gray-700">Cantidad</label>
+                        <input wire:model.live="quantitiesMaterialCreate.{{ $material->id }}" type="number" min=0 step=1
+                               id="quantityMaterialCreate{{ $material->id }}" name="quantityMaterialCreate{{ $material->id }}"
                                class="mt-1 p-2 block w-full border-indigo-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                        @error('quantitiesCreate.' . $material->id)
+                        @error('quantitiesMaterialCreate.' . $material->id)
                         <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
-                        <label for="efficiencyCreate{{ $material->id }}"
-                               class="block text-sm font-medium text-gray-700">Eficiencia</label>
-                        <input wire:model.live="efficiencyInputsCreate.{{ $material->id }}" type="text"
-                               id="efficiencyCreate{{ $material->id }}" name="efficiencyCreate{{ $material->id }}"
+                        <label for="efficiencyMaterialCreate{{ $material->id }}" class="block text-sm font-medium text-gray-700">Eficiencia</label>
+                        <input wire:model.live="efficiencyInputsMaterialCreate.{{ $material->id }}" type="text"
+                               id="efficiencyMaterialCreate{{ $material->id }}" name="efficiencyMaterialCreate{{ $material->id }}"
                                class="mt-1 p-2 block w-full border-indigo-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                        @error('efficiencyInputsCreate.' . $material->id)
+                        @error('efficiencyInputsMaterialCreate.' . $material->id)
                         <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
-                        <label for="partialCostCreate{{ $material->id }}"
+                        <label for="partialCostMaterialCreate{{ $material->id }}"
                                class="block text-sm font-medium text-gray-700">Costo Parcial</label>
-                        <input type="text" id="partialCostCreate{{ $material->id }}" name="partialCostCreate{{ $material->id }}"
-                               value="{{ number_format($partialCostsCreate[$material->id] ?? 0, 0, ',') }}"
+                        <input type="text" id="partialCostMaterialCreate{{ $material->id }}" name="partialCostMaterialCreate{{ $material->id }}"
+                               value="{{ number_format($partialCostsMaterialCreate[$material->id] ?? 0, 0, ',') }}"
                                class="mt-1 p-2 block w-full border-indigo-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                                readonly>
                     </div>

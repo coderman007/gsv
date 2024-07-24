@@ -13,16 +13,13 @@ use App\Models\Transport;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Livewire\WithFileUploads;
 
-// Para manejar archivos
 
 /**
  * @method resetProjectCreateComponent()
  */
 class ProjectEdit extends Component
 {
-    use WithFileUploads;
 
     public Project $project;
     public $openEdit = false;
@@ -547,6 +544,52 @@ class ProjectEdit extends Component
     public function hideResourceForm(): void
     {
         $this->showResource = '';
+    }
+
+    protected function forgetSessionVariables(): void
+    {
+        session()->forget('selectedPositionsEdit');
+        session()->forget('quantitiesPositionEdit');
+        session()->forget('requiredDaysPositionEdit');
+        session()->forget('efficiencyInputsPositionEdit');
+        session()->forget('efficienciesPositionEdit');
+        session()->forget('partialCostsPositionEdit');
+        session()->forget('totalLaborCostEdit');
+
+        // Olvidar variables de sesión para materiales
+        session()->forget('selectedMaterialsEdit');
+        session()->forget('quantitiesMaterialEdit');
+        session()->forget('efficiencyInputsMaterialEdit');
+        session()->forget('efficienciesMaterialEdit');
+        session()->forget('partialCostsMaterialEdit');
+        session()->forget('totalMaterialCostEdit');
+
+        // Olvidar variables de sesión para herramientas manuales
+        session()->forget('selectedToolsEdit');
+        session()->forget('quantitiesToolEdit');
+        session()->forget('requiredDaysToolEdit');
+        session()->forget('efficiencyInputsToolEdit');
+        session()->forget('efficienciesToolEdit');
+        session()->forget('partialCostsToolEdit');
+        session()->forget('totalToolCostEdit');
+
+        // Olvidar variables de sesión para transportes
+        session()->forget('selectedTransportsEdit');
+        session()->forget('quantitiesTransportEdit');
+        session()->forget('requiredDaysTransportEdit');
+        session()->forget('efficiencyInputsTransportEdit');
+        session()->forget('efficienciesTransportEdit');
+        session()->forget('partialCostsTransportEdit');
+        session()->forget('totalTransportCostEdit');
+
+        // Olvidar variables de sesión para adicionales
+        session()->forget('selectedAdditionalsEdit');
+        session()->forget('quantitiesAdditionalsEdit');
+        session()->forget('efficiencyInputsAdditionalsEdit');
+        session()->forget('efficienciesAdditionalsEdit');
+        session()->forget('partialCostsAdditionalsEdit');
+        session()->forget('totalAdditionalCostEdit');
+
     }
 
     public function render(): View

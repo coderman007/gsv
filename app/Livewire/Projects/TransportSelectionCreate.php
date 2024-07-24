@@ -32,7 +32,6 @@ class TransportSelectionCreate extends Component
         $this->availableTransportsCreate = Transport::all();
         $this->updateTotalTransportCostCreate();
 
-        // Retrieve session data
         $this->selectedTransportsCreate = session()->get('selectedTransportsCreate', []);
         $this->quantitiesTransportCreate = session()->get('quantitiesTransportCreate', []);
         $this->requiredDaysTransportCreate = session()->get('requiredDaysTransportCreate', []);
@@ -45,7 +44,6 @@ class TransportSelectionCreate extends Component
 
     public function dehydrate(): void
     {
-        // Store session data
         session()->put('selectedTransportsCreate', $this->selectedTransportsCreate);
         session()->put('quantitiesTransportCreate', $this->quantitiesTransportCreate);
         session()->put('requiredDaysTransportCreate', $this->requiredDaysTransportCreate);
@@ -77,7 +75,7 @@ class TransportSelectionCreate extends Component
         $this->updateTotalTransportCostCreate();
     }
 
-    public function calculatePartialCostTransportCreate($transportId): void
+    public function calculatePartialCostCreate($transportId): void
     {
         $quantity = $this->quantitiesTransportCreate[$transportId] ?? 0;
         $requiredDays = $this->requiredDaysTransportCreate[$transportId] ?? 0;
@@ -86,7 +84,7 @@ class TransportSelectionCreate extends Component
 
         if ($efficiency === null) {
             $this->partialCostsTransportCreate[$transportId] = 0;
-            $this->addError("efficiencyInputsTransportCreate_$transportId", "Entrada de rendimiento inválida: '$efficiencyInput'");
+            $this->addError("efficiencyInputsTransportCreate_$transportId", "El rendimiento ingresado es inválido.");
         } else {
             $transport = Transport::find($transportId);
             $dailyCost = $transport->cost_per_day;
@@ -102,8 +100,7 @@ class TransportSelectionCreate extends Component
             $this->quantitiesTransportCreate[$transportId] = null;
             return;
         }
-
-        $this->calculatePartialCostTransportCreate($transportId);
+        $this->calculatePartialCostCreate($transportId);
         $this->updateTotalTransportCostCreate();
     }
 
@@ -113,8 +110,7 @@ class TransportSelectionCreate extends Component
             $this->requiredDaysTransportCreate[$transportId] = null;
             return;
         }
-
-        $this->calculatePartialCostTransportCreate($transportId);
+        $this->calculatePartialCostCreate($transportId);
         $this->updateTotalTransportCostCreate();
     }
 
@@ -123,13 +119,12 @@ class TransportSelectionCreate extends Component
         $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            $this->addError("efficiencyInputsTransportCreate_$transportId", "Entrada de rendimiento inválida: '$value'");
+            $this->addError("efficiencyInputsTransportCreate_$transportId", "El valor de rendimiento es inválido.");
             return;
         }
-
         $this->efficienciesTransportCreate[$transportId] = $efficiency;
         $this->efficiencyInputsTransportCreate[$transportId] = $value;
-        $this->calculatePartialCostTransportCreate($transportId);
+        $this->calculatePartialCostCreate($transportId);
         $this->updateTotalTransportCostCreate();
     }
 
@@ -156,10 +151,9 @@ class TransportSelectionCreate extends Component
     public function render(): View
     {
         $filteredTransports = Transport::query()
-            ->where('vehicle_type', 'like', "%{$this->transportSearch}%")
+            ->where('vehicle_type', 'like', "%$this->transportSearch%")
             ->get();
 
-        // Reverse the selected transports array to show the last selected at the top
         $selectedTransports = Transport::whereIn('id', $this->selectedTransportsCreate)->get()->sortByDesc(function ($transport) {
             return array_search($transport->id, $this->selectedTransportsCreate);
         });

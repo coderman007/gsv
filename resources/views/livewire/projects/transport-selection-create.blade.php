@@ -2,7 +2,7 @@
     <label class="text-lg font-semibold text-gray-600 py-2">
         <div class="mb-4">
             <input wire:model.live="transportSearch"
-                   id="searchInput"
+                   id="transportSearchInput"
                    type="text"
                    placeholder="Buscar transportes ..."
                    class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
@@ -38,50 +38,56 @@
                         </span>
                     </div>
                 </div>
-                <div class="grid grid-cols-4 gap-4 mb-4 mt-2">
+                <div class="ml-6 grid grid-cols-4 gap-4 mt-2">
                     <div>
-                        <label for="quantity_{{ $transport->id }}" class="block text-sm font-medium text-gray-700">
-                            Cantidad
-                        </label>
-                        <input type="number" wire:model.live="quantitiesTransportCreate.{{ $transport->id }}" min="0"
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
+                        <label for="quantityTransportCreate{{ $transport->id }}" class="block text-sm font-medium text-gray-700">Cantidad</label>
+                        <input wire:model.live="quantitiesTransportCreate.{{ $transport->id }}" type="number" min=0 step=1
+                               id="quantityTransportCreate{{ $transport->id}}"
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus text-sm font-medium text-gray-700">
+                        {{-- value="{{ old('quantitiesTransportCreate.' . $transport->id, $quantitiesTransportCreate[$transport->id] ?? 0) }}" --}}
                         @error('quantitiesTransportCreate.' . $transport->id)
                         <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
-                        <label for="requiredDays_{{ $transport->id }}" class="block text-sm font-medium text-gray-700">
-                            Días requeridos
-                        </label>
-                        <input type="number" wire:model.live="requiredDaysTransportCreate.{{ $transport->id }}" min="0"
+                        <label for="requiredDaysTransportCreate{{ $transport->id }}"
+                               class="block text-sm font-medium text-gray-700">Días requeridos</label>
+                        <input wire:model.live="requiredDaysTransportCreate.{{ $transport->id }}" type="number" min=0 step=1
+                               id="requiredDaysTransportCreate{{ $transport->id }}"
                                class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
+                        {{-- value="{{ old('requiredDaysTransportCreate.' . $transport->id, $requiredDaysTransportCreate[$transport->id] ?? 0) }}"--}}
                         @error('requiredDaysTransportCreate.' . $transport->id)
                         <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
+
                     <div>
-                        <label for="efficiency_{{ $transport->id }}" class="block text-sm font-medium text-gray-700">
-                            Rendimiento
-                        </label>
-                        <input type="text" wire:model.live="efficiencyInputsTransportCreate.{{ $transport->id }}"
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
+                        <label for="efficiencyInputTransportCreate{{ $transport->id }}"
+                               class="block text-sm font-medium text-gray-700">Rendimiento</label>
+                        <input wire:model.live="efficiencyInputsTransportCreate.{{ $transport->id }}" type="text"
+                               id="efficiencyInputTransportCreate{{ $transport->id }}"
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
+                        {{-- value="{{ old('efficiencyInputsTransportCreate.' . $transport->id, $efficiencyInputsTransportCreate[$transport->id] ?? '1') }}"--}}
                         @error('efficiencyInputsTransportCreate.' . $transport->id)
                         <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
+
                     <div>
-                        <label for="partialCost_{{ $transport->id }}" class="block text-sm font-medium text-gray-700">
-                            Costo parcial
-                        </label>
-                        <input type="text" wire:model.live="partialCostsTransportCreate.{{ $transport->id }}" disabled
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md bg-gray-100 text-sm font-medium text-gray-700">
+                        <label for="partialCostTransportCreate{{ $transport->id }}"
+                               class="block text-sm font-medium text-gray-700">Costo Parcial</label>
+                        <input type="text" id="partialCostTransportCreate{{ $transport->id }}"
+                               name="partialCostTransportCreate{{ $transport->id }}"
+                               value="{{ number_format($partialCostsTransportCreate[$transport->id] ?? 0, 0, ',') }}"
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
+                               readonly>
                     </div>
                 </div>
             @endforeach
         </div>
         <div class="flex gap-2 mt-6">
             <label for="totalTransportCostCreate" class="block text-lg font-semibold text-gray-600">Total
-                Transporte</label>
+                Herramientas</label>
             <div
                 class="relative mt-1 px-2 w-full bg-gray-100 border border-slate-300 font-bold text-lg rounded-md focus:ring-teal-500 focus:border-teal-500 flex items-center">
                 <i class="fas fa-coins ml-1 text-yellow-500"></i>

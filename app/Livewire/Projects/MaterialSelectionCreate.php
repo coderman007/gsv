@@ -6,46 +6,52 @@ use App\Helpers\DataTypeConverter;
 use App\Models\Material;
 use Illuminate\View\View;
 use Livewire\Component;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class MaterialSelectionCreate extends Component
 {
     public $availableMaterialsCreate = [];
     public $selectedMaterialsCreate = [];
-    public $quantitiesCreate = [];
-    public $efficiencyInputsCreate = [];
-    public $efficienciesCreate = [];
-    public $partialCostsCreate = [];
+    public $quantitiesMaterialCreate = [];
+    public $efficiencyInputsMaterialCreate = [];
+    public $efficienciesMaterialCreate = [];
+    public $partialCostsMaterialCreate = [];
     public $totalMaterialCostCreate = 0;
-    public $search = '';
+    public $materialSearch = '';
 
     protected $rules = [
         'selectedMaterialsCreate' => 'required|array|min:1',
         'selectedMaterialsCreate.*' => 'exists:materials,id',
-        'quantitiesCreate.*' => 'nullable|numeric|min:0',
-        'efficiencyInputsCreate.*' => 'nullable|string',
+        'quantitiesMaterialCreate.*' => 'nullable|numeric|min:0',
+        'efficiencyInputsMaterialCreate.*' => 'nullable|string',
     ];
 
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
     public function mount(): void
     {
         $this->availableMaterialsCreate = Material::all();
         $this->updateTotalMaterialCostCreate();
 
         $this->selectedMaterialsCreate = session()->get('selectedMaterialsCreate', []);
-        $this->quantitiesCreate = session()->get('quantitiesCreate', []);
-        $this->efficiencyInputsCreate = session()->get('efficiencyInputsCreate', []);
-        $this->efficienciesCreate = session()->get('efficienciesCreate', []);
-        $this->partialCostsCreate = session()->get('partialCostsCreate', []);
+        $this->quantitiesMaterialCreate = session()->get('quantitiesMaterialCreate', []);
+        $this->efficiencyInputsMaterialCreate = session()->get('efficiencyInputsMaterialCreate', []);
+        $this->efficienciesMaterialCreate = session()->get('efficienciesMaterialCreate', []);
+        $this->partialCostsMaterialCreate = session()->get('partialCostsMaterialCreate', []);
         $this->totalMaterialCostCreate = session()->get('totalMaterialCostCreate', 0);
-        $this->search = '';
+        $this->materialSearch = '';
     }
 
     public function dehydrate(): void
     {
         session()->put('selectedMaterialsCreate', $this->selectedMaterialsCreate);
-        session()->put('quantitiesCreate', $this->quantitiesCreate);
-        session()->put('efficiencyInputsCreate', $this->efficiencyInputsCreate);
-        session()->put('efficienciesCreate', $this->efficienciesCreate);
-        session()->put('partialCostsCreate', $this->partialCostsCreate);
+        session()->put('quantitiesMaterialCreate', $this->quantitiesMaterialCreate);
+        session()->put('efficiencyInputsMaterialCreate', $this->efficiencyInputsMaterialCreate);
+        session()->put('efficienciesMaterialCreate', $this->efficienciesMaterialCreate);
+        session()->put('partialCostsMaterialCreate', $this->partialCostsMaterialCreate);
         session()->put('totalMaterialCostCreate', $this->totalMaterialCostCreate);
     }
 
@@ -54,76 +60,75 @@ class MaterialSelectionCreate extends Component
         if (!in_array($materialId, $this->selectedMaterialsCreate)) {
             $this->selectedMaterialsCreate[] = $materialId;
         } else {
-            // Move the material to the end of the array to ensure it is displayed last
             $this->selectedMaterialsCreate = array_merge(array_diff($this->selectedMaterialsCreate, [$materialId]), [$materialId]);
         }
-        $this->search = '';
+        $this->materialSearch = '';
         $this->updateTotalMaterialCostCreate();
     }
 
     public function removeMaterial($materialId): void
     {
         $this->selectedMaterialsCreate = array_diff($this->selectedMaterialsCreate, [$materialId]);
-        unset($this->quantitiesCreate[$materialId]);
-        unset($this->efficiencyInputsCreate[$materialId]);
-        unset($this->efficienciesCreate[$materialId]);
-        unset($this->partialCostsCreate[$materialId]);
+        unset($this->quantitiesMaterialCreate[$materialId]);
+        unset($this->efficiencyInputsMaterialCreate[$materialId]);
+        unset($this->efficienciesMaterialCreate[$materialId]);
+        unset($this->partialCostsMaterialCreate[$materialId]);
         $this->updateTotalMaterialCostCreate();
     }
 
     public function calculatePartialCostCreate($materialId): void
     {
-        $quantity = $this->quantitiesCreate[$materialId] ?? 0;
-        $efficiencyInput = $this->efficiencyInputsCreate[$materialId] ?? "1";
+        $quantity = $this->quantitiesMaterialCreate[$materialId] ?? 0;
+        $efficiencyInput = $this->efficiencyInputsMaterialCreate[$materialId] ?? "1";
         $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
         if ($efficiency === null) {
-            $this->partialCostsCreate[$materialId] = 0;
-            $this->addError("efficiencyInputsCreate_$materialId", "Entrada de rendimiento inválida: '$efficiencyInput'");
+            $this->partialCostsMaterialCreate[$materialId] = 0;
+            $this->addError("efficiencyInputsMaterialCreate_$materialId", "Entrada de rendimiento inválida: '$efficiencyInput'");
         } else {
             $material = Material::find($materialId);
             $unitPrice = $material->unit_price;
-            $this->partialCostsCreate[$materialId] = $quantity * $efficiency * $unitPrice;
+            $this->partialCostsMaterialCreate[$materialId] = $quantity * $efficiency * $unitPrice;
         }
 
         $this->updateTotalMaterialCostCreate();
     }
 
-    public function updatedQuantitiesCreate($value, $materialId): void
+    public function updatedQuantitiesMaterialCreate($value, $materialId): void
     {
         if (!is_numeric($value)) {
-            $this->quantitiesCreate[$materialId] = null;
+            $this->quantitiesMaterialCreate[$materialId] = null;
             return;
         }
         $this->calculatePartialCostCreate($materialId);
         $this->updateTotalMaterialCostCreate();
     }
 
-    public function updatedEfficiencyInputsCreate($value, $materialId): void
+    public function updatedEfficiencyInputsMaterialCreate($value, $materialId): void
     {
         $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            $this->addError("efficiencyInputsCreate_$materialId", "Entrada de rendimiento inválida: '$value'");
+            $this->addError("efficiencyInputsMaterialCreate_$materialId", "Entrada de rendimiento inválida: '$value'");
             return;
         }
-        $this->efficienciesCreate[$materialId] = $efficiency;
-        $this->efficiencyInputsCreate[$materialId] = $value;
+        $this->efficienciesMaterialCreate[$materialId] = $efficiency;
+        $this->efficiencyInputsMaterialCreate[$materialId] = $value;
         $this->calculatePartialCostCreate($materialId);
         $this->updateTotalMaterialCostCreate();
     }
 
     public function updateTotalMaterialCostCreate(): void
     {
-        $this->totalMaterialCostCreate = array_sum($this->partialCostsCreate);
+        $this->totalMaterialCostCreate = array_sum($this->partialCostsMaterialCreate);
     }
 
     public function sendTotalMaterialCostCreate(): void
     {
         $this->dispatch('materialSelectionCreateUpdated', [
             'selectedMaterialsCreate' => $this->selectedMaterialsCreate,
-            'materialQuantitiesCreate' => $this->quantitiesCreate,
-            'materialEfficienciesCreate' => $this->efficienciesCreate,
+            'materialQuantitiesCreate' => $this->quantitiesMaterialCreate,
+            'materialEfficienciesCreate' => $this->efficienciesMaterialCreate,
             'totalMaterialCostCreate' => $this->totalMaterialCostCreate,
         ]);
 
@@ -135,10 +140,9 @@ class MaterialSelectionCreate extends Component
     public function render(): View
     {
         $filteredMaterials = Material::query()
-            ->where('reference', 'like', "%{$this->search}%")
+            ->where('reference', 'like', "%{$this->materialSearch}%")
             ->get();
 
-        // Reverse the selected materials array to show the last selected at the top
         $selectedMaterials = Material::whereIn('id', $this->selectedMaterialsCreate)->get()->sortByDesc(function ($material) {
             return array_search($material->id, $this->selectedMaterialsCreate);
         });
