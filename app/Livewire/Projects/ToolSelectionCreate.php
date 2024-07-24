@@ -154,7 +154,6 @@ class ToolSelectionCreate extends Component
             ->where('name', 'like', "%{$this->toolSearch}%")
             ->get();
 
-        // Reverse the selected tools array to show the last selected at the top
         $selectedTools = Tool::whereIn('id', $this->selectedToolsCreate)->get()->sortByDesc(function ($tool) {
             return array_search($tool->id, $this->selectedToolsCreate);
         });
