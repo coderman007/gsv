@@ -9,6 +9,7 @@ use Livewire\Component;
 
 class TransportSelectionCreate extends Component
 {
+    public $search = '';
     public $availableTransportsCreate = [];
     public $selectedTransportsCreate = [];
     public $quantitiesCreate = [];
@@ -30,49 +31,69 @@ class TransportSelectionCreate extends Component
     {
         $this->availableTransportsCreate = Transport::all();
         $this->updateTotalTransportCostCreate();
+
+        // Retrieve session data
+        $this->selectedTransportsCreate = session()->get('selectedTransportsCreate', []);
+        $this->quantitiesCreate = session()->get('quantitiesCreate', []);
+        $this->requiredDaysCreate = session()->get('requiredDaysCreate', []);
+        $this->efficiencyInputsCreate = session()->get('efficiencyInputsCreate', []);
+        $this->efficienciesCreate = session()->get('efficienciesCreate', []);
+        $this->partialCostsCreate = session()->get('partialCostsCreate', []);
+        $this->totalTransportCostCreate = session()->get('totalTransportCostCreate', 0);
+        $this->search = '';
     }
 
-    public function updatedSelectedTransportsCreate(): void
+    public function dehydrate(): void
     {
-        foreach ($this->availableTransportsCreate as $transport) {
-            $transportId = $transport->id;
-            if (!in_array($transportId, $this->selectedTransportsCreate)) {
-                $this->quantitiesCreate[$transportId] = null;
-                $this->requiredDaysCreate[$transportId] = null;
-                $this->efficiencyInputsCreate[$transportId] = null;
-                $this->efficienciesCreate[$transportId] = null;
-                $this->partialCostsCreate[$transportId] = 0;
-            }
+        // Store session data
+        session()->put('selectedTransportsCreate', $this->selectedTransportsCreate);
+        session()->put('quantitiesCreate', $this->quantitiesCreate);
+        session()->put('requiredDaysCreate', $this->requiredDaysCreate);
+        session()->put('efficiencyInputsCreate', $this->efficiencyInputsCreate);
+        session()->put('efficienciesCreate', $this->efficienciesCreate);
+        session()->put('partialCostsCreate', $this->partialCostsCreate);
+        session()->put('totalTransportCostCreate', $this->totalTransportCostCreate);
+    }
+
+    public function addTransport($transportId): void
+    {
+        if (!in_array($transportId, $this->selectedTransportsCreate)) {
+            $this->selectedTransportsCreate[] = $transportId;
+        } else {
+            $this->selectedTransportsCreate = array_merge(array_diff($this->selectedTransportsCreate, [$transportId]), [$transportId]);
         }
+        $this->search = '';
         $this->updateTotalTransportCostCreate();
     }
 
+    public function removeTransport($transportId): void
+    {
+        $this->selectedTransportsCreate = array_diff($this->selectedTransportsCreate, [$transportId]);
+        unset($this->quantitiesCreate[$transportId]);
+        unset($this->requiredDaysCreate[$transportId]);
+        unset($this->efficiencyInputsCreate[$transportId]);
+        unset($this->efficienciesCreate[$transportId]);
+        unset($this->partialCostsCreate[$transportId]);
+        $this->updateTotalTransportCostCreate();
+    }
 
     public function calculatePartialCostCreate($transportId): void
     {
-        if (in_array($transportId, $this->selectedTransportsCreate)) {
-            $quantity = $this->quantitiesCreate[$transportId] ?? 0;
-            $requiredDays = $this->requiredDaysCreate[$transportId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputsCreate[$transportId] ?? "1";
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
+        $quantity = $this->quantitiesCreate[$transportId] ?? 0;
+        $requiredDays = $this->requiredDaysCreate[$transportId] ?? 0;
+        $efficiencyInput = $this->efficiencyInputsCreate[$transportId] ?? "1";
+        $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
-            if ($efficiency === null) {
-                $this->partialCostsCreate[$transportId] = 0;
-                $this->addError("efficiencyInputsCreate_$transportId", "Entrada de rendimiento inválida: '$efficiencyInput'");
-                return;
-            }
-
-            if (is_numeric($quantity) && is_numeric($requiredDays)) {
-                $transport = Transport::find($transportId);
-                $dailyCost = $transport->cost_per_day;
-                $partialCost = $quantity * $requiredDays * $efficiency * $dailyCost;
-                $this->partialCostsCreate[$transportId] = $partialCost;
-            } else {
-                $this->partialCostsCreate[$transportId] = 0;
-            }
-        } else {
+        if ($efficiency === null) {
             $this->partialCostsCreate[$transportId] = 0;
+            $this->addError("efficiencyInputsCreate_$transportId", "Entrada de rendimiento inválida: '$efficiencyInput'");
+        } else {
+            $transport = Transport::find($transportId);
+            $dailyCost = $transport->cost_per_day;
+            $this->partialCostsCreate[$transportId] = $quantity * $requiredDays * $efficiency * $dailyCost;
         }
+
+        $this->updateTotalTransportCostCreate();
     }
 
     public function updatedQuantitiesCreate($value, $transportId): void
@@ -119,25 +140,33 @@ class TransportSelectionCreate extends Component
 
     public function sendTotalTransportCostCreate(): void
     {
-//        $this->dispatch("totalTransportCostCreateUpdated", $this->totalTransportCostCreate);
-        $this->dispatch("transportSelectionCreateUpdated", [
-            "selectedTransportsCreate" => $this->selectedTransportsCreate,
-            "transportQuantitiesCreate" => $this->quantitiesCreate,
-            "transportRequiredDaysCreate" => $this->requiredDaysCreate,
-            "transportEfficienciesCreate" => $this->efficienciesCreate,
-            "totalTransportCostCreate" => $this->totalTransportCostCreate,
+        $this->dispatch('transportSelectionCreateUpdated', [
+            'selectedTransportsCreate' => $this->selectedTransportsCreate,
+            'transportQuantitiesCreate' => $this->quantitiesCreate,
+            'transportRequiredDaysCreate' => $this->requiredDaysCreate,
+            'transportEfficienciesCreate' => $this->efficienciesCreate,
+            'totalTransportCostCreate' => $this->totalTransportCostCreate,
         ]);
 
         if ($this->totalTransportCostCreate > 0) {
-            $this->dispatch("hideResourceFormCreate");
+            $this->dispatch('hideResourceFormCreate');
         }
     }
 
     public function render(): View
     {
-        return view("livewire.projects.transport-selection-create", [
-            'transports' => $this->availableTransportsCreate,
+        $filteredTransports = Transport::query()
+            ->where('vehicle_type', 'like', "%{$this->search}%")
+            ->get();
+
+        // Reverse the selected transports array to show the last selected at the top
+        $selectedTransports = Transport::whereIn('id', $this->selectedTransportsCreate)->get()->sortByDesc(function ($transport) {
+            return array_search($transport->id, $this->selectedTransportsCreate);
+        });
+
+        return view('livewire.projects.transport-selection-create', [
+            'transports' => $filteredTransports,
+            'selectedTransports' => $selectedTransports,
         ]);
     }
 }
-

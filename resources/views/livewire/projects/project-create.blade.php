@@ -191,13 +191,13 @@
                         <!-- Mostrar componente Livewire correspondiente -->
                         @if ($showResource === 'labor')
                             <livewire:projects.position-selection-create/>
-                        @elseif ($showResource === 'materials' && $this->canShowResources())
+                        @elseif ($showResource === 'materials')
                             <livewire:projects.material-selection-create/>
-                        @elseif ($showResource === 'tools' && $this->canShowResources())
+                        @elseif ($showResource === 'tools')
                             <livewire:projects.tool-selection-create/>
-                        @elseif ($showResource === 'transport' && $this->canShowResources())
+                        @elseif ($showResource === 'transport')
                             <livewire:projects.transport-selection-create/>
-                        @elseif ($showResource === 'additionals' && $this->canShowResources())
+                        @elseif ($showResource === 'additionals')
                             <livewire:projects.additional-selection-create/>
                         @endif
                     </div>
@@ -259,10 +259,6 @@
                                     class='inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 dark:border-gray-500 rounded-md font-semibold text-xs dark:text-gray-300 uppercase tracking-widest dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150 mr-4 text-blue-500 border border-blue-500 shadow-lg hover:text-gray-50 hover:shadow-gray-400 hover:bg-blue-500'>
                                 Aceptar
                             </button>
-
-{{--                            <x-secondary-button wire:click="closeForm" class="mr-4 text-blue-500 border border-blue-500 shadow-lg hover:text-gray-50 hover:shadow-blue-400 hover:bg-blue-400">--}}
-{{--                                Cerrar--}}
-{{--                            </x-secondary-button>--}}
                         </div>
                     </div>
                 </div>
@@ -279,7 +275,7 @@
                     setTimeout(() => {
                         window.location.reload();
                         reloadPageListener(); // Limpiar el listener si es necesario
-                    }, 1500); // 3000 milisegundos = 3 segundos
+                    }, 1000); // 1000 milisegundos = 1 segundo
                 });
             });
 

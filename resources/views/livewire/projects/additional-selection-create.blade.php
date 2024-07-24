@@ -1,78 +1,92 @@
-<div class="flex flex-col w-full">
-    <div class="flex flex-row mb-4">
-        <div class="w-full mr-2">
-            <input wire:model.live="search" type="text"
-                   class="appearance-none block w-full px-3 py-2 border-2 border-yellow-500 rounded-md focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-                   placeholder="Buscar adicionales...">
+<div class="bg-gray-50 p-6 rounded-lg">
+    <label class="text-lg font-semibold text-gray-600 py-2">
+        <div class="mb-4">
+            <input wire:model.live="search"
+                   id="searchInput"
+                   type="text"
+                   placeholder="Buscar adicionales ..."
+                   class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 text-sm font-medium text-gray-700">
+
+            @if(strlen($search) > 0)
+                @if($additionals->isEmpty())
+                    <p class="mt-2 text-sm text-gray-500">No se encontraron adicionales que coincidan con la
+                        búsqueda.</p>
+                @else
+                    <ul class="mt-2 border border-yellow-300 rounded-md max-h-60 overflow-y-auto text-sm">
+                        @foreach ($additionals as $additional)
+                            @if (!in_array($additional->id, $selectedAdditionalsCreate))
+                                <li class="p-2 hover:bg-yellow-100 cursor-pointer"
+                                    wire:click="addAdditional({{ $additional->id }})">
+                                    {{ $additional->name }}
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+                @endif
+            @endif
         </div>
-    </div>
 
-    <!-- Lista de adicionales -->
-    <ul class="overflow-y-auto max-h-96">
-        @forelse ($additionals as $additional)
-            <li class="flex items-center py-2 hover:bg-gray-100">
-                <input type="checkbox" wire:model.live="selectedAdditionalsCreate" value="{{ $additional->id }}"
-                       class="mr-2 border-yellow-300 rounded shadow-sm text-yellow-500 focus:border-yellow-300 focus:ring-yellow-200 focus:ring-opacity-50">
-                <div class="w-full flex justify-between items-center">
-                    <div>
-                        <span class="text-gray-800 font-medium">{{ $additional->name }}</span>
+        <div class="grid grid-cols-1 gap-4">
+            @foreach ($selectedAdditionals as $additional)
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button wire:click="removeAdditional({{ $additional->id }})"
+                                class="ml-5 bg-red-100 text-sm hover:bg-red-200 text-red-500 hover:text-red-800 rounded-md px-3 py-1">
+                            x
+                        </button>
+                        <span class="ml-2 text-sm font-medium text-yellow-700">
+                            {{ ucfirst($additional->name) }}
+                        </span>
                     </div>
-
-                    @if (in_array($additional->id, $selectedAdditionalsCreate))
-                        <div class="flex items-center space-x-4 pr-4">
-
-                            <!-- Cantidad -->
-                            <div class="flex flex-col">
-                                <label for="quantityCreate_{{ $additional->id }}"
-                                       class="text-sm text-gray-700 mb-1">Cantidad:</label>
-                                <input wire:model.live="quantitiesCreate.{{ $additional->id }}"
-                                       id="quantityCreate_{{ $additional->id }}" min=1 type="number"
-                                       class="w-16 px-2 py-1 border-yellow-300 rounded-md focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
-                            </div>
-
-                            <!-- Rendimiento -->
-                            <div class="flex flex-col">
-                                <label for="efficiencyCreate_{{ $additional->id }}"
-                                       class="text-sm text-gray-700 mb-1">Rendimiento:</label>
-                                <input wire:model.live="efficiencyInputsCreate.{{ $additional->id }}"
-                                       id="efficiencyCreate_{{ $additional->id }}" type="text"
-                                       class="w-16 px-2 py-1 border-yellow-300 rounded-md focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
-                            </div>
-
-                            <!-- Costo parcial -->
-                            <div class="flex flex-col">
-                                <label for="partialCostCreate_{{ $additional->id }}" class="text-sm text-gray-700 mb-1">Costo:</label>
-                                <input type="text" readonly
-                                       value="{{ isset($partialCostsCreate[$additional->id]) ? number_format($partialCostsCreate[$additional->id], 2) : 0 }}"
-                                       id="partialCostCreate_{{ $additional->id }}"
-                                       class="w-32 px-2 py-1 border border-yellow-300 rounded-md bg-slate-100 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
-                            </div>
-                        </div>
-                    @endif
                 </div>
-            </li>
-        @empty
-            <li class="text-gray-500 text-center py-2">No se encontraron adicionales.</li>
-        @endforelse
-    </ul>
-
-    <!-- Total de adicionales -->
-    <div class="bg-gray-50 p-2 rounded-lg mb-4 flex items-center">
-        <label for="totalAdditionalCostCreate" class="block text-lg mr-4 font-medium text-gray-700">Total Adicionales:</label>
-        <div class="relative rounded-md shadow-sm flex-1">
-            <input type="text" readonly value="{{ number_format($totalAdditionalCostCreate, 2) }}" id="totalAdditionalCostCreate"
-                   class="text-right mt-1 p-2 pl-10 block w-full border-yellow-500 rounded-md bg-yellow-100 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-md">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                <span class="text-gray-500 sm:text-sm"><i class="fas fa-coins ml-1 text-yellow-500"></i> COP</span>
+                <div class="ml-6 grid grid-cols-3 gap-4 mt-2">
+                    <div>
+                        <label for="quantityCreate{{ $additional->id }}" class="block text-sm font-medium text-gray-700">Cantidad</label>
+                        <input wire:model.live="quantitiesCreate.{{ $additional->id }}" type="number" min=0 step=1
+                               id="quantityCreate{{ $additional->id }}" name="quantityCreate{{ $additional->id }}"
+                               class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500">
+                        @error('quantitiesCreate.' . $additional->id)
+                        <span class="text-red-500">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="efficiencyCreate{{ $additional->id }}"
+                               class="block text-sm font-medium text-gray-700">Eficiencia</label>
+                        <input wire:model.live="efficiencyInputsCreate.{{ $additional->id }}" type="text"
+                               id="efficiencyCreate{{ $additional->id }}" name="efficiencyCreate{{ $additional->id }}"
+                               class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500">
+                        @error('efficiencyInputsCreate.' . $additional->id)
+                        <span class="text-red-500">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="partialCostCreate{{ $additional->id }}"
+                               class="block text-sm font-medium text-gray-700">Costo Parcial</label>
+                        <input type="text" id="partialCostCreate{{ $additional->id }}" name="partialCostCreate{{ $additional->id }}"
+                               value="{{ number_format($partialCostsCreate[$additional->id] ?? 0, 0, ',') }}"
+                               class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500"
+                               readonly>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        <div class="flex gap-2 mt-6">
+            <label for="totalAdditionalCostCreate" class="block text-lg font-semibold text-gray-600">
+                Total Adicionales
+            </label>
+            <div
+                class="relative mt-1 px-2 w-full bg-gray-100 border border-yellow-300 font-bold text-lg rounded-md focus:ring-teal-500 focus:border-teal-500 flex items-center">
+                <i class="fas fa-coins ml-1 text-yellow-500"></i>
+                <input type="text" id="totalAdditionalCostCreate" name="totalAdditionalCostCreate"
+                       value="$ {{ number_format($totalAdditionalCostCreate, 0, ',') }}" readonly
+                       class="ml-2 bg-transparent border-none focus:ring-0">
+            </div>
+            <div class="mt-1 flex justify-end">
+                <button wire:click="sendTotalAdditionalCostCreate"
+                        class="bg-yellow-500 text-white px-4 py-2 text-sm font-semibold rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2">
+                    Confirmar
+                </button>
             </div>
         </div>
-
-        <div class="ml-4">
-            <button wire:click="sendTotalAdditionalCostCreate" type="button"
-                    class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full">
-                Enviar
-            </button>
-        </div>
-    </div>
+    </label>
 </div>
-

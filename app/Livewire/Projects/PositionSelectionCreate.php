@@ -6,6 +6,8 @@ use App\Helpers\DataTypeConverter;
 use App\Models\Position;
 use Illuminate\View\View;
 use Livewire\Component;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class PositionSelectionCreate extends Component
 {
@@ -17,7 +19,7 @@ class PositionSelectionCreate extends Component
     public $efficienciesCreate = [];
     public $partialCostsCreate = [];
     public $totalLaborCostCreate = 0;
-    public $search = ''; // Nueva propiedad para manejar el valor de búsqueda
+    public $search = '';
 
     protected $rules = [
         'selectedPositionsCreate' => 'required|array|min:1',
@@ -27,6 +29,10 @@ class PositionSelectionCreate extends Component
         'efficiencyInputsCreate.*' => 'nullable|string',
     ];
 
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
     public function mount(): void
     {
         $this->availablePositionsCreate = Position::all();
@@ -39,7 +45,7 @@ class PositionSelectionCreate extends Component
         $this->efficienciesCreate = session()->get('efficienciesCreate', []);
         $this->partialCostsCreate = session()->get('partialCostsCreate', []);
         $this->totalLaborCostCreate = session()->get('totalLaborCostCreate', 0);
-        $this->search = ''; // Inicializa el valor de búsqueda
+        $this->search = '';
     }
 
     public function dehydrate(): void
@@ -57,8 +63,10 @@ class PositionSelectionCreate extends Component
     {
         if (!in_array($positionId, $this->selectedPositionsCreate)) {
             $this->selectedPositionsCreate[] = $positionId;
+        } else {
+            $this->selectedPositionsCreate = array_merge(array_diff($this->selectedPositionsCreate, [$positionId]), [$positionId]);
         }
-        $this->search = ''; // Limpia el campo de búsqueda
+        $this->search = '';
         $this->updateTotalLaborCostCreate();
     }
 
@@ -149,12 +157,17 @@ class PositionSelectionCreate extends Component
     public function render(): View
     {
         $filteredPositions = Position::query()
-            ->where('name', 'like', "%{$this->search}%")
+            ->where('name', 'like', "%$this->search%")
             ->get();
+
+        // Reverse the selected positions array to show the last selected at the top
+        $selectedPositions = Position::whereIn('id', $this->selectedPositionsCreate)->get()->sortByDesc(function ($position) {
+            return array_search($position->id, $this->selectedPositionsCreate);
+        });
 
         return view('livewire.projects.position-selection-create', [
             'positions' => $filteredPositions,
+            'selectedPositions' => $selectedPositions,
         ]);
     }
 }
-

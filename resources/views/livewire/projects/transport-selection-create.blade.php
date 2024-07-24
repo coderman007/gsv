@@ -1,100 +1,93 @@
 <div class="bg-gray-50 p-6 rounded-lg">
     <label class="text-lg font-semibold text-gray-600 py-2">
-        <h3 class="mb-2">Transporte</h3>
-        <div class="mb-4 grid grid-cols-7 gap-4">
-            @foreach ($transports as $transport)
-                <!-- Columna 1: Checkbox -->
-                <div class="flex items-center col-span-2">
-                    <input wire:model.live="selectedTransportsCreate" type="checkbox" value="{{ $transport->id }}"
-                           id="transportCreate{{ $transport->id }}"
-                           class="cursor-pointer mr-2 border-slate-300 rounded shadow-sm text-slate-500 focus:border-slate-300 focus:ring focus:ring-slate-200 focus:ring-opacity-50">
-                    <label for="transportCreate{{ $transport->id }}"
-                           class="block text-sm font-medium text-gray-700">{{ $transport->vehicle_type }}</label>
+        <div class="mb-4">
+            <input wire:model.live="search"
+                   id="searchInput"
+                   type="text"
+                   placeholder="Buscar transportes ..."
+                   class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
+
+            @if(strlen($search) > 0)
+                @if($transports->isEmpty())
+                    <p class="mt-2 text-sm text-gray-500">No se encontraron transportes que coincidan con la búsqueda.</p>
+                @else
+                    <ul class="mt-2 border border-slate-300 rounded-md max-h-60 overflow-y-auto text-sm">
+                        @foreach ($transports as $transport)
+                            @if (!in_array($transport->id, $selectedTransportsCreate))
+                                <li class="p-2 hover:bg-slate-100 cursor-pointer"
+                                    wire:click="addTransport({{ $transport->id }})">
+                                    {{ $transport->vehicle_type }}
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+                @endif
+            @endif
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+            @foreach ($selectedTransports as $transport)
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button wire:click="removeTransport({{ $transport->id }})"
+                                class="ml-5 bg-red-100 text-sm hover:bg-red-200 text-red-500 hover:text-red-800 rounded-md px-3 py-1">
+                            x
+                        </button>
+                        <span class="ml-2 text-sm font-medium text-slate-700">
+                            {{ ucfirst($transport->vehicle_type) }}
+                        </span>
+                    </div>
                 </div>
-                <!-- Columna 2: Cantidad -->
-                <div class="col-span-1">
-                    @if (in_array($transport->id, $selectedTransportsCreate))
-                        <div class="mb-2">
-                            <label for="quantityCreate{{ $transport->id }}"
-                                   class="block text-sm font-medium text-gray-700">Cantidad</label>
-                            <input wire:model.live="quantitiesCreate.{{ $transport->id }}" type="number" min=0 step=1
-                                   id="quantityCreate{{ $transport->id }}" name="quantityCreate{{ $transport->id }}"
-                                   class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
-
-                            @error('quantitiesCreate.' . $transport->id)
-                            <span class="text-red-500">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    @endif
-                </div>
-                <!-- Columna 3: Días Requeridos -->
-                <div class="col-span-1">
-                    @if (in_array($transport->id, $selectedTransportsCreate))
-                        <div class="mb-2">
-                            <label for="requiredDaysCreate{{ $transport->id }}"
-                                   class="block text-sm font-medium text-gray-700">Días</label>
-                            <input wire:model.live="requiredDaysCreate.{{ $transport->id }}" type="number" min=0 step=1
-                                   id="requiredDaysCreate{{ $transport->id }}" name="requiredDaysCreate{{ $transport->id }}"
-                                   class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
-
-                            @error('requiredDaysCreate.' . $transport->id)
-                            <span class="text-red-500">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    @endif
-                </div>
-
-                <!-- Columna 4: Rendimiento -->
-                <div class="col-span-1">
-                    @if (in_array($transport->id, $selectedTransportsCreate))
-                        <div class="mb-2">
-                            <label for="efficiencyCreate{{ $transport->id }}"
-                                   class="block text-sm font-medium text-gray-700">Rendimiento</label>
-                            <input wire:model.live="efficiencyInputsCreate.{{ $transport->id }}" type="text"
-                                   id="efficiencyCreate{{ $transport->id }}" name="efficiencyCreate{{ $transport->id }}"
-                                   class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
-
-                            @error("efficiencyInputsCreate.{{ $transport->id }}")
-                            <span class="text-red-500">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    @endif
-                </div>
-
-                <!-- Columna 5: Costo Parcial -->
-                <div class="col-span-2">
-                    @if (in_array($transport->id, $selectedTransportsCreate))
-                        <div class="mb-2">
-                            <label for="partialCostCreate{{ $transport->id }}"
-                                   class="block text-sm font-medium text-gray-700">Costo Parcial</label>
-                            <input type="text" readonly
-                                   value="{{ isset($partialCostsCreate[$transport->id]) ? number_format($partialCostsCreate[$transport->id], 2) : 0 }}"
-                                   id="partialCostCreate{{ $transport->id }}"
-                                   class="mt-1 p-2 block w-full border-slate-300 rounded-md bg-slate-100 focus:ring-slate-500 focus:border-slate-500">
-                        </div>
-                    @endif
+                <div class="ml-6 grid grid-cols-4 gap-4 mt-2">
+                    <div>
+                        <label for="quantitiesCreate{{ $transport->id }}" class="block text-sm font-medium text-gray-700">Cantidad</label>
+                        <input wire:model.live="quantitiesCreate.{{ $transport->id }}" type="number" min=0 step=1
+                               id="quantitiesCreate{{ $transport->id }}"
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
+                        @error('quantitiesCreate.' . $transport->id)
+                        <span class="text-red-500">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="requiredDaysCreate{{ $transport->id }}" class="block text-sm font-medium text-gray-700">Días Requeridos</label>
+                        <input wire:model.live="requiredDaysCreate.{{ $transport->id }}" type="number" min=0 step=1
+                               id="requiredDaysCreate{{ $transport->id }}"
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
+                        @error('requiredDaysCreate.' . $transport->id)
+                        <span class="text-red-500">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="efficiencyInputCreate{{ $transport->id }}" class="block text-sm font-medium text-gray-700">Rendimiento</label>
+                        <input wire:model.live="efficiencyInputsCreate.{{ $transport->id }}" type="text"
+                               id="efficiencyInputCreate{{ $transport->id }}"
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
+                        @error('efficiencyInputsCreate.' . $transport->id)
+                        <span class="text-red-500">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="partialCostCreate{{ $transport->id }}"
+                               class="block text-sm font-medium text-gray-700">Costo Parcial</label>
+                        <input type="text" id="partialCostCreate{{ $transport->id }}" name="partialCostCreate{{ $transport->id }}"
+                               value="{{ number_format($partialCostsCreate[$transport->id] ?? 0, 0, ',') }}"
+                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
+                               readonly>
+                    </div>
                 </div>
             @endforeach
-            @error('selectedTransportsCreate')
-            <span class="col-span-8 text-red-500">{{ $message }}</span>
-            @enderror
         </div>
-
-        <!-- Total de transporte -->
-        <div class="col-span-2 flex items-center">
-            <label for="totalTransportCostCreate" class="block text-lg text-gray-700">Total Transporte:</label>
-            <div class="relative rounded-md shadow-sm flex-1">
-                <input type="text" readonly value="{{ number_format($totalTransportCostCreate, 2) }}" id="totalTransportCostCreate"
-                       class="text-right mt-1 p-2 block w-full border-slate-500 rounded-md bg-slate-100 focus:outline-none focus:ring-slate-500 focus:border-slate-500 sm:text-md">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                    <span class="text-gray-500 sm:text-sm"><i class="fas fa-coins ml-1 text-yellow-500"></i> COP</span>
-                </div>
+        <div class="flex gap-2 mt-6">
+            <label for="totalTransportCostCreate" class="block text-lg font-semibold text-gray-600">Costo Total de Transportes</label>
+            <div class="relative mt-1 px-2 w-full bg-gray-100 border border-slate-300 font-bold text-lg rounded-md focus:ring-teal-500 focus:border-teal-500 flex items-center">
+                <i class="fas fa-coins ml-1 text-yellow-500"></i>
+                <input type="text" id="totalTransportCostCreate" name="totalTransportCostCreate"
+                       value="$ {{ number_format($totalTransportCostCreate, 0, ',') }}" readonly
+                       class="ml-2 bg-transparent border-none focus:ring-0">
             </div>
-
-            <div class="ml-4">
-                <button wire:click="sendTotalTransportCostCreate" type="button"
-                        class="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-full">
-                    Enviar
+            <div class="mt-1 flex justify-end">
+                <button wire:click="sendTotalTransportCostCreate"
+                        class="bg-slate-500 text-white px-4 py-2 text-sm font-semibold rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+                    Confirmar
                 </button>
             </div>
         </div>

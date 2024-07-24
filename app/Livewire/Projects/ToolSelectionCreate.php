@@ -10,7 +10,7 @@ use Livewire\Component;
 class ToolSelectionCreate extends Component
 {
     public $search = '';
-    public $tools = [];
+    public $availableTools = [];
     public $selectedToolsCreate = [];
     public $quantitiesCreate = [];
     public $requiredDaysCreate = [];
@@ -29,54 +29,69 @@ class ToolSelectionCreate extends Component
 
     public function mount(): void
     {
+        $this->availableTools = Tool::all();
+        $this->updateTotalToolCostCreate();
+
+        $this->selectedToolsCreate = session()->get('selectedToolsCreate', []);
+        $this->quantitiesCreate = session()->get('quantitiesCreate', []);
+        $this->requiredDaysCreate = session()->get('requiredDaysCreate', []);
+        $this->efficiencyInputsCreate = session()->get('efficiencyInputsCreate', []);
+        $this->efficienciesCreate = session()->get('efficienciesCreate', []);
+        $this->partialCostsCreate = session()->get('partialCostsCreate', []);
+        $this->totalToolCostCreate = session()->get('totalToolCostCreate', 0);
+        $this->search = '';
+    }
+
+    public function dehydrate(): void
+    {
+        session()->put('selectedToolsCreate', $this->selectedToolsCreate);
+        session()->put('quantitiesCreate', $this->quantitiesCreate);
+        session()->put('requiredDaysCreate', $this->requiredDaysCreate);
+        session()->put('efficiencyInputsCreate', $this->efficiencyInputsCreate);
+        session()->put('efficienciesCreate', $this->efficienciesCreate);
+        session()->put('partialCostsCreate', $this->partialCostsCreate);
+        session()->put('totalToolCostCreate', $this->totalToolCostCreate);
+    }
+
+    public function addTool($toolId): void
+    {
+        if (!in_array($toolId, $this->selectedToolsCreate)) {
+            $this->selectedToolsCreate[] = $toolId;
+        } else {
+            $this->selectedToolsCreate = array_merge(array_diff($this->selectedToolsCreate, [$toolId]), [$toolId]);
+        }
+        $this->search = '';
         $this->updateTotalToolCostCreate();
     }
 
-    public function updatedSearch(): void
+    public function removeTool($toolId): void
     {
-        $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get();
-    }
-
-    public function updatedSelectedToolsCreate(): void
-    {
-        foreach ($this->tools as $tool) {
-            $toolId = $tool->id;
-            if (!in_array($toolId, $this->selectedToolsCreate)) {
-                $this->quantitiesCreate[$toolId] = null;
-                $this->requiredDaysCreate[$toolId] = null;
-                $this->efficiencyInputsCreate[$toolId] = null;
-                $this->efficienciesCreate[$toolId] = null;
-                $this->partialCostsCreate[$toolId] = 0;
-            }
-        }
+        $this->selectedToolsCreate = array_diff($this->selectedToolsCreate, [$toolId]);
+        unset($this->quantitiesCreate[$toolId]);
+        unset($this->requiredDaysCreate[$toolId]);
+        unset($this->efficiencyInputsCreate[$toolId]);
+        unset($this->efficienciesCreate[$toolId]);
+        unset($this->partialCostsCreate[$toolId]);
         $this->updateTotalToolCostCreate();
     }
 
     public function calculatePartialCostCreate($toolId): void
     {
-        if (in_array($toolId, $this->selectedToolsCreate)) {
-            $quantity = $this->quantitiesCreate[$toolId] ?? 0;
-            $requiredDays = $this->requiredDaysCreate[$toolId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputsCreate[$toolId] ?? "1";
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
+        $quantity = $this->quantitiesCreate[$toolId] ?? 0;
+        $requiredDays = $this->requiredDaysCreate[$toolId] ?? 0;
+        $efficiencyInput = $this->efficiencyInputsCreate[$toolId] ?? "1";
+        $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
 
-            if ($efficiency === null) {
-                $this->partialCostsCreate[$toolId] = 0;
-                $this->addError("efficiencyInputsCreate_$toolId", "El rendimiento ingresado es inválido.");
-                return;
-            }
-
-            if (is_numeric($quantity) && is_numeric($requiredDays)) {
-                $tool = Tool::find($toolId);
-                $dailyCost = $tool->unit_price_per_day;
-                $partialCost = $quantity * $requiredDays * $efficiency * $dailyCost;
-                $this->partialCostsCreate[$toolId] = $partialCost;
-            } else {
-                $this->partialCostsCreate[$toolId] = 0;
-            }
-        } else {
+        if ($efficiency === null) {
             $this->partialCostsCreate[$toolId] = 0;
+            $this->addError("efficiencyInputsCreate_$toolId", "El rendimiento ingresado es inválido.");
+        } else {
+            $tool = Tool::find($toolId);
+            $dailyCost = $tool->unit_price_per_day;
+            $this->partialCostsCreate[$toolId] = $quantity * $requiredDays * $efficiency * $dailyCost;
         }
+
+        $this->updateTotalToolCostCreate();
     }
 
     public function updatedQuantitiesCreate($value, $toolId): void
@@ -85,7 +100,6 @@ class ToolSelectionCreate extends Component
             $this->quantitiesCreate[$toolId] = null;
             return;
         }
-
         $this->calculatePartialCostCreate($toolId);
         $this->updateTotalToolCostCreate();
     }
@@ -96,7 +110,6 @@ class ToolSelectionCreate extends Component
             $this->requiredDaysCreate[$toolId] = null;
             return;
         }
-
         $this->calculatePartialCostCreate($toolId);
         $this->updateTotalToolCostCreate();
     }
@@ -109,7 +122,6 @@ class ToolSelectionCreate extends Component
             $this->addError("efficiencyInputsCreate_$toolId", "El valor de rendimiento es inválido.");
             return;
         }
-
         $this->efficienciesCreate[$toolId] = $efficiency;
         $this->efficiencyInputsCreate[$toolId] = $value;
         $this->calculatePartialCostCreate($toolId);
@@ -123,27 +135,33 @@ class ToolSelectionCreate extends Component
 
     public function sendTotalToolCostCreate(): void
     {
-        $this->dispatch("totalToolCostCreateUpdated", $this->totalToolCostCreate);
-        $this->dispatch("toolSelectionCreateUpdated", [
-            "selectedToolsCreate" => $this->selectedToolsCreate,
-            "toolQuantitiesCreate" => $this->quantitiesCreate,
-            "toolRequiredDaysCreate" => $this->requiredDaysCreate,
-            "toolEfficienciesCreate" => $this->efficienciesCreate,
-            "totalToolCostCreate" => $this->totalToolCostCreate,
+        $this->dispatch('toolSelectionCreateUpdated', [
+            'selectedToolsCreate' => $this->selectedToolsCreate,
+            'toolQuantitiesCreate' => $this->quantitiesCreate,
+            'toolRequiredDaysCreate' => $this->requiredDaysCreate,
+            'toolEfficienciesCreate' => $this->efficienciesCreate,
+            'totalToolCostCreate' => $this->totalToolCostCreate,
         ]);
 
         if ($this->totalToolCostCreate > 0) {
-            $this->dispatch("hideResourceFormCreate");
+            $this->dispatch('hideResourceFormCreate');
         }
     }
 
     public function render(): View
     {
-        if (!empty($this->search)) {
-            $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get();
-        }
-        return view("livewire.projects.tool-selection-create", [
-            'tools' => $this->tools,
+        $filteredTools = Tool::query()
+            ->where('name', 'like', "%{$this->search}%")
+            ->get();
+
+        // Reverse the selected tools array to show the last selected at the top
+        $selectedTools = Tool::whereIn('id', $this->selectedToolsCreate)->get()->sortByDesc(function ($tool) {
+            return array_search($tool->id, $this->selectedToolsCreate);
+        });
+
+        return view('livewire.projects.tool-selection-create', [
+            'tools' => $filteredTools,
+            'selectedTools' => $selectedTools,
         ]);
     }
 }

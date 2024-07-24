@@ -128,13 +128,9 @@ class ProjectCreate extends Component
     public function closeForm(): void
     {
         $this->openCreate = false;
-        session()->forget('selectedPositionsCreate');
-        session()->forget('quantitiesCreate');
-        session()->forget('requiredDaysCreate');
-        session()->forget('efficiencyInputsCreate');
-        session()->forget('efficienciesCreate');
-        session()->forget('partialCostsCreate');
-        session()->forget('totalLaborCostCreate');
+        // Olvidar variables de sesión para posiciones de trabajo
+        $this->forgetSessionVariables();
+
         $this->dispatch('reloadPage');
     }
 
@@ -362,13 +358,8 @@ class ProjectCreate extends Component
         $this->dispatch('reloadPage');
         $this->reset();
 
-        session()->forget('selectedPositionsCreate');
-        session()->forget('quantitiesCreate');
-        session()->forget('requiredDaysCreate');
-        session()->forget('efficiencyInputsCreate');
-        session()->forget('efficienciesCreate');
-        session()->forget('partialCostsCreate');
-        session()->forget('totalLaborCostCreate');
+        // Olvidar variables de sesión para posiciones de trabajo
+        $this->forgetSessionVariables();
     }
 
     public function showLaborForm(): void
@@ -382,34 +373,38 @@ class ProjectCreate extends Component
 
     public function showMaterialsForm(): void
     {
-        $this->validateSelections();
-        if ($this->canShowResources()) {
-            $this->showResource = 'materials'; // Update property based on the selected resource
-        }
+        $this->showResource = 'materials';
+//        $this->validateSelections();
+//        if ($this->canShowResources()) {
+//            $this->showResource = 'materials'; // Update property based on the selected resource
+//        }
     }
 
     public function showToolsForm(): void
     {
-        $this->validateSelections();
-        if ($this->canShowResources()) {
-            $this->showResource = 'tools'; // Update property based on the selected resource
-        }
+        $this->showResource = 'tools';
+//        $this->validateSelections();
+//        if ($this->canShowResources()) {
+//            $this->showResource = 'tools'; // Update property based on the selected resource
+//        }
     }
 
     public function showTransportForm(): void
     {
-        $this->validateSelections();
-        if ($this->canShowResources()) {
-            $this->showResource = 'transport'; // Update property based on the selected resource
-        }
+        $this->showResource = 'transport';
+//        $this->validateSelections();
+//        if ($this->canShowResources()) {
+//            $this->showResource = 'transport'; // Update property based on the selected resource
+//        }
     }
 
     public function showAdditionalForm(): void
     {
-        $this->validateSelections();
-        if ($this->canShowResources()) {
-            $this->showResource = 'additionals'; // Update property based on the selected resource
-        }
+        $this->showResource = 'additionals';
+//        $this->validateSelections();
+//        if ($this->canShowResources()) {
+//            $this->showResource = 'additionals'; // Update property based on the selected resource
+//        }
     }
 
     #[On('positionSelectionCreateUpdated')]
@@ -486,5 +481,53 @@ class ProjectCreate extends Component
         return view('livewire.projects.project-create', [
             'totalProjectCost' => $this->totalProjectCost,
         ]);
+    }
+
+    /**
+     * @return void
+     */
+    protected function forgetSessionVariables(): void
+    {
+        session()->forget('selectedPositionsCreate');
+        session()->forget('quantitiesCreate');
+        session()->forget('requiredDaysCreate');
+        session()->forget('efficiencyInputsCreate');
+        session()->forget('efficienciesCreate');
+        session()->forget('partialCostsCreate');
+        session()->forget('totalLaborCostCreate');
+
+        // Olvidar variables de sesión para materiales
+        session()->forget('selectedMaterialsCreate');
+        session()->forget('quantitiesCreate');
+        session()->forget('efficiencyInputsCreate');
+        session()->forget('efficienciesCreate');
+        session()->forget('partialCostsCreate');
+        session()->forget('totalMaterialCostCreate');
+
+        // Olvidar variables de sesión para herramientas manuales
+        session()->forget('selectedToolsCreate');
+        session()->forget('quantitiesCreate');
+        session()->forget('requiredDaysCreate');
+        session()->forget('efficiencyInputsCreate');
+        session()->forget('efficienciesCreate');
+        session()->forget('partialCostsCreate');
+        session()->forget('totalToolCostCreate');
+
+        // Olvidar variables de sesión para transportes
+        session()->forget('selectedTransportsCreate');
+        session()->forget('quantitiesCreate');
+        session()->forget('requiredDaysCreate');
+        session()->forget('efficiencyInputsCreate');
+        session()->forget('efficienciesCreate');
+        session()->forget('partialCostsCreate');
+        session()->forget('totalTransportCostCreate');
+
+        // Olvidar variables de sesión para adicionales
+        session()->forget('selectedAdditionalsCreate');
+        session()->forget('quantitiesCreate');
+        session()->forget('efficiencyInputsCreate');
+        session()->forget('efficienciesCreate');
+        session()->forget('partialCostsCreate');
+        session()->forget('totalAdditionalCostCreate');
     }
 }
