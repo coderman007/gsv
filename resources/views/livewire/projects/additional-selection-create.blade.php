@@ -64,13 +64,13 @@
                         @enderror
                     </div>
                     <div>
-                        <label for="partialCostsAdditionalsCreate{{ $additional->id }}"
-                               class="block text-sm font-medium text-gray-700">Costo parcial</label>
-                        <input type="text" disabled
-                               id="partialCostsAdditionalsCreate{{ $additional->id }}"
-                               name="partialCostsAdditionalsCreate{{ $additional->id }}"
-                               value="${{ number_format($partialCostsAdditionalsCreate[$additional->id] ?? 0, 0) }}"
-                               class="mt-1 p-2 block w-full border-gray-300 rounded-md text-sm font-medium text-gray-700">
+                        <label for="partialCostAdditionalsCreate{{ $additional->id }}"
+                               class="block text-sm font-medium text-gray-700">Costo Parcial</label>
+                        <input type="text" id="partialCostAdditionalsCreate{{ $additional->id }}"
+                               name="partialCostAdditionalsCreate{{ $additional->id }}"
+                               value="$ {{ number_format($partialCostsAdditionalsCreate[$additional->id] ?? 0, 0, ',') }}"
+                               class="mt-1 p-2 block w-full border-yellow-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500"
+                               readonly>
                     </div>
                 </div>
             @endforeach

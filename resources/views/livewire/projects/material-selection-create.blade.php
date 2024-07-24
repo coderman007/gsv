@@ -60,7 +60,7 @@
                         <label for="partialCostMaterialCreate{{ $material->id }}"
                                class="block text-sm font-medium text-gray-700">Costo Parcial</label>
                         <input type="text" id="partialCostMaterialCreate{{ $material->id }}" name="partialCostMaterialCreate{{ $material->id }}"
-                               value="{{ number_format($partialCostsMaterialCreate[$material->id] ?? 0, 0, ',') }}"
+                               value="$ {{ number_format($partialCostsMaterialCreate[$material->id] ?? 0, 0, ',') }}"
                                class="mt-1 p-2 block w-full border-indigo-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                                readonly>
                     </div>

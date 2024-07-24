@@ -13,13 +13,16 @@ use App\Models\Transport;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
+// Para manejar archivos
 
 /**
  * @method resetProjectCreateComponent()
  */
 class ProjectEdit extends Component
 {
+    use WithFileUploads;
 
     public Project $project;
     public $openEdit = false;
@@ -103,44 +106,44 @@ class ProjectEdit extends Component
     public function mount(Project $project): void
     {
         $this->project = $project;
-            $this->existingPositionSelections = $project->positions->map(function ($position) {
-                return [
-                    'position_id' => $position->id,
-                    'quantity' => $position->pivot->quantity,
-                    'required_days' => $position->pivot->required_days,
-                    'efficiency' => $position->pivot->efficiency
-                ];
-            })->toArray();
-            $this->existingMaterialSelections = $project->materials->map(function ($material) {
-                return [
-                   'material_id' => $material->id,
-                    'quantity' => $material->pivot->quantity,
-                    'efficiency' => $material->pivot->efficiency
-                ];
-                })->toArray();
-            $this->existingToolSelections = $project->tools->map(function ($tool) {
-                return [
-                    'tool_id' => $tool->id,
-                    'quantity' => $tool->pivot->quantity,
-                   'required_days' => $tool->pivot->required_days,
-                    'efficiency' => $tool->pivot->efficiency
-                ];
-                })->toArray();
-            $this->existingTransportSelections = $project->transports->map(function ($transport) {
-                return [
-                    'transport_id' => $transport->id,
-                    'quantity' => $transport->pivot->quantity,
-                   'required_days' => $transport->pivot->required_days,
-                    'efficiency' => $transport->pivot->efficiency
-                ];
-                })->toArray();
-            $this->existingAdditionalSelections = $project->additionals->map(function ($additional) {
-                return [
-                    'additional_id' => $additional->id,
-                    'quantity' => $additional->pivot->quantity,
-                    'efficiency' => $additional->pivot->efficiency
-                ];
-                })->toArray();
+        $this->existingPositionSelections = $project->positions->map(function ($position) {
+            return [
+                'position_id' => $position->id,
+                'quantity' => $position->pivot->quantity,
+                'required_days' => $position->pivot->required_days,
+                'efficiency' => $position->pivot->efficiency
+            ];
+        })->toArray();
+        $this->existingMaterialSelections = $project->materials->map(function ($material) {
+            return [
+                'material_id' => $material->id,
+                'quantity' => $material->pivot->quantity,
+                'efficiency' => $material->pivot->efficiency
+            ];
+        })->toArray();
+        $this->existingToolSelections = $project->tools->map(function ($tool) {
+            return [
+                'tool_id' => $tool->id,
+                'quantity' => $tool->pivot->quantity,
+                'required_days' => $tool->pivot->required_days,
+                'efficiency' => $tool->pivot->efficiency
+            ];
+        })->toArray();
+        $this->existingTransportSelections = $project->transports->map(function ($transport) {
+            return [
+                'transport_id' => $transport->id,
+                'quantity' => $transport->pivot->quantity,
+                'required_days' => $transport->pivot->required_days,
+                'efficiency' => $transport->pivot->efficiency
+            ];
+        })->toArray();
+        $this->existingAdditionalSelections = $project->additionals->map(function ($additional) {
+            return [
+                'additional_id' => $additional->id,
+                'quantity' => $additional->pivot->quantity,
+                'efficiency' => $additional->pivot->efficiency
+            ];
+        })->toArray();
 
         $this->categories = ProjectCategory::pluck('name', 'id')->toArray();
 
@@ -544,52 +547,6 @@ class ProjectEdit extends Component
     public function hideResourceForm(): void
     {
         $this->showResource = '';
-    }
-
-    protected function forgetSessionVariables(): void
-    {
-        session()->forget('selectedPositionsEdit');
-        session()->forget('quantitiesPositionEdit');
-        session()->forget('requiredDaysPositionEdit');
-        session()->forget('efficiencyInputsPositionEdit');
-        session()->forget('efficienciesPositionEdit');
-        session()->forget('partialCostsPositionEdit');
-        session()->forget('totalLaborCostEdit');
-
-        // Olvidar variables de sesión para materiales
-        session()->forget('selectedMaterialsEdit');
-        session()->forget('quantitiesMaterialEdit');
-        session()->forget('efficiencyInputsMaterialEdit');
-        session()->forget('efficienciesMaterialEdit');
-        session()->forget('partialCostsMaterialEdit');
-        session()->forget('totalMaterialCostEdit');
-
-        // Olvidar variables de sesión para herramientas manuales
-        session()->forget('selectedToolsEdit');
-        session()->forget('quantitiesToolEdit');
-        session()->forget('requiredDaysToolEdit');
-        session()->forget('efficiencyInputsToolEdit');
-        session()->forget('efficienciesToolEdit');
-        session()->forget('partialCostsToolEdit');
-        session()->forget('totalToolCostEdit');
-
-        // Olvidar variables de sesión para transportes
-        session()->forget('selectedTransportsEdit');
-        session()->forget('quantitiesTransportEdit');
-        session()->forget('requiredDaysTransportEdit');
-        session()->forget('efficiencyInputsTransportEdit');
-        session()->forget('efficienciesTransportEdit');
-        session()->forget('partialCostsTransportEdit');
-        session()->forget('totalTransportCostEdit');
-
-        // Olvidar variables de sesión para adicionales
-        session()->forget('selectedAdditionalsEdit');
-        session()->forget('quantitiesAdditionalsEdit');
-        session()->forget('efficiencyInputsAdditionalsEdit');
-        session()->forget('efficienciesAdditionalsEdit');
-        session()->forget('partialCostsAdditionalsEdit');
-        session()->forget('totalAdditionalCostEdit');
-
     }
 
     public function render(): View

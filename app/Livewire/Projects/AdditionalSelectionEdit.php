@@ -161,7 +161,7 @@ class AdditionalSelectionEdit extends Component
             return array_search($additional->id, $this->selectedAdditionalsEdit);
         });
 
-        return view('livewire.projects.additional-selection-create', [
+        return view('livewire.projects.additional-selection-edit', [
             'additionals' => $filteredAdditionals,
             'selectedAdditionals' => $selectedAdditionals,
         ]);

@@ -69,7 +69,7 @@
                         <label for="partialCostCreate{{ $position->id }}"
                                class="block text-sm font-medium text-gray-700">Costo Parcial</label>
                         <input type="text" id="partialCostCreate{{ $position->id }}" name="partialCostCreate{{ $position->id }}"
-                               value="{{ number_format($partialCostsPositionCreate[$position->id] ?? 0, 0, ',') }}"
+                               value="$ {{ number_format($partialCostsPositionCreate[$position->id] ?? 0, 0, ',') }}"
                                class="mt-1 p-2 block w-full border-teal-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
                                readonly>
                     </div>

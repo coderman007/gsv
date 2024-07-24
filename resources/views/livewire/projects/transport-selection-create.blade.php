@@ -78,7 +78,7 @@
                                class="block text-sm font-medium text-gray-700">Costo Parcial</label>
                         <input type="text" id="partialCostTransportCreate{{ $transport->id }}"
                                name="partialCostTransportCreate{{ $transport->id }}"
-                               value="{{ number_format($partialCostsTransportCreate[$transport->id] ?? 0, 0, ',') }}"
+                               value="$ {{ number_format($partialCostsTransportCreate[$transport->id] ?? 0, 0, ',') }}"
                                class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
                                readonly>
                     </div>
