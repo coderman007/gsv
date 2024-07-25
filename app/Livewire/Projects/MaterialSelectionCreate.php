@@ -140,7 +140,7 @@ class MaterialSelectionCreate extends Component
     public function render(): View
     {
         $filteredMaterials = Material::query()
-            ->where('reference', 'like', "%{$this->materialSearch}%")
+            ->where('reference', 'like', "%$this->materialSearch%")
             ->get();
 
         $selectedMaterials = Material::whereIn('id', $this->selectedMaterialsCreate)->get()->sortByDesc(function ($material) {

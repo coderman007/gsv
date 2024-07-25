@@ -9,30 +9,30 @@ use Livewire\Component;
 
 class ToolSelectionEdit extends Component
 {
-    public $search = '';
-    public $tools = [];
+    public $availableToolsEdit = [];
     public $selectedToolsEdit = [];
-    public $quantitiesEdit = [];
-    public $requiredDaysEdit = [];
-    public $efficiencyInputsEdit = [];
-    public $efficienciesEdit = [];
-    public $partialCostsEdit = [];
+    public $quantitiesToolEdit = [];
+    public $requiredDaysToolEdit = [];
+    public $efficiencyInputsToolEdit = [];
+    public $efficienciesToolEdit = [];
+    public $partialCostsToolEdit = [];
     public $totalToolCostEdit = 0;
-
+    public $toolSearchEdit = '';
     public $existingSelections = [];
 
     protected $rules = [
         'selectedToolsEdit' => 'required|array|min:1',
         'selectedToolsEdit.*' => 'exists:tools,id',
-        'quantitiesEdit.*' => 'nullable|numeric|min:0',
-        'requiredDaysEdit.*' => 'nullable|numeric|min:0',
-        'efficiencyInputsEdit.*' => 'nullable|string',
+        'quantitiesToolEdit.*' => 'nullable|numeric|min:0',
+        'requiredDaysToolEdit.*' => 'nullable|numeric|min:0',
+        'efficiencyInputsToolEdit.*' => 'nullable|string',
     ];
 
     public function mount(): void
     {
         $this->initializeFromExistingSelections();
         $this->updateTotalToolCostEdit();
+
     }
 
     public function initializeFromExistingSelections(): void
@@ -40,129 +40,140 @@ class ToolSelectionEdit extends Component
         foreach ($this->existingSelections as $selection) {
             $toolId = $selection['tool_id'];
             $this->selectedToolsEdit[] = $toolId;
-            $this->quantitiesEdit[$toolId] = $selection['quantity'];
-            $this->requiredDaysEdit[$toolId] = $selection['required_days'];
-            $this->efficiencyInputsEdit[$toolId] = $selection['efficiency'];
-            $this->efficienciesEdit[$toolId] = DataTypeConverter::convertToFloat($selection['efficiency']);
-            $this->calculatePartialCostEdit($toolId);
+            $this->quantitiesToolEdit[$toolId] = $selection['quantity'];
+            $this->requiredDaysToolEdit[$toolId] = $selection['required_days'];
+            $this->efficiencyInputsToolEdit[$toolId] = $selection['efficiency'];
+            $this->efficienciesToolEdit[$toolId] = DataTypeConverter::convertToFloat($selection['efficiency']);
+            $this->calculatePartialCostToolEdit($toolId);
         }
-
-        $this->tools = Tool::whereIn('id', $this->selectedToolsEdit)->get();
-    }
-
-    public function updatedSearch(): void
-    {
-        $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get();
+        $this->availableToolsEdit = Tool::whereIn('id', $this->selectedToolsEdit)->get();
     }
 
     public function updatedSelectedToolsEdit(): void
     {
-        foreach ($this->tools as $tool) {
+        foreach ($this->availableToolsEdit as $tool) {
             $toolId = $tool->id;
             if (!in_array($toolId, $this->selectedToolsEdit)) {
-                $this->quantitiesEdit[$toolId] = null;
-                $this->requiredDaysEdit[$toolId] = null;
-                $this->efficiencyInputsEdit[$toolId] = null;
-                $this->efficienciesEdit[$toolId] = null;
-                $this->partialCostsEdit[$toolId] = 0;
+                $this->quantitiesToolEdit[$toolId] = null;
+                $this->requiredDaysToolEdit[$toolId] = null;
+                $this->efficiencyInputsToolEdit[$toolId] = null;
+                $this->efficienciesToolEdit[$toolId] = null;
+                $this->partialCostsToolEdit[$toolId] = 0;
             }
         }
         $this->updateTotalToolCostEdit();
     }
 
-    public function calculatePartialCostEdit($toolId): void
+    public function addToolEdit($toolId): void
     {
-        if (in_array($toolId, $this->selectedToolsEdit)) {
-            $quantity = $this->quantitiesEdit[$toolId] ?? 0;
-            $requiredDays = $this->requiredDaysEdit[$toolId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputsEdit[$toolId] ?? "1";
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
-
-            if ($efficiency === null) {
-                $this->partialCostsEdit[$toolId] = 0;
-                $this->addError("efficiencyInputsEdit_$toolId", "El rendimiento ingresado es inválido.");
-                return;
-            }
-
-            if (is_numeric($quantity) && is_numeric($requiredDays)) {
-                $tool = Tool::find($toolId);
-                $dailyCost = $tool->unit_price_per_day;
-                $partialCost = $quantity * $requiredDays * $efficiency * $dailyCost;
-                $this->partialCostsEdit[$toolId] = $partialCost;
-            } else {
-                $this->partialCostsEdit[$toolId] = 0;
-            }
+        if (!in_array($toolId, $this->selectedToolsEdit)) {
+            $this->selectedToolsEdit[] = $toolId;
         } else {
-            $this->partialCostsEdit[$toolId] = 0;
+            // Move the tool to the end of the array to ensure it is displayed last
+            $this->selectedToolsEdit = array_merge(array_diff($this->selectedToolsEdit, [$toolId]), [$toolId]);
         }
-    }
-
-    public function updatedQuantitiesEdit($value, $toolId): void
-    {
-        if (!is_numeric($value)) {
-            $this->quantitiesEdit[$toolId] = null;
-            return;
-        }
-
-        $this->calculatePartialCostEdit($toolId);
+        $this->toolSearchEdit = '';
         $this->updateTotalToolCostEdit();
     }
 
-    public function updatedRequiredDaysEdit($value, $toolId): void
+    public function removeToolEdit($toolId): void
     {
-        if (!is_numeric($value)) {
-            $this->requiredDaysEdit[$toolId] = null;
-            return;
-        }
-
-        $this->calculatePartialCostEdit($toolId);
+        $this->selectedToolsEdit = array_diff($this->selectedToolsEdit, [$toolId]);
+        unset($this->quantitiesToolEdit[$toolId]);
+        unset($this->requiredDaysToolEdit[$toolId]);
+        unset($this->efficiencyInputsToolEdit[$toolId]);
+        unset($this->efficienciesToolEdit[$toolId]);
+        unset($this->partialCostsToolEdit[$toolId]);
         $this->updateTotalToolCostEdit();
     }
 
-    public function updatedEfficiencyInputsEdit($value, $toolId): void
+    public function calculatePartialCostToolEdit($toolId): void
+    {
+        $quantity = $this->quantitiesToolEdit[$toolId] ?? 0;
+        $requiredDays = $this->requiredDaysToolEdit[$toolId] ?? 0;
+        $efficiencyInput = $this->efficiencyInputsToolEdit[$toolId] ?? "1";
+        $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
+
+        if ($efficiency === null) {
+            $this->partialCostsToolEdit[$toolId] = 0;
+            $this->addError("efficiencyInputsToolEdit_$toolId", "Entrada de rendimiento inválida: '$efficiencyInput'");
+        } else {
+            $tool = Tool::find($toolId);
+            $unitPrice = $tool->unit_price_per_day;
+            $this->partialCostsToolEdit[$toolId] = $quantity * $requiredDays * $efficiency * $unitPrice;
+        }
+
+        $this->updateTotalToolCostEdit();
+    }
+
+    public function updatedQuantitiesToolEdit($value, $toolId): void
+    {
+        if (!is_numeric($value)) {
+            $this->quantitiesToolEdit[$toolId] = null;
+            return;
+        }
+        $this->calculatePartialCostToolEdit($toolId);
+        $this->updateTotalToolCostEdit();
+    }
+
+    public function updatedRequiredDaysToolEdit($value, $toolId): void
+    {
+        if (!is_numeric($value)) {
+            $this->requiredDaysToolEdit[$toolId] = null;
+            return;
+        }
+        $this->calculatePartialCostToolEdit($toolId);
+        $this->updateTotalToolCostEdit();
+    }
+
+    public function updatedEfficiencyInputsToolEdit($value, $toolId): void
     {
         $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            $this->addError("efficiencyInputsEdit_$toolId", "El valor de rendimiento es inválido.");
+            $this->addError("efficiencyInputsToolEdit_$toolId", "Entrada de rendimiento inválida: '$value'");
             return;
         }
-
-        $this->efficienciesEdit[$toolId] = $efficiency;
-        $this->efficiencyInputsEdit[$toolId] = $value;
-        $this->calculatePartialCostEdit($toolId);
+        $this->efficienciesToolEdit[$toolId] = $efficiency;
+        $this->efficiencyInputsToolEdit[$toolId] = $value;
+        $this->calculatePartialCostToolEdit($toolId);
         $this->updateTotalToolCostEdit();
     }
 
     public function updateTotalToolCostEdit(): void
     {
-        $this->totalToolCostEdit = array_sum($this->partialCostsEdit);
+        $this->totalToolCostEdit = array_sum($this->partialCostsToolEdit);
     }
 
     public function sendTotalToolCostEdit(): void
     {
-        $this->dispatch("totalToolCostEditUpdated", $this->totalToolCostEdit);
-        $this->dispatch("toolSelectionEditUpdated", [
-            "selectedToolsEdit" => $this->selectedToolsEdit,
-            "toolQuantitiesEdit" => $this->quantitiesEdit,
-            "toolRequiredDaysEdit" => $this->requiredDaysEdit,
-            "toolEfficienciesEdit" => $this->efficienciesEdit,
-            "totalToolCostEdit" => $this->totalToolCostEdit,
+        $this->dispatch('toolSelectionEditUpdated', [
+            'selectedToolsEdit' => $this->selectedToolsEdit,
+            'toolQuantitiesEdit' => $this->quantitiesToolEdit,
+            'toolRequiredDaysEdit' => $this->requiredDaysToolEdit,
+            'toolEfficienciesEdit' => $this->efficienciesToolEdit,
+            'totalToolCostEdit' => $this->totalToolCostEdit,
         ]);
 
         if ($this->totalToolCostEdit > 0) {
-            $this->dispatch("hideResourceFormEdit");
+            $this->dispatch('hideResourceFormEdit');
         }
     }
 
     public function render(): View
     {
-        if (!empty($this->search)) {
-            $this->tools = Tool::where('name', 'like', '%' . $this->search . '%')->get();
-        }
-        return view("livewire.projects.tool-selection-edit", [
-            'tools' => $this->tools,
+        $filteredTools = Tool::query()
+            ->where('name', 'like', "%$this->toolSearchEdit%")
+            ->get();
+
+        // Reverse the selected tools array to show the last selected at the top
+        $selectedTools = Tool::whereIn('id', $this->selectedToolsEdit)->get()->sortByDesc(function ($tool) {
+            return array_search($tool->id, $this->selectedToolsEdit);
+        });
+
+        return view('livewire.projects.tool-selection-edit', [
+            'tools' => $filteredTools,
+            'selectedTools' => $selectedTools,
         ]);
     }
 }
-

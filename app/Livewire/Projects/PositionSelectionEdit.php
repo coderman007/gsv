@@ -11,25 +11,25 @@ class PositionSelectionEdit extends Component
 {
     public $availablePositionsEdit = [];
     public $selectedPositionsEdit = [];
-    public $quantitiesEdit = [];
-    public $requiredDaysEdit = [];
-    public $efficiencyInputsEdit = [];
-    public $efficienciesEdit = [];
-    public $partialCostsEdit = [];
+    public $quantitiesPositionEdit = [];
+    public $requiredDaysPositionEdit = [];
+    public $efficiencyInputsPositionEdit = [];
+    public $efficienciesPositionEdit = [];
+    public $partialCostsPositionEdit = [];
     public $totalLaborCostEdit = 0;
+    public $positionSearchEdit = '';
     public $existingSelections = [];
 
     protected $rules = [
         'selectedPositionsEdit' => 'required|array|min:1',
         'selectedPositionsEdit.*' => 'exists:positions,id',
-        'quantitiesEdit.*' => 'nullable|numeric|min:0',
-        'requiredDaysEdit.*' => 'nullable|numeric|min:0',
-        'efficiencyInputsEdit.*' => 'nullable|string',
+        'quantitiesPositionEdit.*' => 'nullable|numeric|min:0',
+        'requiredDaysPositionEdit.*' => 'nullable|numeric|min:0',
+        'efficiencyInputsPositionEdit.*' => 'nullable|string',
     ];
 
     public function mount(): void
     {
-        $this->availablePositionsEdit = Position::all();
         $this->initializeFromExistingSelections();
         $this->updateTotalLaborCostEdit();
     }
@@ -39,31 +39,13 @@ class PositionSelectionEdit extends Component
         foreach ($this->existingSelections as $selection) {
             $positionId = $selection['position_id'];
             $this->selectedPositionsEdit[] = $positionId;
-            $this->quantitiesEdit[$positionId] = $selection['quantity'];
-            $this->requiredDaysEdit[$positionId] = $selection['required_days'];
-            $this->efficiencyInputsEdit[$positionId] = $selection['efficiency'];
-            $this->efficienciesEdit[$positionId] = DataTypeConverter::convertToFloat($selection['efficiency']);
-            $this->calculatePartialCostEdit($positionId);
+            $this->quantitiesPositionEdit[$positionId] = $selection['quantity'];
+            $this->requiredDaysPositionEdit[$positionId] = $selection['required_days'];
+            $this->efficiencyInputsPositionEdit[$positionId] = $selection['efficiency'];
+            $this->efficienciesPositionEdit[$positionId] = DataTypeConverter::convertToFloat($selection['efficiency']);
+            $this->calculatePartialCostPositionEdit($positionId);
         }
-    }
-
-    public function addPosition($positionId): void
-    {
-        if (!in_array($positionId, $this->selectedPositionsEdit)) {
-            $this->selectedPositionsEdit[] = $positionId;
-        }
-        $this->updateTotalLaborCostEdit();
-    }
-
-    public function removePosition($positionId): void
-    {
-        $this->selectedPositionsEdit = array_diff($this->selectedPositionsEdit, [$positionId]);
-        unset($this->quantitiesEdit[$positionId]);
-        unset($this->requiredDaysEdit[$positionId]);
-        unset($this->efficiencyInputsEdit[$positionId]);
-        unset($this->efficienciesEdit[$positionId]);
-        unset($this->partialCostsEdit[$positionId]);
-        $this->updateTotalLaborCostEdit();
+        $this->availablePositionsEdit = Position::whereIn('id', $this->selectedPositionsEdit)->get();
     }
 
     public function updatedSelectedPositionsEdit(): void
@@ -71,73 +53,95 @@ class PositionSelectionEdit extends Component
         foreach ($this->availablePositionsEdit as $position) {
             $positionId = $position->id;
             if (!in_array($positionId, $this->selectedPositionsEdit)) {
-                $this->quantitiesEdit[$positionId] = null;
-                $this->requiredDaysEdit[$positionId] = null;
-                $this->efficiencyInputsEdit[$positionId] = null;
-                $this->efficienciesEdit[$positionId] = null;
-                $this->partialCostsEdit[$positionId] = 0;
+                $this->quantitiesPositionEdit[$positionId] = null;
+                $this->requiredDaysPositionEdit[$positionId] = null;
+                $this->efficiencyInputsPositionEdit[$positionId] = null;
+                $this->efficienciesPositionEdit[$positionId] = null;
+                $this->partialCostsPositionEdit[$positionId] = 0;
             }
         }
         $this->updateTotalLaborCostEdit();
     }
 
-    public function calculatePartialCostEdit($positionId): void
+    public function addPositionEdit($positionId): void
     {
-        if (in_array($positionId, $this->selectedPositionsEdit)) {
-            $quantity = $this->quantitiesEdit[$positionId] ?? 0;
-            $requiredDays = $this->requiredDaysEdit[$positionId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputsEdit[$positionId] ?? "1";
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
-
-            if ($efficiency === null) {
-                $this->partialCostsEdit[$positionId] = 0;
-                $this->addError('efficiencyInputsEdit', "Entrada de rendimiento inválida: '$efficiencyInput'");
-            } else {
-                $position = Position::find($positionId);
-                $dailyCost = $position->real_daily_cost;
-                $this->partialCostsEdit[$positionId] = $quantity * $requiredDays * $efficiency * $dailyCost;
-            }
+        if (!in_array($positionId, $this->selectedPositionsEdit)) {
+            $this->selectedPositionsEdit[] = $positionId;
         } else {
-            $this->partialCostsEdit[$positionId] = 0;
+            // Move the position to the end of the array to ensure it is displayed last
+            $this->selectedPositionsEdit = array_merge(array_diff($this->selectedPositionsEdit, [$positionId]), [$positionId]);
         }
-    }
-
-    public function updatedQuantitiesEdit($value, $positionId): void
-    {
-        if (!is_numeric($value)) {
-            $this->quantitiesEdit[$positionId] = null;
-            return;
-        }
-        $this->calculatePartialCostEdit($positionId);
+        $this->positionSearchEdit = '';
         $this->updateTotalLaborCostEdit();
     }
 
-    public function updatedRequiredDaysEdit($value, $positionId): void
+    public function removePositionEdit($positionId): void
     {
-        if (!is_numeric($value)) {
-            $this->requiredDaysEdit[$positionId] = null;
-            return;
-        }
-        $this->calculatePartialCostEdit($positionId);
+        $this->selectedPositionsEdit = array_diff($this->selectedPositionsEdit, [$positionId]);
+        unset($this->quantitiesPositionEdit[$positionId]);
+        unset($this->requiredDaysPositionEdit[$positionId]);
+        unset($this->efficiencyInputsPositionEdit[$positionId]);
+        unset($this->efficienciesPositionEdit[$positionId]);
+        unset($this->partialCostsPositionEdit[$positionId]);
         $this->updateTotalLaborCostEdit();
     }
 
-    public function updatedEfficiencyInputsEdit($value, $positionId): void
+
+    public function calculatePartialCostPositionEdit($positionId): void
+    {
+        $quantity = $this->quantitiesPositionEdit[$positionId] ?? 0;
+        $requiredDays = $this->requiredDaysPositionEdit[$positionId] ?? 0;
+        $efficiencyInput = $this->efficiencyInputsPositionEdit[$positionId] ?? "1";
+        $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
+
+        if ($efficiency === null) {
+            $this->partialCostsPositionEdit[$positionId] = 0;
+            $this->addError("efficiencyInputsPositionEdit_$positionId", "Entrada de rendimiento inválida: '$efficiencyInput'");
+        } else {
+            $position = Position::find($positionId);
+            $unitPrice = $position->real_daily_cost;
+            $this->partialCostsPositionEdit[$positionId] = $quantity * $requiredDays * $efficiency * $unitPrice;
+        }
+
+        $this->updateTotalLaborCostEdit();
+    }
+
+    public function updatedQuantitiesPositionEdit($value, $positionId): void
+    {
+        if (!is_numeric($value)) {
+            $this->quantitiesPositionEdit[$positionId] = null;
+            return;
+        }
+        $this->calculatePartialCostPositionEdit($positionId);
+        $this->updateTotalLaborCostEdit();
+    }
+
+    public function updatedRequiredDaysPositionEdit($value, $positionId): void
+    {
+        if (!is_numeric($value)) {
+            $this->requiredDaysPositionEdit[$positionId] = null;
+            return;
+        }
+        $this->calculatePartialCostPositionEdit($positionId);
+        $this->updateTotalLaborCostEdit();
+    }
+
+    public function updatedEfficiencyInputsPositionEdit($value, $positionId): void
     {
         $efficiency = DataTypeConverter::convertToFloat($value);
         if ($efficiency === null) {
-            $this->addError('efficiencyInputsEdit', "Entrada de rendimiento inválida: '$value'");
+            $this->addError('efficiencyInputsPositionEdit', "Entrada de rendimiento inválida: '$value'");
             return;
         }
-        $this->efficienciesEdit[$positionId] = $efficiency;
-        $this->efficiencyInputsEdit[$positionId] = $value;
-        $this->calculatePartialCostEdit($positionId);
+        $this->efficienciesPositionEdit[$positionId] = $efficiency;
+        $this->efficiencyInputsPositionEdit[$positionId] = $value;
+        $this->calculatePartialCostPositionEdit($positionId);
         $this->updateTotalLaborCostEdit();
     }
 
     public function updateTotalLaborCostEdit(): void
     {
-        $this->totalLaborCostEdit = array_sum($this->partialCostsEdit);
+        $this->totalLaborCostEdit = array_sum($this->partialCostsPositionEdit);
     }
 
     public function sendTotalLaborCostEdit(): void
@@ -145,9 +149,9 @@ class PositionSelectionEdit extends Component
 //        $this->dispatch('totalLaborCostEditUpdated', $this->totalLaborCostEdit);
         $this->dispatch('positionSelectionEditUpdated', [
             'selectedPositionsEdit' => $this->selectedPositionsEdit,
-            'positionQuantitiesEdit' => $this->quantitiesEdit,
-            'positionRequiredDaysEdit' => $this->requiredDaysEdit,
-            'positionEfficienciesEdit' => $this->efficienciesEdit,
+            'positionQuantitiesEdit' => $this->quantitiesPositionEdit,
+            'positionRequiredDaysEdit' => $this->requiredDaysPositionEdit,
+            'positionEfficienciesEdit' => $this->efficienciesPositionEdit,
             'totalLaborCostEdit' => $this->totalLaborCostEdit,
         ]);
 
@@ -158,8 +162,18 @@ class PositionSelectionEdit extends Component
 
     public function render(): View
     {
+        $filteredPositions = Position::query()
+            ->where('name', 'like', "%$this->positionSearchEdit%")
+            ->get();
+
+        // Reverse the selected positions array to show the last selected at the top
+        $selectedPositions = Position::whereIn('id', $this->selectedPositionsEdit)->get()->sortByDesc(function ($position) {
+            return array_search($position->id, $this->selectedPositionsEdit);
+        });
+
         return view('livewire.projects.position-selection-edit', [
-            'positions' => $this->availablePositionsEdit,
+            'positions' => $filteredPositions,
+            'selectedPositions' => $selectedPositions,
         ]);
     }
 }

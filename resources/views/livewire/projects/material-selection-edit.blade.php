@@ -1,79 +1,98 @@
-<div class="flex flex-col w-full">
-    <div class="flex flex-row mb-4">
-        <div class="w-full mr-2">
-            <input wire:model.live="search" type="text"
-                   class="appearance-none block w-full px-3 py-2 border-2 border-indigo-500 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                   placeholder="Buscar materiales...">
+<div class="bg-gray-50 p-6 rounded-lg">
+    <label class="text-lg font-semibold text-gray-600 py-2">
+        <div class="mb-4">
+            <input wire:model.live="materialSearchEdit"
+                   id="materialSearchEditInput"
+                   type="text"
+                   placeholder="Buscar materiales ..."
+                   class="mt-1 p-2 block w-full border-indigo-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium text-gray-700">
+
+            @if(strlen($materialSearchEdit) > 0)
+                @if($materials->isEmpty())
+                    <p class="mt-2 text-sm text-gray-500">No se encontraron materiales que coincidan con la
+                        búsqueda.</p>
+                @else
+                    <ul class="mt-2 border border-indigo-300 rounded-md max-h-60 overflow-y-auto text-sm">
+                        @foreach ($materials as $material)
+                            @if (!in_array($material->id, $selectedMaterialsEdit))
+                                <li class="p-2 hover:bg-indigo-100 cursor-pointer"
+                                    wire:click="addMaterialEdit({{ $material->id }})">
+                                    {{ $material->reference }}
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+                @endif
+            @endif
         </div>
-    </div>
 
-    <!-- Lista de materiales -->
-    <ul class="overflow-y-auto max-h-96">
-        @forelse ($materials as $material)
-            <li class="flex items-center py-2 hover:bg-gray-100">
-                <input type="checkbox" wire:model.live="selectedMaterialsEdit" value="{{ $material->id }}"
-                       class="mr-2 border-indigo-300 rounded shadow-sm text-indigo-500 focus:border-indigo-300 focus:ring-indigo-200 focus:ring-opacity-50">
-                <div class="w-full flex justify-between items-center">
-                    <div>
-                        <span class="text-gray-800 font-medium">{{ $material->reference }}</span>
+        <div class="grid grid-cols-1 gap-4">
+            @foreach ($selectedMaterials as $material)
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button wire:click="removeMaterialEdit({{ $material->id }})"
+                                class="ml-5 bg-red-100 text-sm hover:bg-red-200 text-red-500 hover:text-red-800 rounded-md px-3 py-1">
+                            x
+                        </button>
+                        <span class="ml-2 text-sm font-medium text-indigo-700">
+                            {{ ucfirst($material->reference) }}
+                        </span>
                     </div>
-
-                    @if (in_array($material->id, $selectedMaterialsEdit))
-                        <div class="flex items-center space-x-4 pr-4">
-
-                            <!-- Cantidad -->
-                            <div class="flex flex-col">
-                                <label for="quantityEdit_{{ $material->id }}"
-                                       class="text-sm text-gray-700 mb-1">Cantidad:</label>
-                                <input wire:model.live="quantitiesEdit.{{ $material->id }}"
-                                       id="quantityEdit_{{ $material->id }}" min=1 type="number"
-                                       class="w-16 px-2 py-1 border-indigo-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
-
-                            <!-- Rendimiento -->
-                            <div class="flex flex-col">
-                                <label for="efficiencyEdit_{{ $material->id }}"
-                                       class="text-sm text-gray-700 mb-1">Rendimiento:</label>
-                                <input wire:model.live="efficiencyInputsEdit.{{ $material->id }}"
-                                       id="efficiencyEdit_{{ $material->id }}" type="text"
-                                       class="w-16 px-2 py-1 border-indigo-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
-
-                            <!-- Costo parcial -->
-                            <div class="flex flex-col">
-                                <label for="partialCostEdit_{{ $material->id }}" class="text-sm text-gray-700 mb-1">Costo:</label>
-                                <input type="text" readonly
-                                       value="{{ isset($partialCostsEdit[$material->id]) ? number_format($partialCostsEdit[$material->id], 2) : 0 }}"
-                                       id="partialCostEdit_{{ $material->id }}"
-                                       class="w-32 px-2 py-1 border border-indigo-300 rounded-md bg-slate-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
-                        </div>
-                    @endif
                 </div>
-            </li>
-        @empty
-            <li class="text-gray-500 text-center py-2">No se encontraron materiales.</li>
-        @endforelse
-    </ul>
+                <div class="ml-6 grid grid-cols-3 gap-4 mt-2">
+                    <div>
+                        <label for="quantitiesMaterialEdit{{ $material->id }}"
+                               class="block text-sm font-medium text-gray-700">Cantidad</label>
+                        <input wire:model.live="quantitiesMaterialEdit.{{ $material->id }}" type="number" min=0
+                               step=1
+                               id="quantitiesMaterialEdit{{ $material->id }}"
+                               name="quantitiesMaterialEdit{{ $material->id }}"
+                               class="mt-1 p-2 block w-full border-indigo-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium text-gray-700">
+                        @error('quantitiesMaterialEdit.' . $material->id)
+                        <span class="text-red-500">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="efficiencyInputsMaterialEdit{{ $material->id }}"
+                               class="block text-sm font-medium text-gray-700">Rendimiento</label>
+                        <input wire:model.live="efficiencyInputsMaterialEdit.{{ $material->id }}" type="text"
+                               id="efficiencyInputsMaterialEdit{{ $material->id }}"
+                               name="efficiencyInputsMaterialEdit{{ $material->id }}"
+                               class="mt-1 p-2 block w-full border-indigo-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium text-gray-700">
+                        @error('efficiencyInputsMaterialEdit.' . $material->id)
+                        <span class="text-red-500">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="partialCostsMaterialEdit{{ $material->id }}"
+                               class="block text-sm font-medium text-gray-700">Costo parcial</label>
+                        <input type="text" id="partialCostMaterialEdit{{ $material->id }}"
+                               name="partialCostMaterialEdit{{ $material->id }}"
+                               value="$ {{ number_format($partialCostsMaterialEdit[$material->id] ?? 0, 0, ',') }}"
+                               class="mt-1 p-2 block w-full border-indigo-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                               readonly>
+                    </div>
+                </div>
+            @endforeach
+        </div>
 
-    <!-- Total de materiales -->
-    <div class="bg-gray-50 p-2 rounded-lg mb-4 flex items-center">
-        <label for="totalMaterialCostEdit" class="block text-lg mr-4 font-medium text-gray-700">Total Materiales:</label>
-        <div class="relative rounded-md shadow-sm flex-1">
-            <input type="text" readonly value="{{ number_format($totalMaterialCostEdit, 2) }}" id="totalMaterialCostEdit"
-                   class="text-right mt-1 p-2 pl-10 block w-full border-indigo-500 rounded-md bg-indigo-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-md">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                <span class="text-gray-500 sm:text-sm"><i class="fas fa-coins ml-1 text-yellow-500"></i> COP</span>
+        <div class="flex gap-2 mt-6">
+            <label for="totalMaterialCostEdit" class="block text-lg font-semibold text-gray-600">
+                Total Materiales
+            </label>
+            <div
+                class="relative mt-1 px-2 w-full bg-gray-100 border border-indigo-300 font-bold text-lg rounded-md focus:ring-teal-500 focus:border-teal-500 flex items-center">
+                <i class="fas fa-coins ml-1 text-yellow-500"></i>
+                <input type="text" id="totalMaterialCostEdit" name="totalMaterialCostEdit"
+                       value="$ {{ number_format($totalMaterialCostEdit, 0, ',') }}" readonly
+                       class="ml-2 bg-transparent border-none focus:ring-0">
+            </div>
+            <div class="mt-1 flex justify-end">
+                <button wire:click="sendTotalMaterialCostEdit"
+                        class="bg-indigo-500 text-white px-4 py-2 text-sm font-semibold rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    Confirmar
+                </button>
             </div>
         </div>
-
-        <div class="ml-4">
-            <button wire:click="sendTotalMaterialCostEdit" type="button"
-                    class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full">
-                Enviar
-            </button>
-        </div>
-    </div>
+    </label>
 </div>
-
-

@@ -6,32 +6,39 @@ use App\Helpers\DataTypeConverter;
 use App\Models\Transport;
 use Illuminate\View\View;
 use Livewire\Component;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class TransportSelectionEdit extends Component
 {
     public $availableTransportsEdit = [];
     public $selectedTransportsEdit = [];
-    public $quantitiesEdit = [];
-    public $requiredDaysEdit = [];
-    public $efficiencyInputsEdit = [];
-    public $efficienciesEdit = [];
-    public $partialCostsEdit = [];
+    public $quantitiesTransportEdit = [];
+    public $requiredDaysTransportEdit = [];
+    public $efficiencyInputsTransportEdit = [];
+    public $efficienciesTransportEdit = [];
+    public $partialCostsTransportEdit = [];
     public $totalTransportCostEdit = 0;
+    public $transportSearchEdit = '';
     public $existingSelections = [];
 
     protected $rules = [
         'selectedTransportsEdit' => 'required|array|min:1',
         'selectedTransportsEdit.*' => 'exists:transports,id',
-        'quantitiesEdit.*' => 'nullable|numeric|min:0',
-        'requiredDaysEdit.*' => 'nullable|numeric|min:0',
-        'efficiencyInputsEdit.*' => 'nullable|string',
+        'quantitiesTransportEdit.*' => 'nullable|numeric|min:0',
+        'requiredDaysTransportEdit.*' => 'nullable|numeric|min:0',
+        'efficiencyInputsTransportEdit.*' => 'nullable|string',
     ];
 
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
     public function mount(): void
     {
-        $this->availableTransportsEdit = Transport::all();
         $this->initializeFromExistingSelections();
         $this->updateTotalTransportCostEdit();
+
     }
 
     public function initializeFromExistingSelections(): void
@@ -39,12 +46,14 @@ class TransportSelectionEdit extends Component
         foreach ($this->existingSelections as $selection) {
             $transportId = $selection['transport_id'];
             $this->selectedTransportsEdit[] = $transportId;
-            $this->quantitiesEdit[$transportId] = $selection['quantity'];
-            $this->requiredDaysEdit[$transportId] = $selection['required_days'];
-            $this->efficiencyInputsEdit[$transportId] = $selection['efficiency'];
-            $this->efficienciesEdit[$transportId] = DataTypeConverter::convertToFloat($selection['efficiency']);
-            $this->calculatePartialCostEdit($transportId);
+            $this->quantitiesTransportEdit[$transportId] = $selection['quantity'];
+            $this->requiredDaysTransportEdit[$transportId] = $selection['required_days'];
+            $this->efficiencyInputsTransportEdit[$transportId] = $selection['efficiency'];
+            $this->efficienciesTransportEdit[$transportId] = DataTypeConverter::convertToFloat($selection['efficiency']);
+            $this->calculatePartialCostTransportEdit($transportId);
         }
+
+        $this->availableTransportsEdit = Transport::whereIn('id', $this->selectedTransportsEdit)->get();
     }
 
     public function updatedSelectedTransportsEdit(): void
@@ -52,107 +61,126 @@ class TransportSelectionEdit extends Component
         foreach ($this->availableTransportsEdit as $transport) {
             $transportId = $transport->id;
             if (!in_array($transportId, $this->selectedTransportsEdit)) {
-                $this->quantitiesEdit[$transportId] = null;
-                $this->requiredDaysEdit[$transportId] = null;
-                $this->efficiencyInputsEdit[$transportId] = null;
-                $this->efficienciesEdit[$transportId] = null;
-                $this->partialCostsEdit[$transportId] = 0;
+                $this->quantitiesTransportEdit[$transportId] = null;
+                $this->requiredDaysTransportEdit[$transportId] = null;
+                $this->efficiencyInputsTransportEdit[$transportId] = null;
+                $this->efficienciesTransportEdit[$transportId] = null;
+                $this->partialCostsTransportEdit[$transportId] = 0;
             }
         }
         $this->updateTotalTransportCostEdit();
     }
 
-
-    public function calculatePartialCostEdit($transportId): void
+    public function addTransportEdit($transportId): void
     {
-        if (in_array($transportId, $this->selectedTransportsEdit)) {
-            $quantity = $this->quantitiesEdit[$transportId] ?? 0;
-            $requiredDays = $this->requiredDaysEdit[$transportId] ?? 0;
-            $efficiencyInput = $this->efficiencyInputsEdit[$transportId] ?? "1";
-            $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
-
-            if ($efficiency === null) {
-                $this->partialCostsEdit[$transportId] = 0;
-                $this->addError("efficiencyInputsEdit_$transportId", "Entrada de rendimiento inválida: '$efficiencyInput'");
-                return;
-            }
-
-            if (is_numeric($quantity) && is_numeric($requiredDays)) {
-                $transport = Transport::find($transportId);
-                $dailyCost = $transport->cost_per_day;
-                $partialCost = $quantity * $requiredDays * $efficiency * $dailyCost;
-                $this->partialCostsEdit[$transportId] = $partialCost;
-            } else {
-                $this->partialCostsEdit[$transportId] = 0;
-            }
+        if (!in_array($transportId, $this->selectedTransportsEdit)) {
+            $this->selectedTransportsEdit[] = $transportId;
         } else {
-            $this->partialCostsEdit[$transportId] = 0;
+            // Move the transport to the end of the array to ensure it is displayed last
+            $this->selectedTransportsEdit = array_merge(array_diff($this->selectedTransportsEdit, [$transportId]), [$transportId]);
         }
-    }
-
-    public function updatedQuantitiesEdit($value, $transportId): void
-    {
-        if (!is_numeric($value)) {
-            $this->quantitiesEdit[$transportId] = null;
-            return;
-        }
-
-        $this->calculatePartialCostEdit($transportId);
+        $this->transportSearchEdit = '';
         $this->updateTotalTransportCostEdit();
     }
 
-    public function updatedRequiredDaysEdit($value, $transportId): void
+    public function removeTransportEdit($transportId): void
     {
-        if (!is_numeric($value)) {
-            $this->requiredDaysEdit[$transportId] = null;
-            return;
-        }
-
-        $this->calculatePartialCostEdit($transportId);
+        $this->selectedTransportsEdit = array_diff($this->selectedTransportsEdit, [$transportId]);
+        unset($this->quantitiesTransportEdit[$transportId]);
+        unset($this->requiredDaysTransportEdit[$transportId]);
+        unset($this->efficiencyInputsTransportEdit[$transportId]);
+        unset($this->efficienciesTransportEdit[$transportId]);
+        unset($this->partialCostsTransportEdit[$transportId]);
         $this->updateTotalTransportCostEdit();
     }
 
-    public function updatedEfficiencyInputsEdit($value, $transportId): void
+    public function calculatePartialCostTransportEdit($transportId): void
+    {
+        $quantity = $this->quantitiesTransportEdit[$transportId] ?? 0;
+        $requiredDays = $this->requiredDaysTransportEdit[$transportId] ?? 0;
+        $efficiencyInput = $this->efficiencyInputsTransportEdit[$transportId] ?? "1";
+        $efficiency = DataTypeConverter::convertToFloat($efficiencyInput);
+
+        if ($efficiency === null) {
+            $this->partialCostsTransportEdit[$transportId] = 0;
+            $this->addError("efficiencyInputsTransportEdit_$transportId", "Entrada de rendimiento inválida: '$efficiencyInput'");
+        } else {
+            $transport = Transport::find($transportId);
+            $unitPrice = $transport->cost_per_day;
+            $this->partialCostsTransportEdit[$transportId] = $quantity * $requiredDays * $efficiency * $unitPrice;
+        }
+
+        $this->updateTotalTransportCostEdit();
+    }
+
+    public function updatedQuantitiesTransportEdit($value, $transportId): void
+    {
+        if (!is_numeric($value)) {
+            $this->quantitiesTransportEdit[$transportId] = null;
+            return;
+        }
+        $this->calculatePartialCostTransportEdit($transportId);
+        $this->updateTotalTransportCostEdit();
+    }
+
+    public function updatedRequiredDaysTransportEdit($value, $transportId): void
+    {
+        if (!is_numeric($value)) {
+            $this->requiredDaysTransportEdit[$transportId] = null;
+            return;
+        }
+        $this->calculatePartialCostTransportEdit($transportId);
+        $this->updateTotalTransportCostEdit();
+    }
+
+    public function updatedEfficiencyInputsTransportEdit($value, $transportId): void
     {
         $efficiency = DataTypeConverter::convertToFloat($value);
 
         if ($efficiency === null) {
-            $this->addError("efficiencyInputsEdit_$transportId", "Entrada de rendimiento inválida: '$value'");
+            $this->addError("efficiencyInputsTransportEdit_$transportId", "Entrada de rendimiento inválida: '$value'");
             return;
         }
-
-        $this->efficienciesEdit[$transportId] = $efficiency;
-        $this->efficiencyInputsEdit[$transportId] = $value;
-        $this->calculatePartialCostEdit($transportId);
+        $this->efficienciesTransportEdit[$transportId] = $efficiency;
+        $this->efficiencyInputsTransportEdit[$transportId] = $value;
+        $this->calculatePartialCostTransportEdit($transportId);
         $this->updateTotalTransportCostEdit();
     }
 
     public function updateTotalTransportCostEdit(): void
     {
-        $this->totalTransportCostEdit = array_sum($this->partialCostsEdit);
+        $this->totalTransportCostEdit = array_sum($this->partialCostsTransportEdit);
     }
 
     public function sendTotalTransportCostEdit(): void
     {
-//        $this->dispatch("totalTransportCostEditUpdated", $this->totalTransportCostEdit);
-        $this->dispatch("transportSelectionEditUpdated", [
-            "selectedTransportsEdit" => $this->selectedTransportsEdit,
-            "transportQuantitiesEdit" => $this->quantitiesEdit,
-            "transportRequiredDaysEdit" => $this->requiredDaysEdit,
-            "transportEfficienciesEdit" => $this->efficienciesEdit,
-            "totalTransportCostEdit" => $this->totalTransportCostEdit,
+        $this->dispatch('transportSelectionEditUpdated', [
+            'selectedTransportsEdit' => $this->selectedTransportsEdit,
+            'transportQuantitiesEdit' => $this->quantitiesTransportEdit,
+            'transportRequiredDaysEdit' => $this->requiredDaysTransportEdit,
+            'transportEfficienciesEdit' => $this->efficienciesTransportEdit,
+            'totalTransportCostEdit' => $this->totalTransportCostEdit,
         ]);
 
         if ($this->totalTransportCostEdit > 0) {
-            $this->dispatch("hideResourceFormEdit");
+            $this->dispatch('hideResourceFormEdit');
         }
     }
 
     public function render(): View
     {
-        return view("livewire.projects.transport-selection-edit", [
-            'transports' => $this->availableTransportsEdit,
+        $filteredTransports = Transport::query()
+            ->where('vehicle_type', 'like', "%$this->transportSearchEdit%")
+            ->get();
+
+        // Reverse the selected transports array to show the last selected at the top
+        $selectedTransports = Transport::whereIn('id', $this->selectedTransportsEdit)->get()->sortByDesc(function ($transport) {
+            return array_search($transport->id, $this->selectedTransportsEdit);
+        });
+
+        return view('livewire.projects.transport-selection-edit', [
+            'transports' => $filteredTransports,
+            'selectedTransports' => $selectedTransports,
         ]);
     }
 }
-
