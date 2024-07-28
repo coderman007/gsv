@@ -15,8 +15,8 @@
 
     <x-dialog-modal wire:model="openShow" maxWidth="4xl">
         <x-slot name="title">
-            <h2 class="text-xl font-semibold text-blue-400 dark:text-white">Información de la Categoría de
-                Proyecto</h2>
+            <h2 class="text-2xl font-semibold text-center text-gray-500 dark:text-white py-6">Detalle de la
+                Categoría</h2>
         </x-slot>
 
         <x-slot name="content">
@@ -30,20 +30,37 @@
                             </div>
                         </div>
                     @endif
-                    <div class="col-span-1">
-                        <h1 class="text-lg font-bold text-gray-900 dark:text-gray-400">Nombre</h1>
-                        <p class="text-lg text-gray-800 dark:text-white">{{ $category->name }}</p>
+                    <div class="space-y-2">
+                        <label for="capacity"
+                               class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Capacidad:</label>
+                        <div class="px-6 py-4 dark:text-lg">
+                            <div class="bg-cyan-100 p-2 rounded-sm font-semibold text-center text-lg">
+                                <span>{{ $category->name }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-span-1">
-                        <h1 class="text-lg font-bold text-gray-900 dark:text-gray-400">Estado</h1>
-                        <p class="text-lg py-2 rounded-md {{ $category->status == 'Activo' ? 'text-green-500 dark:text-green-600' : 'text-red-500 dark:text-red-600' }}">
-                            {{ $category->status }}
-                        </p>
+
+                    <div class="space-y-2">
+                        <label for="capacity"
+                               class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Estado:</label>
+                        <div class="px-6 py-4 dark:text-lg">
+                            <div class="bg-cyan-100 rounded-sm font-semibold text-center text-lg">
+                                <p class="text-lg py-2 rounded-md {{ $category->status == 'Activo' ? 'text-green-500 dark:text-green-600' : 'text-red-500 dark:text-red-600' }}">
+                                    {{ $category->status }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="col-span-1 md:col-span-2">
-                        <h1 class="text-lg font-bold text-gray-900 dark:text-gray-400">Descripción</h1>
-                        <div class="text-lg text-gray-800 dark:text-white pl-4" style="overflow-wrap: break-word; text-align: justify;">
-                            {{ $category->description }}
+                        <div class="space-y-2">
+                            <label for="capacity" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Descripción:</label>
+                            <div class="px-6 py-4 dark:text-lg">
+                                <div style="overflow-wrap: break-word; text-align: justify;"
+                                     class="bg-cyan-100 p-2 rounded-sm font-semibold text-center text-lg">
+                                    <span>{{ $category->description }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -12,33 +12,55 @@
     </a>
 
     <!-- Diálogo modal para mostrar detalles de la política comercial -->
-    <x-dialog-modal wire:model="openShow">
-        <x-slot name="title">
-            <!-- Cambiar color del título a azul -->
-            <div class="text-center text-blue-500 text-xl">Detalles de la Política Comercial</div>
-        </x-slot>
+    <x-dialog-modal maxWidth="3xl" wire:model="openShow">
+        <div class="w-full mx-auto bg-white dark:bg-gray-800 shadow-md p-6 rounded-md">
+            <!-- Título del modal -->
+            <x-slot name="title">
+                <h2 class="font-semibold text-2xl text-center pt-4 text-gray-500 dark:text-gray-300">Detalle de Política Comercial</h2>
+            </x-slot>
+            <!-- Contenido del modal -->
+            <x-slot name="content">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <!-- Nombre -->
+                    <div class="space-y-2 md:col-span-2">
+                        <p id="name"
+                           class="text-violet-500 dark:text-violet-200 text-2xl font-bold p-4 dark:bg-violet-600 rounded-lg">{{ ucfirst($commercialPolicy->name) }}</p>
+                    </div>
 
-        <x-slot name="content">
-            <!-- Cambiar el fondo a blanco, con un borde suave para diferenciar -->
-            <div class="md:px-5 pb-5 bg-white rounded-lg shadow p-6">
-                <div class="md:mx-6">
-                    <!-- Cambiar estilo de texto a gris oscuro, con tonos más consistentes -->
-                    <h3 class="text-xl font-semibold text-gray-800">{{ $commercialPolicy->name }}</h3>
-                    <p class="p-2 text-lg text-gray-700">
-                        Porcentaje: {{ $commercialPolicy->percentage }}%
-                    </p>
+                    <!-- Porcentaje -->
+                    <div class="space-y-2">
+                        <label for="percentage" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Porcentaje:</label>
+                        <div class="px-6 py-4 dark:text-lg">
+                            <div class="bg-violet-100 p-2 rounded-sm font-semibold text-center text-lg">
+                                <span>{{ $commercialPolicy->percentage }}%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Descripción (si existe) -->
+                    @if($commercialPolicy->description)
+                        <div class="space-y-2">
+                            <label for="description" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Descripción:</label>
+                            <div class="px-6 py-4 dark:text-lg">
+                                <div class="bg-violet-100 p-2 rounded-sm font-semibold text-center text-lg">
+                                    <span>{{ $commercialPolicy->description }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
-            </div>
-        </x-slot>
+            </x-slot>
 
-        <x-slot name="footer">
-            <div class="flex justify-center mx-auto text-lg">
-                <button type="button" wire:click="$set('openShow', false)"
-                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
-                    <i class="fa-solid fa-ban mr-2"></i> Salir
-                </button>
-            </div>
-        </x-slot>
-
+            <!-- Pie del modal con el botón de cierre -->
+            <x-slot name="footer">
+                <div class="flex justify-end">
+                    <button wire:click="$set('openShow', false)"
+                            class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-md transition duration-300 ease-in-out flex items-center">
+                        <i class="fas fa-times mr-2"></i>
+                        Cerrar
+                    </button>
+                </div>
+            </x-slot>
+        </div>
     </x-dialog-modal>
 </div>

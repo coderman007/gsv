@@ -127,7 +127,7 @@
                         <td class="px-6 py-4 dark:text-lg">{{ $project->required_area . " mts" }}<sup>2</sup></td>
                         <td class="px-6 py-4 dark:text-lg">{{ $project->zone }}</td>
                         <td class="px-6 py-4 dark:text-lg">
-                            <div class="bg-sky-100 p-2 rounded-sm font-semibold text-right">
+                            <div class="bg-emerald-100 p-2 rounded-sm font-semibold text-right">
                                 <span class="">$</span>
                                 <span
                                     class="">{{ number_format($project->sale_value, 0, ',') }}</span>

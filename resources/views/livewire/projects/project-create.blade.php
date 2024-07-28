@@ -168,11 +168,11 @@
                         </div>
                         <div class="flex flex-col justify-center">
                             <button wire:click="showTransportForm"
-                                    class="bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-full"
+                                    class="bg-lime-500 hover:bg-lime-700 text-white font-bold py-2 px-4 rounded-full"
                                     type="button">Transporte
                             </button>
                             <div
-                                class="text-slate-500 font-bold text-center ">
+                                class="text-lime-500 font-bold text-center ">
                                 $ {{ number_format($totalTransportCost, 0, ',') }}</div>
                         </div>
                         <div class="flex flex-col justify-center">

@@ -5,17 +5,17 @@
                    id="transportSearchInput"
                    type="text"
                    placeholder="Buscar transportes ..."
-                   class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
+                   class="mt-1 p-2 block w-full border-lime-300 rounded-md focus:ring-lime-500 focus:border-lime-500 text-sm font-medium text-gray-700">
 
             @if(strlen($transportSearch) > 0)
                 @if($transports->isEmpty())
                     <p class="mt-2 text-sm text-gray-500">No se encontraron transportes que coincidan con la
                         búsqueda.</p>
                 @else
-                    <ul class="mt-2 border border-slate-300 rounded-md max-h-60 overflow-y-auto text-sm">
+                    <ul class="mt-2 border border-lime-300 rounded-md max-h-60 overflow-y-auto text-sm">
                         @foreach ($transports as $transport)
                             @if (!in_array($transport->id, $selectedTransportsCreate))
-                                <li class="p-2 hover:bg-slate-100 cursor-pointer"
+                                <li class="p-2 hover:bg-lime-100 cursor-pointer"
                                     wire:click="addTransport({{ $transport->id }})">
                                     {{ $transport->vehicle_type }}
                                 </li>
@@ -33,7 +33,7 @@
                                 class="ml-5 bg-red-100 text-sm hover:bg-red-200 text-red-500 hover:text-red-800 rounded-md px-3 py-1">
                             x
                         </button>
-                        <span class="ml-2 text-sm font-medium text-slate-700">
+                        <span class="ml-2 text-sm font-medium text-lime-700">
                             {{ ucfirst($transport->vehicle_type) }}
                         </span>
                     </div>
@@ -43,7 +43,7 @@
                         <label for="quantityTransportCreate{{ $transport->id }}" class="block text-sm font-medium text-gray-700">Cantidad</label>
                         <input wire:model.live="quantitiesTransportCreate.{{ $transport->id }}" type="number" min=0 step=1
                                id="quantityTransportCreate{{ $transport->id}}"
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus text-sm font-medium text-gray-700">
+                               class="mt-1 p-2 block w-full border-lime-300 rounded-md focus text-sm font-medium text-gray-700">
                         {{-- value="{{ old('quantitiesTransportCreate.' . $transport->id, $quantitiesTransportCreate[$transport->id] ?? 0) }}" --}}
                         @error('quantitiesTransportCreate.' . $transport->id)
                         <span class="text-red-500">{{ $message }}</span>
@@ -54,7 +54,7 @@
                                class="block text-sm font-medium text-gray-700">Días requeridos</label>
                         <input wire:model.live="requiredDaysTransportCreate.{{ $transport->id }}" type="number" min=0 step=1
                                id="requiredDaysTransportCreate{{ $transport->id }}"
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500 text-sm font-medium text-gray-700">
+                               class="mt-1 p-2 block w-full border-lime-300 rounded-md focus:ring-lime-500 focus:border-lime-500 text-sm font-medium text-gray-700">
                         {{-- value="{{ old('requiredDaysTransportCreate.' . $transport->id, $requiredDaysTransportCreate[$transport->id] ?? 0) }}"--}}
                         @error('requiredDaysTransportCreate.' . $transport->id)
                         <span class="text-red-500">{{ $message }}</span>
@@ -66,7 +66,7 @@
                                class="block text-sm font-medium text-gray-700">Rendimiento</label>
                         <input wire:model.live="efficiencyInputsTransportCreate.{{ $transport->id }}" type="text"
                                id="efficiencyInputTransportCreate{{ $transport->id }}"
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500">
+                               class="mt-1 p-2 block w-full border-lime-300 rounded-md focus:ring-lime-500 focus:border-lime-500">
                         {{-- value="{{ old('efficiencyInputsTransportCreate.' . $transport->id, $efficiencyInputsTransportCreate[$transport->id] ?? '1') }}"--}}
                         @error('efficiencyInputsTransportCreate.' . $transport->id)
                         <span class="text-red-500">{{ $message }}</span>
@@ -79,7 +79,7 @@
                         <input type="text" id="partialCostTransportCreate{{ $transport->id }}"
                                name="partialCostTransportCreate{{ $transport->id }}"
                                value="$ {{ number_format($partialCostsTransportCreate[$transport->id] ?? 0, 0, ',') }}"
-                               class="mt-1 p-2 block w-full border-slate-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
+                               class="mt-1 p-2 block w-full border-lime-300 rounded-md focus:ring-lime-500 focus:border-lime-500"
                                readonly>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
             <label for="totalTransportCostCreate" class="block text-lg font-semibold text-gray-600">Total
                 Transporte</label>
             <div
-                class="relative mt-1 px-2 w-full bg-gray-100 border border-slate-300 font-bold text-lg rounded-md focus:ring-teal-500 focus:border-teal-500 flex items-center">
+                class="relative mt-1 px-2 w-full bg-gray-100 border border-lime-300 font-bold text-lg rounded-md focus:ring-teal-500 focus:border-teal-500 flex items-center">
                 <i class="fas fa-coins ml-1 text-yellow-500"></i>
                 <input type="text" id="totalTransportCostCreate" name="totalTransportCostCreate"
                        value="$ {{ number_format($totalTransportCostCreate, 0, ',') }}" readonly
@@ -97,7 +97,7 @@
             </div>
             <div class="mt-1 flex justify-end">
                 <button wire:click="sendTotalTransportCostCreate"
-                        class="bg-slate-500 text-white px-4 py-2 text-sm font-semibold rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+                        class="bg-lime-500 text-white px-4 py-2 text-sm font-semibold rounded-md hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2">
                     Confirmar
                 </button>
             </div>
