@@ -3,8 +3,8 @@
             class="rounded-md px-3.5 py-2 m-1 overflow-hidden relative group cursor-pointer border-2 font-medium border-gray-500 hover:border-blue-500 text-white">
         <span
             class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
-        <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease"><i
-                class="fa fa-solid fa-plus text-xl"></i> Nuevo Cliente </span>
+        <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease">
+            <i class="fa-solid fa-user-tag text-xl"></i> Nuevo Cliente </span>
     </button>
 
     <x-dialog-modal maxWidth="5xl" wire:model="openCreate">
@@ -113,11 +113,16 @@
             </x-slot>
 
             <x-slot name="footer">
-                <div class="mt-5 flex justify-end">
-                    <x-success-button type="submit" wire:click="createClient"
+                <div class="mt-5 flex gap-4 justify-end">
+
+                    <x-button-exit wire:click="$set('openCreate', false)">
+                        Cancelar
+                    </x-button-exit>
+
+                    <x-button-create type="submit" wire:click="createClient"
                                       class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
                         Crear Cliente
-                    </x-success-button>
+                    </x-button-create>
                 </div>
             </x-slot>
         </div>

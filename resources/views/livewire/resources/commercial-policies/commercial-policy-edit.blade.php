@@ -43,19 +43,17 @@
         </x-slot>
 
         <x-slot name="footer">
-            <div class="flex justify-center gap-4 p-4 border-t border-gray-300">
-                <!-- Botón para cancelar y cerrar el diálogo -->
-                <button wire:click="$toggle('openEdit')"
-                        class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none transition duration-200">
-                    Salir
+            <div class="flex justify-between gap-4 text-lg">
+                <button type="button" wire:click="$set('openEdit', false)"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-solid fa-ban mr-2"></i> Cancelar
                 </button>
-
-                <!-- Botón para guardar cambios -->
-                <button wire:click="updateCommercialPolicy"
+                <button type="submit"
+                        wire:click="updateCommercialPolicy"
                         wire:loading.attr="disabled"
                         wire:target="updateCommercialPolicy"
-                        class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none transition duration-200">
-                    Guardar Cambios
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-solid fa-pen-to-square mr-2 text-xl"></i> Actualizar
                 </button>
             </div>
         </x-slot>

@@ -1,26 +1,21 @@
-<div>
-    <div class="relative inline-block text-center cursor-pointer group">
-        <a href="#" wire:click="$set('openEdit', true)">
-            <div class="flex items-center justify-center p-2 text-gray-200 rounded-md bg-gradient-to-br from-blue-300 to-blue-500 hover:from-blue-500 hover:to-gray-700 hover:text-white transition duration-300 ease-in-out">
-                <i class="fa-solid fa-pen-to-square"></i>
-            </div>
-            <div class="absolute z-10 px-3 py-2 text-center text-white bg-gray-800 rounded-lg opacity-0 pointer-events-none text-md group-hover:opacity-80 bottom-full -left-3">
-                Editar
-                <svg class="absolute left-0 w-full h-2 text-black top-full" x="0px" y="0px" viewBox="0 0 255 255" xml:space="preserve">
-                </svg>
-            </div>
-        </a>
-    </div>
+<div class="relative inline-block text-center cursor-pointer group">
+    <a href="#" wire:click="$set('openEdit', true)">
+        <div class="flex items-center justify-center p-2 text-gray-200 rounded-md bg-gradient-to-br from-blue-300 to-blue-500 hover:from-blue-500 hover:to-gray-700 hover:text-white transition duration-300 ease-in-out">
+            <i class="fa-solid fa-pen-to-square"></i>
+        </div>
+        <div class="absolute z-10 px-3 py-2 text-center text-white bg-gray-800 rounded-lg opacity-0 pointer-events-none text-md group-hover:opacity-100 transition duration-300">
+            <i class="fa-solid fa-arrow-up"></i> Editar
+        </div>
+    </a>
 
     <x-dialog-modal maxWidth="3xl" wire:model="openEdit">
-        <div class="w-full mx-auto bg-white shadow-md p-6 rounded-md">
-            <x-slot name="title">
-                <h2 class="font-semibold text-2xl text-center pt-4 text-blue-500">Editar Herramienta</h2>
-            </x-slot>
+        <x-slot name="title">
+            <h2 class="text-2xl font-semibold text-center text-gray-500 dark:text-white py-6">Editar Herramienta</h2>
+        </x-slot>
 
-            <x-slot name="content">
-                <form wire:submit.prevent="updateTool" class="flex flex-col items-center mt-6 p-4 bg-gray-50 rounded-lg">
-
+        <x-slot name="content">
+            <div class="border border-sky-500 shadow-sm shadow-sky-500 m-4 p-10 rounded-lg">
+                <form class="space-y-5 mx-auto">
                     <!-- Imagen -->
                     <div class="p-4">
                         <div class="relative">
@@ -54,32 +49,40 @@
                         </div>
                     </div>
 
-                    <!-- Campo para ingresar el nombre de la herramienta -->
-                    <div class="space-y-2 w-3/4 text-xs">
-                        <label for="name" class="block text-gray-700">Nombre:</label>
+                    <!-- Campo para el nombre de la herramienta -->
+                    <div class="mb-5">
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-500 dark:text-white text-left">Nombre:</label>
                         <input wire:model="name" type="text" id="name"
-                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
-                        <x-input-error for="name"/>
+                               class="bg-sky-50 border border-sky-300 text-gray-500 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500"
+                               placeholder="Ingrese el nombre" required />
+                        <x-input-error for="name" />
                     </div>
 
-                    <!-- Campo para ingresar el precio unitario por día de la herramienta -->
-                    <div class="space-y-2 w-3/4 text-xs">
-                        <label for="unitPricePerDay" class="block text-gray-700">Precio Unitario por Día:</label>
-                        <input wire:model="unitPricePerDay" type="number" id="unitPricePerDay"
-                               class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2">
-                        <x-input-error for="unitPricePerDay"/>
+                    <!-- Campo para el precio unitario por día de la herramienta -->
+                    <div class="mb-5">
+                        <label for="unitPricePerDay" class="block mb-2 text-sm font-medium text-gray-500 dark:text-white text-left">Precio Unitario por Día:</label>
+                        <input wire:model="unitPricePerDay" type="number" id="unitPricePerDay" step="0.01"
+                               class="bg-sky-50 border border-sky-300 text-gray-500 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500"
+                               placeholder="Ingrese el precio unitario por día" required />
+                        <x-input-error for="unitPricePerDay" />
                     </div>
-
                 </form>
-            </x-slot>
-            <x-slot name="footer">
-                <div class="flex justify-end">
-                    <button type="submit" wire:click="updateTool"
-                            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
-                        Actualizar
-                    </button>
-                </div>
-            </x-slot>
-        </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <div class="flex justify-between gap-4 text-lg">
+                <button type="button" wire:click="$set('openEdit', false)"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-solid fa-ban mr-2"></i> Cancelar
+                </button>
+                <button type="submit" wire:click="updateTool"
+                        wire:loading.attr="disabled"
+                        wire:target="updateTool"
+                        class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-solid fa-pen-to-square mr-2 text-xl"></i> Actualizar
+                </button>
+            </div>
+        </x-slot>
     </x-dialog-modal>
 </div>

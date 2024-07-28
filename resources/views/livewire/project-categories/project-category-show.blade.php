@@ -21,31 +21,28 @@
 
         <x-slot name="content">
             <div class="w-full h-auto bg-white dark:bg-gray-800">
-                <div class="grid grid-cols-2 gap-4 p-6">
-                    <div class="col-span-2 mb-4 flex justify-center">
-                        <div class="mx-auto rounded-lg overflow-hidden border-2 border-blue-500">
-                            <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}"
-                                 class="w-72 h-auto rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+                    @if($category->image)
+                        <div class="col-span-1 md:col-span-2 mb-4 flex justify-center">
+                            <div class="w-72 rounded-lg overflow-hidden border-2 border-blue-500">
+                                <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}"
+                                     class="w-full h-auto rounded-lg">
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Nombre</h1>
+                    @endif
+                    <div class="col-span-1">
+                        <h1 class="text-lg font-bold text-gray-900 dark:text-gray-400">Nombre</h1>
                         <p class="text-lg text-gray-800 dark:text-white">{{ $category->name }}</p>
                     </div>
-                    <div>
-                        <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Estado</h1>
-                        @if ($category->status == 'Activo')
-                            <p class="text-lg py-2 text-green-500 dark:text-green-600 rounded-md">
-                                {{ $category->status }}</p>
-                        @else
-                            <p class="text-lg py-2 text-red-500 dark:text-red-600 rounded-md">
-                                {{ $category->status }}</p>
-                        @endif
+                    <div class="col-span-1">
+                        <h1 class="text-lg font-bold text-gray-900 dark:text-gray-400">Estado</h1>
+                        <p class="text-lg py-2 rounded-md {{ $category->status == 'Activo' ? 'text-green-500 dark:text-green-600' : 'text-red-500 dark:text-red-600' }}">
+                            {{ $category->status }}
+                        </p>
                     </div>
-                    <div class="col-span-2">
-                        <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Descripción</h1>
-                        <div class="text-lg text-gray-800 dark:text-white pl-4"
-                             style="overflow-wrap: break-word; text-align: justify;">
+                    <div class="col-span-1 md:col-span-2">
+                        <h1 class="text-lg font-bold text-gray-900 dark:text-gray-400">Descripción</h1>
+                        <div class="text-lg text-gray-800 dark:text-white pl-4" style="overflow-wrap: break-word; text-align: justify;">
                             {{ $category->description }}
                         </div>
                     </div>
@@ -54,10 +51,11 @@
         </x-slot>
 
         <x-slot name="footer">
-            <div class="mx-auto px-6">
+            <div class="flex justify-end">
                 <button wire:click="$set('openShow', false)"
-                        class="bg-blue-500 hover:bg-blue-600 text-white text-lg font-semibold py-2 px-6 rounded-md">
-                    Salir
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-md transition duration-300 ease-in-out flex items-center">
+                    <i class="fas fa-times mr-2"></i>
+                    Cerrar
                 </button>
             </div>
         </x-slot>

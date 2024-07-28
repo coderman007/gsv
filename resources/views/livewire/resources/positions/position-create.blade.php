@@ -5,7 +5,7 @@
         <span
             class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
         <span class="relative transition duration-700 group-hover:text-white ease">
-            <i class="fas fa-plus mr-2"></i> Nueva Posición Laboral
+            <div class="flex items-center gap-2"><i class="fa-solid fa-helmet-safety text-xl"></i> <span>Nueva Posición Laboral</span></div>
         </span>
     </button>
 
@@ -14,13 +14,13 @@
         <div class="w-full mx-auto bg-white dark:bg-gray-800 shadow-md p-6 rounded-md">
             <!-- Título del modal -->
             <x-slot name="title">
-                <h2 class="font-semibold text-2xl text-center pt-4 text-blue-500 dark:text-blue-400">Crear Nueva
+                <h2 class="font-semibold text-2xl text-center pt-4 text-gray-500 dark:text-gray-400">Nueva
                     Posición Laboral</h2>
             </x-slot>
 
             <!-- Contenido del modal -->
             <x-slot name="content">
-                <form wire:submit.prevent="createPosition" class="space-y-6">
+                <form wire:submit="createPosition" class="space-y-6">
                     <!-- Step 1: Nombre -->
                     <div x-data="{ step: 1 }" class="space-y-6">
                         <div x-show="step === 1" class="space-y-4 relative">
@@ -28,12 +28,18 @@
                                 de la posición</label>
                             <div class="relative">
                                 <input id="name" placeholder="Nombre de la posición" wire:model.live="name"
-                                       class="mt-1 block w-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                       class="bg-teal-50 border border-teal-300 text-gray-500 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
                                        required type="text">
-                                <button type="button" x-on:click="step = 2"
-                                        class="absolute right-0 top-0 mt-16 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
-                                    <i class="fas fa-arrow-right mr-2"></i>Siguiente
-                                </button>
+                                <div class="flex justify-between mt-4">
+                                    <button type="button" wire:click="$set('openCreate', false)"
+                                            class="bg-gray-500 hover:bg-gray-600 text-white font-semibold mt-1 py-2 px-4 rounded-md transition-all duration-300">
+                                        <i class="fa-solid fa-ban mr-2"></i> Cancelar
+                                    </button>
+                                    <button type="button" x-on:click="step = 2"
+                                            class="absolute right-0 top-0 mt-16 bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                                        <i class="fas fa-arrow-right mr-2"></i>Siguiente
+                                    </button>
+                                </div>
                             </div>
                             @error('name') <span class="text-red-500 mt-2"> {{$message }} </span> @enderror
                         </div>
@@ -43,7 +49,7 @@
                             <label for="basic" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Salario
                                 Básico</label>
                             <input id="basic" placeholder="Salario Básico" wire:model.live="basic"
-                                   class="mt-1 block w-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                   class="bg-teal-50 border border-teal-300 text-gray-500 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
                                    required type="number" step="0.01">
                             @error('name') <span class="text-red-500 mt-2"> {{$message }} </span> @enderror
 
@@ -53,7 +59,7 @@
                                     <i class="fas fa-arrow-left mr-2"></i> Anterior
                                 </button>
                                 <button type="button" x-on:click="step = 3"
-                                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                                        class="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
                                     <i class="fas fa-arrow-right mr-2"></i>Siguiente
                                 </button>
                             </div>
@@ -66,7 +72,7 @@
                                 al Mes</label>
                             <input id="monthlyWorkHours" placeholder="Horas Trabajadas al Mes"
                                    wire:model.live="monthlyWorkHours"
-                                   class="mt-1 block w-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                   class="bg-teal-50 border border-teal-300 text-gray-500 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
                                    required type="number" step="0.01">
                             <x-input-error for="monthlyWorkHours" class="mt-2"/>
                             <div class="flex justify-between mt-4">
@@ -75,7 +81,7 @@
                                     <i class="fas fa-arrow-left mr-2"></i> Anterior
                                 </button>
                                 <button type="button" x-on:click="step = 4"
-                                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                                        class="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
                                     <i class="fas fa-arrow-right mr-2"></i>Siguiente
                                 </button>
                             </div>
@@ -84,9 +90,10 @@
                         <!-- Step 4: Factor Prestacional -->
                         <div x-show="step === 4" class="space-y-4">
                             <label for="benefitFactor"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300">Factor Prestacional</label>
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300">Factor
+                                Prestacional</label>
                             <input id="benefitFactor" placeholder="Factor Prestacional" wire:model.live="benefitFactor"
-                                   class="mt-1 block w-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                   class="bg-teal-50 border border-teal-300 text-gray-500 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
                                    required type="number" step="0.01">
                             <x-input-error for="benefitFactor" class="mt-2"/>
                             <div class="flex justify-between mt-4">
@@ -95,7 +102,7 @@
                                     <i class="fas fa-arrow-left mr-2"></i> Anterior
                                 </button>
                                 <button type="button" x-on:click="step = 5"
-                                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                                        class="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
                                     <i class="fas fa-arrow-right mr-2"></i>Siguiente
                                 </button>
                             </div>
@@ -109,7 +116,7 @@
                                     Real</label>
                                 <input id="realMonthlyCost" placeholder="Costo Mensual Real"
                                        value="{{ number_format($realMonthlyCost, 2) }}" readonly
-                                       class="mt-1 block w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                       class="bg-teal-50 border border-teal-300 text-gray-500 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
                                        required type="text">
                                 <x-input-error for="realMonthlyCost" class="mt-2"/>
                             </div>
@@ -120,7 +127,7 @@
                                     Real</label>
                                 <input id="realDailyCost" placeholder="Costo Diario Real"
                                        value="{{ number_format($realDailyCost, 2) }}" readonly
-                                       class="mt-1 block w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                       class="bg-teal-50 border border-teal-300 text-gray-500 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
                                        required type="text">
                                 <x-input-error for="realDailyCost" class="mt-2"/>
                             </div>
@@ -131,8 +138,8 @@
                                     <i class="fas fa-arrow-left mr-2"></i> Anterior
                                 </button>
                                 <button type="submit" wire:click="createPosition"
-                                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
-                                    <i class="fas fa-plus mr-2"></i> Crear Posición
+                                        class="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                                    <i class="fa-regular fa-floppy-disk mr-2 text-xl"></i> Guardar
                                 </button>
                             </div>
 

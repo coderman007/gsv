@@ -18,34 +18,46 @@
         <div class="w-full mx-auto bg-white dark:bg-gray-800 shadow-md p-6 rounded-md">
             <!-- Título del modal -->
             <x-slot name="title">
-                <h2 class="font-semibold text-2xl text-center pt-4 text-gray-500 dark:text-gray-400">Detalle de Transporte</h2>
+                <h2 class="font-semibold text-2xl text-center pt-4 text-gray-500 dark:text-gray-300">Detalle de Transporte</h2>
             </x-slot>
             <!-- Contenido del modal -->
             <x-slot name="content">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <!-- Tipo de vehículo -->
                     <div class="space-y-2 md:col-span-2">
-                        <label for="vehicle_type" class="font-semibold text-gray-700 dark:text-gray-300 text-xl">Tipo de Vehículo:</label>
                         <p id="vehicle_type"
-                           class="text-green-800 dark:text-green-200 text-2xl font-bold p-4 bg-green-200 dark:bg-green-600 rounded-lg shadow-md">{{ $transport->vehicle_type }}</p>
+                           class="text-slate-700 dark:text-slate-200 text-2xl font-bold p-4 dark:bg-slate-600 rounded-lg">{{ ucfirst($transport->vehicle_type) }}</p>
                     </div>
 
                     <!-- Costo por día -->
                     <div class="space-y-2">
                         <label for="cost_per_day" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Costo por Día:</label>
-                        <p id="cost_per_day" class="text-gray-800 dark:text-gray-200 text-lg">{{  number_format($transport->cost_per_day, 2) }}</p>
+                        <div class="px-6 py-4 dark:text-lg">
+                            <div class="bg-slate-200 p-2 rounded-sm font-semibold text-center text-lg">
+                                <span>$</span>
+                                <span>{{ number_format($transport->cost_per_day, 2, ',', '.') }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Capacidad -->
                     <div class="space-y-2">
                         <label for="capacity" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Capacidad:</label>
-                        <p id="capacity" class="text-gray-800 dark:text-gray-200 text-lg">{{ $transport->capacity }}</p>
+                        <div class="px-6 py-4 dark:text-lg">
+                            <div class="bg-slate-200 p-2 rounded-sm font-semibold text-center text-lg">
+                                <span>{{ $transport->capacity }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Tipo de combustible -->
                     <div class="space-y-2">
                         <label for="fuel_type" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Tipo de Combustible:</label>
-                        <p id="fuel_type" class="text-gray-800 dark:text-gray-200 text-lg">{{ $transport->fuel_type }}</p>
+                        <div class="px-6 py-4 dark:text-lg">
+                            <div class="bg-slate-200 p-2 rounded-sm font-semibold text-center text-lg">
+                                <span>{{ $transport->fuel_type }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </x-slot>

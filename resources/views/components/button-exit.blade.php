@@ -5,7 +5,7 @@
          font-semibold'
     ]) }}
     wire:click="{{ $clickAction ?? '' }}">
-    <i class="fas fa-sign-out-alt"></i> <!-- Icono para "Salir" -->
+    <i class="fa-solid fa-ban"></i> <!-- Icono para "Salir" -->
     {{ $slot }}
 </button>
 

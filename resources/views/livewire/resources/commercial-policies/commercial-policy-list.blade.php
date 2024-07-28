@@ -3,7 +3,7 @@
 
         {{-- Barra de búsqueda --}}
         <div class="flex justify-start w-1/3">
-            <x-input type="text" name="search" wire:model.live="search"
+            <x-input type="text" name="search" wire:model.lazy="search"
                      class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
                      placeholder="Buscar por nombre..."/>
         </div>

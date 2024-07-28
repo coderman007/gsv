@@ -32,12 +32,11 @@
         </x-slot>
 
         <x-slot name="footer">
-            <div class="flex justify-center gap-4 p-4 border-t border-gray-300">
-                <!-- Cambiar color del botón a azul para consistencia -->
-                <a href="#" wire:click="$set('openShow', false)"
-                   class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none transition duration-200">
-                    Salir
-                </a>
+            <div class="flex justify-center mx-auto text-lg">
+                <button type="button" wire:click="$set('openShow', false)"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-solid fa-ban mr-2"></i> Salir
+                </button>
             </div>
         </x-slot>
 

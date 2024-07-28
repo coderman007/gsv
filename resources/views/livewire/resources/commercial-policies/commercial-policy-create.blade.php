@@ -5,7 +5,7 @@
         <span
             class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-blue-500 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
         <span class="relative text-gray-500 transition duration-700 group-hover:text-white ease">
-            <i class="fa fa-solid fa-plus text-xl"></i> Agregar
+            <div class="flex items-center"><i class="fa-solid fa-file-contract mr-2 text-xl"></i> Nueva Política</div>
         </span>
     </button>
 
@@ -40,19 +40,17 @@
         </x-slot>
 
         <x-slot name="footer">
-            <div class="flex justify-center gap-4 p-4 border-t border-gray-300">
-                <!-- Botón para cancelar y cerrar el diálogo -->
-                <button wire:click="$toggle('openCreate')"
-                        class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none transition duration-200">
-                    Salir
+            <div class="flex justify-between gap-4 text-lg">
+                <button type="button" wire:click="$set('openCreate', false)"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-solid fa-ban mr-2"></i> Cancelar
                 </button>
-
-                <!-- Botón para crear la política comercial -->
-                <button wire:click="createCommercialPolicy"
+                <button type="submit"
+                        wire:click="createCommercialPolicy"
                         wire:loading.attr="disabled"
                         wire:target="createCommercialPolicy"
-                        class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none transition duration-200">
-                    Crear
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-regular fa-square-plus mr-2 text-xl"></i> Crear
                 </button>
             </div>
         </x-slot>

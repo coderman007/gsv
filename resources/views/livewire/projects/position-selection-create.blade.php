@@ -4,7 +4,7 @@
             <input wire:model.live="positionSearch"
                    id="searchInput"
                    type="text"
-                   placeholder="Buscar posiciones ..."
+                   placeholder="Buscar posiciones de trabajo ..."
                    class="mt-1 p-2 block w-full border-teal-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-sm font-medium text-gray-700">
 
             @if(strlen($positionSearch) > 0)

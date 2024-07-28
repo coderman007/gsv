@@ -16,19 +16,19 @@
     <!-- Diálogo modal para editar un transporte -->
     <x-dialog-modal wire:model="openEdit">
         <x-slot name="title">
-            <div class="my-4 text-center text-blue-500 text-xl">
+            <div class="my-4 text-center text-gray-500 text-xl">
                 Editar Transporte
             </div>
         </x-slot>
         <x-slot name="content">
             <!-- Sección para el tipo de vehículo -->
-            <div class="mt-5 bg-white rounded-lg shadow p-6">
+            <div class="mt-5 bg-white rounded-lg border border-fuchsia-500 p-6">
                 <!-- Tipo de Vehículo -->
                 <div class="mb-4">
                     <x-label class="text-left text-lg text-gray-700" value="Tipo de Vehículo" />
                     <!-- Mostrar el tipo de vehículo actual -->
                     <div class="flex items-center mt-2">
-                        <input type="text" wire:model="vehicle_type" class="text-gray-800 w-full px-4 py-2.5 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" wire:model="vehicle_type" class="bg-fuchsia-50 border border-fuchsia-300 text-gray-500 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500">
                     </div>
                     <!-- Muestra errores de validación, si existen -->
                     <x-input-error for="vehicle_type" />
@@ -37,36 +37,35 @@
                 <!-- Capacidad -->
                 <div class="mt-4">
                     <x-label class="text-left text-lg text-gray-700" value="Capacidad" />
-                    <input wire:model="capacity" type="number" class="text-gray-800 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <input wire:model="capacity" type="number" class="bg-fuchsia-50 border border-fuchsia-300 text-gray-500 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500">
                     <x-input-error for="capacity" />
                 </div>
 
                 <!-- Costo por día -->
                 <div class="mt-4">
                     <x-label class="text-left text-lg text-gray-700" value="Costo por Día" />
-                    <input wire:model="cost_per_day" type="number" class="text-gray-800 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <input wire:model="cost_per_day" type="number" class="bg-fuchsia-50 border border-fuchsia-300 text-gray-500 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500">
                     <x-input-error for="cost_per_day" />
                 </div>
 
                 <!-- Tipo de combustible -->
                 <div class="mt-4">
                     <x-label class="text-left text-lg text-gray-700" value="Tipo de Combustible" />
-                    <input wire:model="fuel_type" type="text" class="text-gray-800 w-full px-4 py-2.5 mt-2 text-base transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <input wire:model="fuel_type" type="text" class="bg-fuchsia-50 border border-fuchsia-300 text-gray-500 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500">
                     <x-input-error for="fuel_type" />
                 </div>
             </div>
         </x-slot>
 
         <x-slot name="footer">
-            <div class="flex justify-center gap-4 p-4 border-t border-gray-300">
-                <!-- Botón para cancelar y cerrar el diálogo -->
-                <button wire:click="$toggle('openEdit')" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none transition duration-200">
-                    Salir
+            <div class="flex justify-between gap-4 text-lg">
+                <button type="button" wire:click="$set('openEdit', false)"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-solid fa-ban mr-2"></i> Cancelar
                 </button>
-
-                <!-- Botón para actualizar el transporte -->
-                <button wire:click="updateTransport" wire:loading.attr="disabled" wire:target="updateTransport" class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none transition duration-200">
-                    Guardar Cambios
+                <button type="submit" wire:click="updateTransport"
+                        class="bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-solid fa-pen-to-square mr-2 text-xl"></i> Actualizar
                 </button>
             </div>
         </x-slot>

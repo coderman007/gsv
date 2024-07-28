@@ -18,7 +18,7 @@
         <div class="w-full mx-auto bg-white dark:bg-gray-800 shadow-md p-6 rounded-md">
             <!-- Título del modal -->
             <x-slot name="title">
-                <h2 class="font-semibold text-2xl text-center pt-4 text-gray-500 dark:text-gray-400">Detalle de Posición
+                <h2 class="font-semibold text-2xl text-center pt-4 text-gray-500 dark:text-gray-300">Detalle de Posición
                     Laboral</h2>
             </x-slot>
             <!-- Contenido del modal -->
@@ -26,40 +26,59 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <!-- Nombre -->
                     <div class="space-y-2 md:col-span-2">
-                        <label for="name" class="font-semibold text-gray-700 dark:text-gray-300 text-xl"></label>
                         <p id="name"
-                           class="text-green-800 dark:text-green-200 text-2xl font-bold p-4 bg-green-200 dark:bg-green-600 rounded-lg shadow-md">{{ $position->name }}</p>
+                           class="text-teal-500 dark:text-teal-200 text-2xl font-bold p-4 dark:bg-teal-600 rounded-lg">{{ $position->name }}</p>
                     </div>
 
                     <!-- Salario Básico -->
                     <div class="space-y-2">
                         <label for="basic" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Salario
                             Básico:</label>
-                        <p id="basic" class="text-gray-800 dark:text-gray-200 text-lg">{{ $position->basic }}</p>
+                        <div class="px-6 py-4 dark:text-lg">
+                            <div class="bg-teal-100 p-2 rounded-sm font-semibold text-center text-lg">
+                                <span class="">$</span>
+                                <span
+                                    class="">{{ number_format($position->basic, 0, ',') }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Factor de Beneficio -->
                     <div class="space-y-2">
                         <label for="benefit_factor" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Factor
                             de Beneficio:</label>
-                        <p id="benefit_factor"
-                           class="text-gray-800 dark:text-gray-200 text-lg">{{ $position->benefit_factor }}</p>
+                        <div class="px-6 py-4 dark:text-lg">
+                            <div class="bg-teal-100 p-2 rounded-sm font-semibold text-center text-lg">
+                                <span
+                                    class="">{{ number_format($position->benefit_factor, 2, ',') }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Costo Mensual Real -->
                     <div class="space-y-2">
                         <label for="real_monthly_cost" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Costo
                             Mensual Real:</label>
-                        <p id="real_monthly_cost"
-                           class="text-gray-800 dark:text-gray-200 text-lg">{{ $position->real_monthly_cost }}</p>
+                        <div class="px-6 py-4 dark:text-lg">
+                            <div class="bg-teal-100 p-2 rounded-sm font-semibold text-center text-lg">
+                                <span class="">$</span>
+                                <span
+                                    class="">{{ number_format($position->real_monthly_cost, 0, ',') }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Costo Diario Real -->
                     <div class="space-y-2">
                         <label for="real_daily_cost" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Costo
                             Diario Real:</label>
-                        <p id="real_daily_cost"
-                           class="text-gray-800 dark:text-gray-200 text-lg">{{ $position->real_daily_cost }}</p>
+                        <div class="px-6 py-4 dark:text-lg">
+                            <div class="bg-teal-100 p-2 rounded-sm font-semibold text-center text-lg">
+                                <span class="">$</span>
+                                <span
+                                    class="">{{ number_format($position->real_daily_cost, 0, ',') }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </x-slot>

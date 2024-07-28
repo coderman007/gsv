@@ -168,8 +168,6 @@
     @push('js')
         <script>
             // Notificación de creación de categorías de proyectos
-            import swal from "sweetalert2";
-
             Livewire.on('createdProjectCategoryNotification', function () {
                 swal.fire({
                     icon: 'success'

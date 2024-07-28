@@ -66,7 +66,7 @@
                     </th>
 
                     <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('unit_price_per_day')">
-                        Precio Unitario por Día
+                        Precio Diario
                         @if ($sortBy == 'unit_price_per_day')
                             @if ($sortDirection == 'asc')
                                 <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
@@ -103,7 +103,6 @@
                             <div class="flex justify-center items-center gap-1">
                                 <livewire:resources.tools.tool-show :tool="$tool" :key="time() . $tool->id"/>
                                 <livewire:resources.tools.tool-edit :toolId="$tool->id" :key="time() . $tool->id"/>
-
                                 <livewire:resources.tools.tool-delete :tool="$tool" :key="time() . $tool->id"/>
                             </div>
                         </td>
