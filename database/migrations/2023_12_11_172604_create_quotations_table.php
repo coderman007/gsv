@@ -19,8 +19,10 @@ return new class extends Migration
             $table->date('quotation_date');
             $table->unsignedSmallInteger('validity_period');
             $table->enum('transformer', ['Trifásico', 'Monofásico']);
+            $table->decimal('transformer_power', 8, 2)->nullable();
             $table->decimal('energy_to_provide', 8, 2);
-            $table->decimal('roof_dimension', 8, 2);
+            $table->decimal('required_area', 8, 2);
+            $table->decimal('panels_needed', 8, 2);
             $table->decimal('kilowatt_cost');
             $table->decimal('subtotal', 20, 2);
             $table->decimal('total', 20, 2);
