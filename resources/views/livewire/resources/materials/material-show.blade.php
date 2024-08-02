@@ -65,11 +65,11 @@
 
                     <!-- Descripción -->
                     <div class="space-y-2">
-                        <label for="benefit_factor" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Descripción:</label>
+                        <label for="benefit_factor" class="font-semibold text-gray-700 dark:text-gray-300 text-lg">Potencia Nominal:</label>
                         <div class="px-6 py-4 dark:text-lg">
                             <div class="bg-indigo-100 p-2 rounded-sm font-semibold text-center text-lg">
                                 <span
-                                    class="">{{ $material->description }}</span>
+                                    class="">{{ $material->rated_power }}</span>
                             </div>
                         </div>
                     </div>

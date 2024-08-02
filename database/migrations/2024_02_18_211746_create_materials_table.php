@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('material_category_id');
             $table->string('reference');
-            $table->text('description');
+            $table->unsignedDecimal('rated_power');
             $table->double('unit_price');
             $table->string('image')->nullable();
             $table->timestamps();

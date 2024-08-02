@@ -65,9 +65,9 @@
                         @endif
                     </th>
 
-                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('description')">
-                        Descripción
-                        @if ($sortBy == 'description')
+                    <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('rated_power')">
+                        Potencia Nominal
+                        @if ($sortBy == 'rated_power')
                             @if ($sortDirection == 'asc')
                                 <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
                             @else
@@ -112,7 +112,7 @@
                             </button>
                             <span class="ml-8 mt-3">{{ $material->reference }}</span>
                         </td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $material->description }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ $material->rated_power }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $material->unit_price }}</td>
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">

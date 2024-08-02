@@ -93,6 +93,22 @@ class QuotationCreate extends Component
 
     public function updatedEnergyToProvide(): void
     {
+        if (is_null($this->selectedClientId)) {
+            $this->addError('selectedClientId', 'Debe seleccionar un cliente antes de ingresar la energía a proveer.');
+            return;
+        }
+
+        if ($this->solar_radiation_level <= 0) {
+            $this->addError('solar_radiation_level', 'El nivel de radiación solar debe ser mayor que cero. Seleccione un cliente válido para obtener este valor.');
+            $this->subtotal = 0;
+            $this->total = 0;
+            $this->project = null;
+            $this->projectName = '';
+            $this->required_area = 0;
+            $this->panels_needed = 0;
+            return;
+        }
+
         $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
 
         $project = Project::where('power_output', '>=', $requiredPowerOutput)
@@ -109,7 +125,7 @@ class QuotationCreate extends Component
             // Buscar el material con referencia 'Módulo Solar'
             $material = Material::where('reference', 'Módulo Solar')->first();
             if ($material) {
-                $panelPower = $material->description; // Aquí, 'description' contiene la potencia del panel
+                $panelPower = $material->rated_power; // Aquí, 'rated_power' contiene la potencia del panel
                 $this->panels_needed = ceil($requiredPowerOutput * 1000 / $panelPower); // Número de paneles requeridos
             } else {
                 $this->addError('energy_to_provide', 'No se encontró el material con referencia Módulo Solar.');
@@ -123,6 +139,8 @@ class QuotationCreate extends Component
         $this->transformer = null;
         $this->transformerPower = null;
     }
+
+
 
     public function showNewClientModal(): void
     {

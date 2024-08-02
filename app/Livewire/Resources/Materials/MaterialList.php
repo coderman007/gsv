@@ -42,7 +42,7 @@ class MaterialList extends Component
     public function materials(): LengthAwarePaginator|array|_IH_Material_C
     {
         return Material::where('reference', 'like', '%' . $this->search . '%')
-            ->orWhere('description', 'like', '%' . $this->search . '%')
+            ->orWhere('rated_power', 'like', '%' . $this->search . '%')
             ->orWhere('unit_price', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
