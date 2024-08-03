@@ -26,6 +26,33 @@ class QuotationClientCreate extends Component
     public $cities; // Variable para almacenar todas las ciudades
     public $filteredCities = []; // Variable para almacenar las ciudades filtradas
 
+    protected array $rules = [
+        'city_id' => 'required|exists:cities,id',
+        'type' => 'required|in:Persona,Empresa',
+        'name' => 'required|string',
+        'document' => 'nullable|string',
+        'email' => 'nullable|email',
+        'address' => 'nullable|string',
+        'phone' => 'nullable|string',
+        'image'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ];
+
+    protected array $messages = [
+        'city_id.required' => 'Debe seleccionar una ciudad.',
+        'city_id.exists' => 'La ciudad seleccionada no es válida.',
+        'type.required' => 'Debe seleccionar un tipo de cliente.',
+        'type.in' => 'El tipo debe ser Persona o Empresa.',
+        'name.required' => 'El nombre es obligatorio.',
+        'name.string' => 'El nombre debe ser una cadena de texto.',
+        'document.string' => 'El documento debe ser una cadena de texto.',
+        'email.email' => 'El correo electrónico debe ser una dirección válida.',
+        'address.string' => 'La dirección debe ser una cadena de texto.',
+        'phone.string' => 'El teléfono debe ser una cadena de texto.',
+        'image.image' => 'El archivo debe ser una imagen.',
+        'image.mimes' => 'La imagen debe ser de tipo jpeg, png o jpg.',
+        'image.max' => 'La imagen no debe superar los 2MB.',
+    ];
+
     public function mount(): void
     {
         // Cargar todas las ciudades al inicializar el componente
@@ -35,16 +62,7 @@ class QuotationClientCreate extends Component
     public function createClient(): void
     {
         // Validar datos del cliente y de ubicación
-        $this->validate([
-            'city_id' => 'required|exists:cities,id',
-            'type' => 'required|in:Persona,Empresa',
-            'name' => 'required|string',
-            'document' => 'nullable|string',
-            'email' => 'nullable|email',
-            'address' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'image'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+        $this->validate();
 
         // Almacenar la imagen del cliente si se proporciona
         $image_url = null;
@@ -83,7 +101,7 @@ class QuotationClientCreate extends Component
         // Emitir el evento Livewire
         $this->dispatch('clientStoredNotification', [
             'title' => 'Success',
-            'text' => 'Cliente almacenado con Éxito!',
+            'text' => 'Cliente almacenado con éxito!',
             'icon' => 'success'
         ]);
     }
@@ -92,6 +110,56 @@ class QuotationClientCreate extends Component
     {
         // Filtrar las ciudades basadas en la entrada del usuario
         $this->filteredCities = City::where('name', 'like', '%' . $value . '%')->pluck('name');
+        // Validar el campo city_id basado en la entrada de city
+        $this->validateOnly('city_id');
+    }
+
+    public function updatedCityId($value): void
+    {
+        // Validar el campo city_id
+        $this->validateOnly('city_id');
+    }
+
+    public function updatedType($value): void
+    {
+        // Validar el campo type
+        $this->validateOnly('type');
+    }
+
+    public function updatedName($value): void
+    {
+        // Validar el campo name
+        $this->validateOnly('name');
+    }
+
+    public function updatedDocument($value): void
+    {
+        // Validar el campo document
+        $this->validateOnly('document');
+    }
+
+    public function updatedEmail($value): void
+    {
+        // Validar el campo email
+        $this->validateOnly('email');
+    }
+
+    public function updatedAddress($value): void
+    {
+        // Validar el campo address
+        $this->validateOnly('address');
+    }
+
+    public function updatedPhone($value): void
+    {
+        // Validar el campo phone
+        $this->validateOnly('phone');
+    }
+
+    public function updatedImage($value): void
+    {
+        // Validar el campo image
+        $this->validateOnly('image');
     }
 
     public function selectCity($city): void
@@ -102,8 +170,9 @@ class QuotationClientCreate extends Component
             $this->city_id = $selectedCity->id; // Para almacenar el ID de la ciudad
         }
         $this->filteredCities = [];
+        // Validar el campo city_id después de seleccionar la ciudad
+        $this->validateOnly('city_id');
     }
-
 
     public function render(): View
     {

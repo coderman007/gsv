@@ -201,7 +201,7 @@ class ProjectCreate extends Component
         // Verificar que el valor es numérico y mayor o igual a cero
         if (is_numeric($value) && $value >= 0) {
             // Calcular el área necesaria si el valor es válido
-            $this->required_area = number_format(($value / 0.55 * (2.6 * 1.1)), 2);
+            $this->required_area = round(($value / 0.55 * (2.6 * 1.1)), 2);
 
             // Limpiar el error si existe
             $this->resetErrorBag('power_output'); // Elimina el mensaje de error

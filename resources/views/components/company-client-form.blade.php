@@ -4,7 +4,7 @@
     <div class="space-y-2 w-full text-xs">
         <label class="text-lg font-semibold text-gray-600 py-2">Nombre de la
             Empresa</label>
-        <input placeholder="Nombre de la Empresa" wire:model="name"
+        <input placeholder="Nombre de la Empresa" wire:model.live="name"
             class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded-lg h-10 px-4 my-2"
             required="required" type="text">
         <x-input-error for="name" />

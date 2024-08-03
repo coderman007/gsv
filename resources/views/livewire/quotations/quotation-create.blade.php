@@ -182,10 +182,18 @@
         </x-slot>
 
         <x-slot name="footer">
-            <div class="flex justify-end mt-6">
-                <x-info-button wire:click="createQuotation">Cotizar
-                </x-info-button>
-
+            <div class="flex justify-between gap-4 text-lg">
+                <button type="button" wire:click="$set('openCreate', false)"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-solid fa-ban mr-2"></i> Cancelar
+                </button>
+                <button type="submit"
+                        wire:click="createQuotation"
+                        wire:loading.attr="disabled"
+                        wire:target="createQuotation"
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300">
+                    <i class="fa-regular fa-floppy-disk mr-2 text-xl"></i> Guardar
+                </button>
             </div>
         </x-slot>
     </x-dialog-modal>
