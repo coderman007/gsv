@@ -16,12 +16,12 @@ class MaterialEdit extends Component
 
     public $materialId;
     public $openEdit = false;
-    public $categories, $selectedCategory, $reference, $rated_power, $unitPrice, $image;
+    public $categories, $selectedCategory, $reference, $description, $unitPrice, $image;
 
     protected $rules = [
         'selectedCategory' => 'required|exists:material_categories,id',
         'reference' => 'required|string|max:255',
-        'rated_power' => 'required|numeric|min:0.01',
+        'description' => 'required|numeric|min:0.01',
         'unitPrice' => 'required|numeric|min:0',
         'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
     ];
@@ -33,7 +33,7 @@ class MaterialEdit extends Component
         $material = Material::findOrFail($materialId);
         $this->selectedCategory = $material->material_category_id;
         $this->reference = $material->reference;
-        $this->rated_power = $material->rated_power;
+        $this->description = $material->description;
         $this->unitPrice = $material->unit_price;
     }
 
@@ -47,7 +47,7 @@ class MaterialEdit extends Component
         $material->update([
             'material_category_id' => $category->id,
             'reference' => $this->reference,
-            'rated_power' => $this->rated_power,
+            'description' => $this->description,
             'unit_price' => $this->unitPrice,
         ]);
 
@@ -64,7 +64,7 @@ class MaterialEdit extends Component
 
         $this->dispatch('updatedMaterial', $material);
         $this->dispatch('updatedMaterialNotification');
-        $this->reset('selectedCategory', 'reference', 'rated_power', 'unitPrice', 'image');
+        $this->reset('selectedCategory', 'reference', 'description', 'unitPrice', 'image');
         $this->openEdit = false;
     }
 

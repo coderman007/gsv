@@ -13,7 +13,7 @@ class MaterialSeeder extends Seeder
             [
                 'material_category_id' => 1,
                 'reference' => 'Módulo Solar',
-                'rated_power' => 575,
+                'description' => '575',
                 'unit_price' => 9838.00,
             ],
 //            [

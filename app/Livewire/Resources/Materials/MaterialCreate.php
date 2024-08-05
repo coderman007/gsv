@@ -14,12 +14,12 @@ class MaterialCreate extends Component
     use WithFileUploads;
 
     public $openCreate = false;
-    public $categories, $selectedCategory, $reference, $rated_power, $unitPrice, $image;
+    public $categories, $selectedCategory, $reference, $description, $unitPrice, $image;
 
     protected $rules = [
         'selectedCategory' => 'required|exists:material_categories,id', // Validar que la categoría seleccionada existe en la base de datos
         'reference' => 'required|string|max:255',
-        'rated_power' => 'required|numeric|min:0.01',
+        'description' => 'required|numeric|min:0.01',
         'unitPrice' => 'required|numeric|min:0',
         'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
     ];
@@ -45,7 +45,7 @@ class MaterialCreate extends Component
         $material = Material::create([
             'material_category_id' => $category->id,
             'reference' => $this->reference,
-            'rated_power' => $this->rated_power,
+            'description' => $this->description,
             'unit_price' => $this->unitPrice,
             'image' => $image_url,
         ]);
@@ -56,7 +56,7 @@ class MaterialCreate extends Component
         $this->dispatch('createdMaterial', $material);
         $this->dispatch('createdMaterialNotification');
 
-        $this->reset('selectedCategory', 'reference', 'rated_power', 'unitPrice', 'image');
+        $this->reset('selectedCategory', 'reference', 'description', 'unitPrice', 'image');
     }
 
     public function render(): View

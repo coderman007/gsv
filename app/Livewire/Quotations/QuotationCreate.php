@@ -125,7 +125,19 @@ class QuotationCreate extends Component
             // Buscar el material con referencia 'Módulo Solar'
             $material = Material::where('reference', 'Módulo Solar')->first();
             if ($material) {
-                $panelPower = $material->rated_power; // Aquí, 'rated_power' contiene la potencia del panel
+                $description = $material->description;
+
+                if (is_null($description) || $description === '') {
+                    $this->addError('energy_to_provide', 'La descripción del material no puede estar vacía.');
+                    return;
+                }
+
+                if (!is_numeric($description)) {
+                    $this->addError('energy_to_provide', 'La descripción del material debe ser un valor numérico.');
+                    return;
+                }
+
+                $panelPower = (float) $description; // Convertir 'description' a un valor numérico
                 $this->panels_needed = ceil($requiredPowerOutput * 1000 / $panelPower); // Número de paneles requeridos
             } else {
                 $this->addError('energy_to_provide', 'No se encontró el material con referencia Módulo Solar.');

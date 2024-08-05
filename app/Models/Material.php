@@ -15,7 +15,7 @@ class Material extends Model
     protected $fillable = [
         'material_category_id',
         'reference',
-        'rated_power',
+        'description',
         'unit_price',
         'image'
     ];

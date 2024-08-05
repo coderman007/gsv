@@ -69,7 +69,7 @@
                         <div class="px-6 py-4 dark:text-lg">
                             <div class="bg-indigo-100 p-2 rounded-sm font-semibold text-center text-lg">
                                 <span
-                                    class="">{{ $material->rated_power }}</span>
+                                    class="">{{ $material->description }}</span>
                             </div>
                         </div>
                     </div>
