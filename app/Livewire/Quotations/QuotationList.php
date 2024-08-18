@@ -70,6 +70,9 @@ class QuotationList extends Component
 
     public function render(): View
     {
-        return view('livewire.quotations.quotation-list');
+        return view('livewire.quotations.quotation-list', [
+            'quotations' => $this->quotations
+        ]);
     }
+
 }

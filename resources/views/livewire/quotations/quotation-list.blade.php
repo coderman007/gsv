@@ -113,29 +113,27 @@
                             {{ $quotation->id }}
                         </th>
                         <td class="px-6 py-4 dark:text-lg">{{ $quotation->consecutive }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $quotation->quotation_date }}</td>
+                        <td class="px-6 py-4 dark:text-lg">
+                            {{ \Carbon\Carbon::parse($quotation->quotation_date)->format('Y-m-d') }}
+                        </td>
                         <td class="px-6 py-4 dark:text-lg">{{ number_format($quotation->total, 2) }}</td>
-                        <td
-                            class="px-6 py-4 dark:text-lg {{ $quotation->status === 'Generada' ? 'text-blue-600' : 'text-red-500' }}">
+                        <td class="px-6 py-4 dark:text-lg {{ $quotation->status_color }}">
                             {{ $quotation->status }}
                         </td>
                         <td class="px-6 py-4 text-center dark:text-lg">
                             <a href="{{ route('quotations.pdf', $quotation->id) }}"
-                                  class="flex items-center justify-center text-red-500 hover:text-red-700">
-                                    <div class="border border-red-500 rounded p-2">
-                                        <i class="fas fa-file-pdf fa-2x"></i>
-                                    </div>
-                                </a>
+                               class="flex items-center justify-center text-red-500 hover:text-red-700">
+                                <div class="border border-red-500 rounded p-2">
+                                    <i class="fas fa-file-pdf fa-2x"></i>
+                                </div>
+                            </a>
                         </td>
-
-
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">
                                 <livewire:quotations.quotation-show :quotation="$quotation"
                                                                     :key="time() . $quotation->id"/>
                                 <livewire:quotations.quotation-edit :quotationId="$quotation->id"
                                                                     :key="time() . $quotation->id"/>
-
                                 <livewire:quotations.quotation-delete :quotation="$quotation"
                                                                       :key="time() . $quotation->id"/>
                             </div>
@@ -149,6 +147,7 @@
                     </tr>
                 @endforelse
                 </tbody>
+
             </table>
 
             <div class="px-3 py-1">

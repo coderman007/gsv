@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,10 +31,9 @@ class Quotation extends Model
     ];
 
     // Conversión de fechas
-    protected array $dates = [
-        'quotation_date',
+    protected $casts = [
+        'quotation_date' => 'date',
     ];
-
     protected static function boot(): void
     {
         parent::boot();
@@ -60,5 +60,37 @@ class Quotation extends Model
     public function additionalCosts(): HasMany
     {
         return $this->hasMany(AdditionalCost::class);
+    }
+
+    // Método para obtener el estado basado en la fecha de validez
+    public function getStatusAttribute()
+    {
+        $validUntil = $this->quotation_date->copy()->addDays($this->validity_period);
+        $now = Carbon::now();
+
+        if ($now->greaterThan($validUntil)) {
+            return 'Expirada';
+        } elseif ($now->diffInDays($validUntil) <= 7) {
+            return 'Cercana a Expirar';
+        } else {
+            return 'Válida';
+        }
+    }
+
+    // Método para obtener el color basado en el estado
+    public function getStatusColorAttribute()
+    {
+        $status = $this->status;
+
+        switch ($status) {
+            case 'Expirada':
+                return 'text-red-600'; // Color rojo para expiradas
+            case 'Cercana a Expirar':
+                return 'text-yellow-600'; // Color amarillo para cercanas a expirar
+            case 'Válida':
+                return 'text-green-600'; // Color verde para válidas
+            default:
+                return 'text-gray-600'; // Color gris para el estado por defecto
+        }
     }
 }
