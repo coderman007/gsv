@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\QuotationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Livewire\Clients\ClientCreate;
@@ -45,6 +46,8 @@ Route::middleware([
     Route::get('project-categories', ProjectCategoryList::class)->name('project-categories');
     Route::get('quotations', QuotationList::class)->name('quotations');
     Route::get('quotations/create', QuotationCreate::class)->name('quotation-create');
+    Route::get('/quotations/{id}/pdf', [QuotationController::class, 'downloadQuotationPDF'])->name('quotations.pdf');
+
     // Route::get('resources', ResourceList::class)->name('resources');
     Route::get('positions', PositionList::class)->name('positions');
     Route::get('materials', MaterialList::class)->name('materials');

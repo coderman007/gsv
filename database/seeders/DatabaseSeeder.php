@@ -22,9 +22,9 @@ class DatabaseSeeder extends Seeder
             MaterialCategorySeeder::class,
             PositionSeeder::class,
             MaterialSeeder::class,
-            ToolSeeder::class,
-            TransportSeeder::class,
-            AdditionalSeeder::class,
+//            ToolSeeder::class,
+//            TransportSeeder::class,
+//            AdditionalSeeder::class,
             CommercialPolicySeeder::class,
         ]);
 

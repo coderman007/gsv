@@ -1,26 +1,26 @@
 <div class="container mx-auto mt-8">
     @if ($this->quotations->count() > 0)
-    <section class="flex justify-between w-full mx-4">
+        <section class="flex justify-between w-full mx-4">
 
-        {{-- Barra de búsqueda --}}
-        <div class="flex justify-start w-1/3">
-            <x-input type="text" name="search" wire:model.live="search"
-                     class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
-                     placeholder="Buscar..."/>
-        </div>
-
-        {{-- Título --}}
-        <div class="flex justify-center w-1/3">
-            <div class="text-3xl font-bold text-center text-blue-500 uppercase">
-                <h1>Cotizaciones</h1>
+            {{-- Barra de búsqueda --}}
+            <div class="flex justify-start w-1/3">
+                <x-input type="text" name="search" wire:model.live="search"
+                         class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400"
+                         placeholder="Buscar..."/>
             </div>
-        </div>
 
-        {{-- Componente de creación --}}
-        <div class="flex justify-end w-1/3 mr-8">
-            <livewire:quotations.quotation-create/>
-        </div>
-    </section>
+            {{-- Título --}}
+            <div class="flex justify-center w-1/3">
+                <div class="text-3xl font-bold text-center text-blue-500 uppercase">
+                    <h1>Cotizaciones</h1>
+                </div>
+            </div>
+
+            {{-- Componente de creación --}}
+            <div class="flex justify-end w-1/3 mr-8">
+                <livewire:quotations.quotation-create/>
+            </div>
+        </section>
 
         {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
@@ -79,7 +79,7 @@
                     </th>
 
                     <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('total')">
-                        Precio Unitario
+                        Precio de Venta
                         @if ($sortBy == 'total')
                             @if ($sortDirection == 'asc')
                                 <i class="ml-2 fa-solid fa-arrow-up-z-a"></i>
@@ -93,6 +93,10 @@
 
                     <th scope="col" class="px-6 py-3">
                         Estado
+                    </th>
+
+                    <th scope="col" class="px-6 py-3">
+                        Descargar
                     </th>
 
                     <th scope="col" class="px-6 py-3">
@@ -115,16 +119,25 @@
                             class="px-6 py-4 dark:text-lg {{ $quotation->status === 'Generada' ? 'text-blue-600' : 'text-red-500' }}">
                             {{ $quotation->status }}
                         </td>
+                        <td class="px-6 py-4 text-center dark:text-lg">
+                            <a href="{{ route('quotations.pdf', $quotation->id) }}"
+                                  class="flex items-center justify-center text-red-500 hover:text-red-700">
+                                    <div class="border border-red-500 rounded p-2">
+                                        <i class="fas fa-file-pdf fa-2x"></i>
+                                    </div>
+                                </a>
+                        </td>
+
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">
                                 <livewire:quotations.quotation-show :quotation="$quotation"
-                                                                            :key="time() . $quotation->id"/>
+                                                                    :key="time() . $quotation->id"/>
                                 <livewire:quotations.quotation-edit :quotationId="$quotation->id"
-                                                                            :key="time() . $quotation->id"/>
+                                                                    :key="time() . $quotation->id"/>
 
                                 <livewire:quotations.quotation-delete :quotation="$quotation"
-                                                                              :key="time() . $quotation->id"/>
+                                                                      :key="time() . $quotation->id"/>
                             </div>
                         </td>
                     </tr>
@@ -168,8 +181,8 @@
             Livewire.on('createdQuotationNotification', function () {
                 swal.fire({
                     icon: 'success',
-                    title: 'Quotation Creado!',
-                    text: 'El quotation se ha creado correctamente!'
+                    title: 'Cotización Creada!',
+                    text: 'La cotización se ha creado correctamente!'
                 })
             });
 
@@ -177,8 +190,8 @@
             Livewire.on('updatedQuotationNotification', function () {
                 swal.fire({
                     icon: 'success',
-                    title: 'Quotation Actualizado!',
-                    text: 'El quotation se ha actualizado correctamente!'
+                    title: 'Cotización Actualizada!',
+                    text: 'La cotización se ha actualizado correctamente!'
                 })
             });
 
@@ -186,8 +199,8 @@
             Livewire.on('deletedQuotationNotification', function () {
                 swal.fire({
                     icon: 'success',
-                    title: 'Quotation Eliminado!',
-                    text: 'El quotation se ha eliminado correctamente!'
+                    title: 'Cotización Eliminada!',
+                    text: 'La cotización se ha eliminado correctamente!'
                 })
             });
         </script>

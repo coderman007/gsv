@@ -98,6 +98,18 @@ class QuotationCreate extends Component
             return;
         }
 
+        // Verifica si energy_to_provide es nulo o no es un número
+        if (empty($this->energy_to_provide) || !is_numeric($this->energy_to_provide)) {
+            // Resetear los valores relacionados con la cotización
+            $this->subtotal = 0;
+            $this->total = 0;
+            $this->project = null;
+            $this->projectName = '';
+            $this->required_area = 0;
+            $this->panels_needed = 0;
+            return;
+        }
+
         if ($this->solar_radiation_level <= 0) {
             $this->addError('solar_radiation_level', 'El nivel de radiación solar debe ser mayor que cero. Seleccione un cliente válido para obtener este valor.');
             $this->subtotal = 0;
@@ -109,6 +121,7 @@ class QuotationCreate extends Component
             return;
         }
 
+        // Realiza los cálculos solo si energy_to_provide es un valor numérico válido
         $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
 
         $project = Project::where('power_output', '>=', $requiredPowerOutput)
@@ -151,6 +164,7 @@ class QuotationCreate extends Component
         $this->transformer = null;
         $this->transformerPower = null;
     }
+
 
 
 
