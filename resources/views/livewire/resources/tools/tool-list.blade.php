@@ -96,7 +96,7 @@
                             {{ $tool->id }}
                         </th>
                         <td class="px-6 py-4 dark:text-lg">{{ $tool->name }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $tool->unit_price_per_day }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ number_format($tool->unit_price_per_day, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $tool->projects()->count() }}</td>
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">

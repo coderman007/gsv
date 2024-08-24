@@ -113,7 +113,7 @@
                             <span class="ml-8 mt-3">{{ $material->reference }}</span>
                         </td>
                         <td class="px-6 py-4 dark:text-lg">{{ $material->description }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $material->unit_price }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ number_format($material->unit_price, 0, ',', '.') }}</td>
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">

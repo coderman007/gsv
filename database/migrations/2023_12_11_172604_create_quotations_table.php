@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('kilowatt_cost');
             $table->decimal('subtotal', 20, 2);
             $table->decimal('total', 20, 2);
-            $table->enum('status', ['Generada', 'Ganada', 'Perdida', 'Expirada'])->default('Generada');
+            $table->enum('status', ['Generada', 'Ganada', 'Perdida'])->default('Generada');
             $table->timestamps();
 
             $table->foreign('project_id')->references('id')->on('projects')->cascadeOnDelete();

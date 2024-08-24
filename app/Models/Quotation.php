@@ -12,7 +12,6 @@ class Quotation extends Model
 {
     use HasFactory;
 
-    // Atributos que pueden ser asignados masivamente
     protected $fillable = [
         'consecutive',
         'project_id',
@@ -30,23 +29,10 @@ class Quotation extends Model
         'status'
     ];
 
-    // Conversión de fechas
     protected $casts = [
         'quotation_date' => 'date',
     ];
-    protected static function boot(): void
-    {
-        parent::boot();
 
-        // Establecer el valor predeterminado al crear una cotización
-        static::creating(function ($quotation) {
-            if (empty($quotation->status)) {
-                $quotation->status = 'Generada';
-            }
-        });
-    }
-
-    // Relaciones con otros modelos
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
@@ -62,35 +48,62 @@ class Quotation extends Model
         return $this->hasMany(AdditionalCost::class);
     }
 
-    // Método para obtener el estado basado en la fecha de validez
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function ($quotation) {
+            if (empty($quotation->status)) {
+                $quotation->status = 'Generada';
+            }
+        });
+    }
+
     public function getStatusAttribute()
     {
+        // Verificar si la clave 'status' existe en el array antes de acceder a ella
+        if (!array_key_exists('status', $this->attributes)) {
+            return 'Generada'; // Valor por defecto
+        }
+
         $validUntil = $this->quotation_date->copy()->addDays($this->validity_period);
         $now = Carbon::now();
 
-        if ($now->greaterThan($validUntil)) {
-            return 'Expirada';
-        } elseif ($now->diffInDays($validUntil) <= 7) {
-            return 'Cercana a Expirar';
-        } else {
-            return 'Válida';
+        if ($this->attributes['status'] === 'Ganada') {
+            return 'Ganada';
         }
+
+        if ($now->greaterThan($validUntil)) {
+            return 'Perdida';
+        }
+
+        return $this->attributes['status'];
     }
 
-    // Método para obtener el color basado en el estado
-    public function getStatusColorAttribute()
-    {
-        $status = $this->status;
 
-        switch ($status) {
-            case 'Expirada':
-                return 'text-red-600'; // Color rojo para expiradas
-            case 'Cercana a Expirar':
-                return 'text-yellow-600'; // Color amarillo para cercanas a expirar
-            case 'Válida':
-                return 'text-green-600'; // Color verde para válidas
-            default:
-                return 'text-gray-600'; // Color gris para el estado por defecto
-        }
+    public function getStatusColorAttribute(): string
+    {
+        return match ($this->status) {
+            'Ganada' => 'text-green-600',
+            'Perdida' => 'text-red-600',
+            default => 'text-blue-600',
+        };
+    }
+
+    public function markAsWon(): void
+    {
+        $this->status = 'Ganada';
+        $this->save();
+    }
+
+    public function markAsLost(): void
+    {
+        $this->status = 'Perdida';
+        $this->save();
+    }
+
+    public function getFormattedTotalAttribute(): string
+    {
+        return number_format($this->total, 2, '.', ',');
     }
 }

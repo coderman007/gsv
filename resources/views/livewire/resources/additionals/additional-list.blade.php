@@ -105,8 +105,7 @@
                         </th>
                         <td class="px-6 py-4 dark:text-lg">{{ $additional->name }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $additional->description }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $additional->unit_price }}</td>
-
+                        <td class="px-6 py-4 dark:text-lg">{{ number_format($additional->unit_price, 0, ',', '.') }}</td>
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">

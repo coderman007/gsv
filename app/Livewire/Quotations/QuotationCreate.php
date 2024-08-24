@@ -3,12 +3,14 @@
 namespace App\Livewire\Quotations;
 
 use App\Models\Client;
+use App\Models\Material;
 use App\Models\Project;
 use App\Models\Quotation;
-use App\Models\Material; // Importar el modelo Material
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
+
+// Importar el modelo Material
 
 class QuotationCreate extends Component
 {
@@ -31,7 +33,8 @@ class QuotationCreate extends Component
     public $validity_period;
     public $subtotal;
     public $total;
-    public $panels_needed; // Nueva propiedad para el número de paneles requeridos
+    public $panels_needed;
+    public $errorMessage;
 
     protected $rules = [
         'selectedClientId' => 'required|exists:clients,id',
@@ -60,12 +63,19 @@ class QuotationCreate extends Component
 
         $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
 
-        $this->project = Project::where('power_output', '>=', $requiredPowerOutput)->first();
+        $project = Project::where('power_output', '>=', $requiredPowerOutput)
+            ->where('power_output', '<=', $requiredPowerOutput + 2) // Limitar el margen superior a 2 kW
+            ->first();
+
+        $this->project = $project;
 
         if (!$this->project) {
-            $this->addError('energy_to_provide', 'No se encontró un proyecto adecuado para la cantidad de kilovatios ingresados.');
+            $this->errorMessage = 'No se encontró un proyecto adecuado para la cantidad de kilovatios ingresados.';
             return;
         }
+
+        // Resetear el mensaje de error si se encuentra un proyecto
+        $this->errorMessage = null;
 
         $quotation = Quotation::create([
             'project_id' => $this->project->id,
@@ -125,10 +135,18 @@ class QuotationCreate extends Component
         $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
 
         $project = Project::where('power_output', '>=', $requiredPowerOutput)
+            ->where('power_output', '<=', $requiredPowerOutput + 2) // Limitar el margen superior a 2 kW
             ->orderBy('power_output')
             ->first();
 
         $this->project = $project;
+
+        if (!$project) {
+            $this->errorMessage = 'No se encontró un proyecto adecuado para la cantidad de kilovatios ingresados.';
+        } else {
+            $this->errorMessage = null; // Resetear el mensaje de error
+        }
+
         if ($project) {
             $this->projectName = $project->projectCategory->name . " de " . $project->power_output . " kW.";
             $this->required_area = $project->required_area;
@@ -150,7 +168,7 @@ class QuotationCreate extends Component
                     return;
                 }
 
-                $panelPower = (float) $description; // Convertir 'description' a un valor numérico
+                $panelPower = (float)$description; // Convertir 'description' a un valor numérico
                 $this->panels_needed = ceil($requiredPowerOutput * 1000 / $panelPower); // Número de paneles requeridos
             } else {
                 $this->addError('energy_to_provide', 'No se encontró el material con referencia Módulo Solar.');
@@ -164,8 +182,6 @@ class QuotationCreate extends Component
         $this->transformer = null;
         $this->transformerPower = null;
     }
-
-
 
 
     public function showNewClientModal(): void
@@ -204,6 +220,14 @@ class QuotationCreate extends Component
         // Formatear el consecutivo según el estándar deseado
         $this->consecutive = 'PROY' . date('ymd') . '-' . str_pad($consecutiveNumber, 3, '0', STR_PAD_LEFT);
     }
+
+    // app/Http/Livewire/Quotations/QuotationCreate.php
+
+    public function getTotalFormattedProperty(): string
+    {
+        return number_format($this->total, 2, '.', ',');
+    }
+
 
     public function render(): View
     {

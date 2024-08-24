@@ -21,7 +21,7 @@ class MaterialEdit extends Component
     protected $rules = [
         'selectedCategory' => 'required|exists:material_categories,id',
         'reference' => 'required|string|max:255',
-        'description' => 'required|numeric|min:0.01',
+        'description' => 'required|string|max:255',
         'unitPrice' => 'required|numeric|min:0',
         'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
     ];

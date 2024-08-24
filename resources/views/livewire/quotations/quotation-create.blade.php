@@ -36,6 +36,15 @@
         </x-slot>
 
         <x-slot name="content">
+
+            <!-- Mostrar el mensaje de error dinámico si existe -->
+            @if ($errorMessage)
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <strong class="font-bold">¡Error!</strong>
+                    <span class="block sm:inline">{{ $errorMessage }}</span>
+                </div>
+            @endif
+
             <!-- Datos Requeridos -->
             <div class="bg-gray-100 p-4 rounded-md mb-4">
                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Datos Requeridos</h3>
@@ -133,8 +142,9 @@
 
                     <div>
                         <label class="block text-green-700 text-sm font-bold" for="total">Total</label>
-                        <input type="number" id="total" wire:model="total"
-                               class="shadow appearance-none rounded w-full py-2 px-3 bg-green-100 text-green-700 leading-tight border border-green-500 focus:outline-none focus:shadow-outline focus:ring-green-500">
+                        <input type="text" id="total" value="{{ $this->totalFormatted }}"
+                               class="shadow appearance-none rounded w-full py-2 px-3 bg-green-100 text-green-700 leading-tight border border-green-500 focus:outline-none focus:shadow-outline focus:ring-green-500"
+                               readonly>
                     </div>
                 </div>
             </div>

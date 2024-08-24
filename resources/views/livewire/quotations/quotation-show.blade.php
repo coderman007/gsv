@@ -85,10 +85,10 @@
                                     <dt class="font-medium text-gray-600">Costo por Kilovatio:</dt>
                                     <dd class="highlight">${{ number_format($quotation->kilowatt_cost, 2) }}</dd>
                                 </div>
-                                <div class="flex justify-between">
-                                    <dt class="font-medium text-gray-600">Valor Bruto:</dt>
-                                    <dd class="highlight">${{ number_format($quotation->subtotal, 2) }}</dd>
-                                </div>
+{{--                                <div class="flex justify-between">--}}
+{{--                                    <dt class="font-medium text-gray-600">Valor Bruto:</dt>--}}
+{{--                                    <dd class="highlight">${{ number_format($quotation->subtotal, 2) }}</dd>--}}
+{{--                                </div>--}}
                                 <div class="flex justify-between">
                                     <dt class="font-medium text-gray-600">Total:</dt>
                                     <dd class="highlight">${{ number_format($quotation->total, 2) }}</dd>

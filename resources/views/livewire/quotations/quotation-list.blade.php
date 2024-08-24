@@ -119,7 +119,29 @@
                         <td class="px-6 py-4 dark:text-lg">{{ number_format($quotation->total, 2) }}</td>
                         <td class="px-6 py-4 dark:text-lg {{ $quotation->status_color }}">
                             {{ $quotation->status }}
+
+                            <div class="flex justify-center items-center gap-4">
+                                <!-- Icono para marcar como Ganada -->
+                                @if ($quotation->status !== 'Ganada' && $quotation->status !== 'Perdida')
+                                    <i wire:click="updateStatus({{ $quotation->id }}, 'Ganada')"
+                                       class="fas fa-check-circle text-green-500 cursor-pointer hover:text-green-700"
+                                       title="Marcar como Ganada"></i>
+                                @endif
+
+                                <!-- Icono para marcar como Perdida -->
+                                @if ($quotation->status !== 'Perdida' && $quotation->status !== 'Ganada')
+                                    <i wire:click="updateStatus({{ $quotation->id }}, 'Perdida')"
+                                       class="fas fa-times-circle text-red-500 cursor-pointer hover:text-red-700"
+                                       title="Marcar como Perdida"></i>
+                                @endif
+                                @if($quotation->status == 'Perdida' || $quotation->status == 'Ganada')
+                                    <button wire:click="resetStatus({{ $quotation->id }})" class="text-gray-500">
+                                        Restablecer
+                                    </button>
+                                @endif
+                            </div>
                         </td>
+
                         <td class="px-6 py-4 text-center dark:text-lg">
                             <a href="{{ route('quotations.pdf', $quotation->id) }}"
                                class="flex items-center justify-center text-red-500 hover:text-red-700">

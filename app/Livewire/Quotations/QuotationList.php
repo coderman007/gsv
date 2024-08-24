@@ -48,6 +48,26 @@ class QuotationList extends Component
             ->paginate($this->perSearch);
     }
 
+    public function updateStatus($quotationId, $status): void
+    {
+        $quotation = Quotation::find($quotationId);
+        if ($quotation && in_array($status, ['Ganada', 'Perdida'])) {
+            $quotation->status = $status;
+            $quotation->save();
+        }
+    }
+
+    public function resetStatus($quotationId): void
+    {
+        $quotation = Quotation::find($quotationId);
+        if ($quotation) {
+            $quotation->status = 'Generada';
+            $quotation->save();
+        }
+    }
+
+
+
     #[On('createdQuotation')]
     public function createdQuotation($quotationData = null)
     {

@@ -104,9 +104,9 @@
                         @endif
                     </th>
 
-                    <th scope="col" class="px-6 py-3">
-                        APU
-                    </th>
+{{--                    <th scope="col" class="px-6 py-3">--}}
+{{--                        APU--}}
+{{--                    </th>--}}
 
                     <th scope="col" class="px-6 py-3">
                         Acciones
@@ -124,8 +124,8 @@
                         <td class="px-6 py-4 dark:text-lg">{{ $transport->vehicle_type }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $transport->capacity }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $transport->fuel_type }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $transport->cost_per_day }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $transport->projects()->count() }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ number_format($transport->cost_per_day, 0, ',', '.') }}</td>
+{{--                        <td class="px-6 py-4 dark:text-lg">{{ $transport->projects()->count() }}</td>--}}
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">

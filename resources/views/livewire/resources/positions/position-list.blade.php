@@ -1,26 +1,26 @@
 <div class="container mx-auto mt-8">
     @if($this->positions->count() > 0)
-    <section class="flex justify-between w-full">
+        <section class="flex justify-between w-full">
 
-        {{-- Barra de búsqueda --}}
-        <div class="flex justify-start items-center w-1/3">
-            <x-input type="text" name="search" wire:model.lazy="search"
-                     class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400 h-10"
-                     placeholder="Buscar..."/>
-        </div>
-
-        {{-- Título --}}
-        <div class="flex justify-center items-center w-1/3">
-            <div class="text-3xl font-bold text-center text-blue-500 uppercase">
-                <h1>Posiciones</h1>
+            {{-- Barra de búsqueda --}}
+            <div class="flex justify-start items-center w-1/3">
+                <x-input type="text" name="search" wire:model.lazy="search"
+                         class="w-full bg-white dark:text-gray-100 dark:bg-gray-800 border-none rounded-lg focus:ring-gray-400 h-10"
+                         placeholder="Buscar..."/>
             </div>
-        </div>
 
-        {{-- Componente de creación --}}
-        <div class="flex justify-end w-1/3 mr-8">
-            <livewire:resources.positions.position-create/>
-        </div>
-    </section>
+            {{-- Título --}}
+            <div class="flex justify-center items-center w-1/3">
+                <div class="text-3xl font-bold text-center text-blue-500 uppercase">
+                    <h1>Posiciones</h1>
+                </div>
+            </div>
+
+            {{-- Componente de creación --}}
+            <div class="flex justify-end w-1/3 mr-8">
+                <livewire:resources.positions.position-create/>
+            </div>
+        </section>
 
         {{-- Opciones de visualización --}}
         <div class="py-2 md:py-4 ml-4 text-gray-500 dark:text-gray-100">
@@ -110,8 +110,8 @@
                         </th>
                         <td class="px-6 py-4 dark:text-lg">{{ $position->name }}</td>
                         <td class="px-6 py-4 dark:text-lg">{{ $position->monthly_work_hours }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $position->basic }}</td>
-                        <td class="px-6 py-4 dark:text-lg">{{ $position->real_daily_cost }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ number_format($position->basic, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4 dark:text-lg">{{ number_format($position->real_daily_cost, 0, ',', '.') }}</td>
 
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">
