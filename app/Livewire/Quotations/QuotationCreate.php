@@ -64,7 +64,7 @@ class QuotationCreate extends Component
         $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
 
         $project = Project::where('power_output', '>=', $requiredPowerOutput)
-            ->where('power_output', '<=', $requiredPowerOutput + 2) // Limitar el margen superior a 2 kW
+            ->where('power_output', '<=', $requiredPowerOutput + 0.2) // Limitar el margen superior a 2 kW
             ->first();
 
         $this->project = $project;
@@ -135,7 +135,7 @@ class QuotationCreate extends Component
         $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
 
         $project = Project::where('power_output', '>=', $requiredPowerOutput)
-            ->where('power_output', '<=', $requiredPowerOutput + 2) // Limitar el margen superior a 2 kW
+            ->where('power_output', '<=', $requiredPowerOutput + 0.2) // Limitar el margen superior a 2 kW
             ->orderBy('power_output')
             ->first();
 
