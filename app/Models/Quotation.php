@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Quotation extends Model
 {
@@ -46,6 +47,11 @@ class Quotation extends Model
     public function additionalCosts(): HasMany
     {
         return $this->hasMany(AdditionalCost::class);
+    }
+
+    public function cashFlow(): HasOne
+    {
+        return $this->hasOne(CashFlow::class);
     }
 
     protected static function boot(): void

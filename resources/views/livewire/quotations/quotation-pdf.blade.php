@@ -11,15 +11,17 @@
             margin: 0;
             padding: 0;
         }
+
         .container {
             width: 90%;
             margin: 0 auto;
             padding: 20px;
             background: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             border: 1px solid #ddd;
         }
+
         .header {
             background-color: #1f5d94;
             color: #fff;
@@ -29,20 +31,24 @@
             margin-bottom: 20px;
             position: relative;
         }
+
         .header img {
             position: absolute;
             top: 20px;
             left: 20px;
             max-width: 120px;
         }
+
         .header h1 {
             margin: 0;
             font-size: 28px;
         }
+
         .header p {
             margin: 5px 0;
             font-size: 14px;
         }
+
         .section {
             margin-bottom: 20px;
             padding: 20px;
@@ -50,6 +56,7 @@
             background-color: #f9f9f9;
             border-radius: 8px;
         }
+
         .section h2 {
             font-size: 22px;
             color: #1f5d94;
@@ -57,36 +64,44 @@
             padding-bottom: 5px;
             border-bottom: 2px solid #1f5d94;
         }
+
         .section p {
             margin: 8px 0;
             font-size: 16px;
         }
+
         .section strong {
             color: #1f5d94;
         }
+
         .table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
+
         .table th, .table td {
             border: 1px solid #ddd;
             padding: 15px;
             text-align: left;
         }
+
         .table th {
             background-color: #1f5d94;
             color: #fff;
             font-size: 16px;
         }
+
         .table td {
             font-size: 16px;
         }
+
         .total-row {
             background-color: #ecf0f1;
             font-weight: bold;
             color: #27ae60;
         }
+
         .footer {
             text-align: center;
             margin: 30px 0;
@@ -97,35 +112,43 @@
             border-radius: 8px;
             padding: 20px;
         }
+
         .footer-content {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 20px;
         }
+
         .footer .contact-info,
         .footer .social-media {
             flex: 1;
             min-width: 250px;
         }
+
         .contact-info p {
             margin: 5px 0;
         }
+
         .contact-info a {
             color: #1f5d94;
             text-decoration: none;
         }
+
         .contact-info a:hover {
             text-decoration: underline;
         }
+
         .social-media a {
             text-decoration: none;
             color: #1f5d94;
             margin: 0 10px;
         }
+
         .social-media a:hover {
             text-decoration: underline;
         }
+
         .footer .contact-info,
         .footer .social-media {
             border: 1px solid #ddd;
@@ -133,11 +156,38 @@
             border-radius: 8px;
             background-color: #f9f9f9;
         }
+
         .footer .contact-info h3,
         .footer .social-media h3 {
             font-size: 18px;
             margin-bottom: 10px;
             color: #1f5d94;
+        }
+
+        .cash-flow-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-left: 6px solid #1f5d94;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .cash-flow-section h2 {
+            font-size: 22px;
+            color: #1f5d94;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #1f5d94;
+        }
+
+        .cash-flow-section p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        .cash-flow-table td {
+            font-size: 16px;
+            padding: 10px;
         }
     </style>
 </head>
@@ -176,6 +226,86 @@
             <tr class="total-row">
                 <td>Total</td>
                 <td>${{ $quotation->total }}</td>
+            </tr>
+        </table>
+    </div>
+    <!-- Sección de Flujos de Caja -->
+    <div class="cash-flow-section">
+        <h2>Flujos de Caja</h2>
+        <table class="table cash-flow-table">
+
+            <tr>
+                <td><strong>CAPACIDAD DEL PROYECTO</strong></td>
+                <td>{{ $quotation->project->power_output }} kWh/mes</td>
+            </tr>
+
+            <tr>
+                <td><strong>INVERSION (CAPEX)</strong></td>
+                <td>${{ number_format($cashFlow->capex, 2, ',', '.') }}</td>
+            </tr>
+
+            <tr>
+                <td><strong>COSTO ENERGÍA</strong></td>
+                <td>${{ number_format($cashFlow->energy_cost, 2, ',', '.') }} / kWh</td>
+            </tr>
+
+            <tr>
+                <td><strong>ENERGÍA ANUAL GENERADA</strong></td>
+                <td>{{ $cashFlow->energy_generated_annual }} kWh</td>
+            </tr>
+
+            <tr>
+                <td><strong>COSTO ENERGÍA ANUAL GENERADA</strong></td>
+                <td>${{ number_format(
+                            $cashFlow->energy_generated_annual * ($cashFlow->energy_cost ?? 0) * 1, 0, '.', ',' ) }}
+                </td>
+            </tr>
+
+            <tr>
+                <td><strong>ENERGÍA MENSUAL GENERADA</strong></td>
+                <td>{{ $cashFlow->energy_generated_monthly }} kWh</td>
+            </tr>
+
+            <tr>
+                <td><strong>COSTO ENERGÍA MENSUAL GENERADA</strong></td>
+                <td>${{ number_format(
+                            ($cashFlow->energy_generated_annual * ($cashFlow->energy_cost ?? 0) * 1) / 12, 0, '.', ',' ) }}
+                </td>
+            </tr>
+
+            <tr>
+                <td><strong>CANTIDAD ENERGÍA A CONSUMIR</strong></td>
+                <td>100 % Mensual</td>
+            </tr>
+            <tr>
+                <td><strong>IPC</strong></td>
+                <td>{{ number_format($cashFlow->loadMacroEconomicVariables()['Índice de Precios al Consumidor (IPC)'], 1, ',', '.') }}%</td>
+            </tr>
+            <tr>
+                <td><strong>PORCENTAJE IMPUESTO SOBRE LA RENTA</strong></td>
+                <td>{{ number_format($cashFlow->loadMacroEconomicVariables()['Impuesto sobre la Renta (IR)'], 1, ',', '.') }}%</td>
+            </tr>
+            <tr>
+                <td><strong>INCREMENTO ANUAL COSTO ENERGÍA</strong></td>
+                <td>{{ number_format($cashFlow->loadMacroEconomicVariables()['Incremento Anual Costo Energía (IACE)'], 1, ',', '.') }}%</td>
+            </tr>
+            <tr>
+                <td><strong>PERDIDA EFICIENCIA SISTEMA SOLAR</strong></td>
+                <td>{{ number_format($cashFlow->loadMacroEconomicVariables()['Pérdida Eficiencia Sistema Fotovoltaico (PESF)'], 1, ',', '.') }}%</td>
+            </tr>
+            <tr>
+                <td><strong>COSTO MANTENIMIENTO ANUAL</strong></td>
+                <td>${{ number_format($cashFlow->maintenance_cost, 2, ',', '.') }}</td>
+            </tr>
+
+            <tr>
+                <td><strong>MITIGACIÓN DE GEI</strong></td>
+                <td>{{ number_format($cashFlow->mgei, 4, ',', '.') }} toneladas CO2</td>
+            </tr>
+
+            <tr>
+                <td><strong>COMPENSACIÓN ARBÓREA</strong></td>
+                <td>{{ number_format($cashFlow->ca, 4, ',', '.') }} árboles</td>
             </tr>
         </table>
     </div>

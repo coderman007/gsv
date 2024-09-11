@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\QuotationController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\QuotationController;
 use App\Livewire\Clients\ClientCreate;
 use App\Livewire\Clients\ClientList;
 use App\Livewire\Layouts\LayoutList;
@@ -10,14 +9,16 @@ use App\Livewire\ProjectCategories\ProjectCategoryList;
 use App\Livewire\Projects\ProjectList;
 use App\Livewire\Quotations\QuotationCreate;
 use App\Livewire\Quotations\QuotationList;
-use App\Livewire\Resources\Positions\PositionList;
-use App\Livewire\Resources\Transports\TransportList;
-use App\Livewire\Resources\Materials\MaterialList;
-use App\Livewire\Resources\Tools\ToolList;
 use App\Livewire\Resources\Additionals\AdditionalList;
 use App\Livewire\Resources\CommercialPolicies\CommercialPolicyList;
-use App\Livewire\Users\UserList;
 use App\Livewire\Resources\Irradiances\IrradianceEdit;
+use App\Livewire\Resources\MacroEconomicVariables;
+use App\Livewire\Resources\Materials\MaterialList;
+use App\Livewire\Resources\Positions\PositionList;
+use App\Livewire\Resources\Tools\ToolList;
+use App\Livewire\Resources\Transports\TransportList;
+use App\Livewire\Users\UserList;
+use Illuminate\Support\Facades\Route;
 
 // use App\Http\Controllers\QuotationController;
 
@@ -57,5 +58,6 @@ Route::middleware([
     Route::get('commercial-policies', CommercialPolicyList::class)->name('commercial-policies');
     Route::get('layouts', LayoutList::class)->name('layouts');
     Route::get('irradiances', IrradianceEdit::class)->name('irradiances');
+    Route::get('macro-economic-variables', MacroEconomicVariables::class)->name('macro-economic-variables.index');
 });
 

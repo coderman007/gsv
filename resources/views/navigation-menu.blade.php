@@ -85,6 +85,11 @@
                                              :active="request()->routeIs('irradiances')">
                                 {{ __('Irradiancia') }}
                             </x-dropdown-link>
+
+                            <x-dropdown-link class="hover:text-blue-500" href="{{ route('macro-economic-variables.index') }}"
+                                             :active="request()->routeIs('macro-economic-variables.index')">
+                                {{ __('V. Macroeconómicas') }}
+                            </x-dropdown-link>
                         </x-slot>
                     </x-dropdown>
                 </div>

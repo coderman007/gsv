@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\MacroEconomicVariable;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
 //            TransportSeeder::class,
 //            AdditionalSeeder::class,
             CommercialPolicySeeder::class,
+            MacroEconomicVariableSeeder::class,
         ]);
 
         // \App\Models\User::factory(10)->create();
