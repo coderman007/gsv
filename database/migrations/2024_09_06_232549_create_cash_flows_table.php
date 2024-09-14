@@ -22,20 +22,18 @@ return new class extends Migration
             $table->decimal('energy_generated_annual', 15, 2); // Energía Anual Generada (EAG)
             $table->decimal('energy_generated_monthly', 15, 2); // Energía Mensual Generada (EMG)
 
+            // Variables adicionales
             $table->decimal('mgei', 8, 4)->nullable(); // Mitigación de GEI
             $table->decimal('ca', 8, 4)->nullable();   // Compensación Arbórea
 
-            // Ingresos y egresos
-            $table->decimal('income_autoconsumption', 15, 2); // Ingresos por autoconsumo
-            $table->decimal('tax_discount', 15, 2); // Descuento de renta (DR)
-            $table->decimal('accelerated_depreciation', 15, 2); // Depreciación Acelerada (DA)
-
-            $table->decimal('opex', 15, 2); // OPEX (Costos operativos)
-            $table->decimal('maintenance_cost', 15, 2); // Costos de mantenimiento (CMA)
-
-            // Caja libre y flujo acumulado
-            $table->decimal('cash_flow', 30, 2); // Caja libre
-            $table->decimal('accumulated_cash_flow', 30, 2); // Flujo acumulado
+            // Ingresos y egresos almacenados en JSON
+            $table->json('income_autoconsumption')->nullable(); // Ingresos por autoconsumo (AA) - Año 1 a 25
+            $table->json('tax_discount')->nullable(); // Descuento de renta (DR) - Año 1 a 25
+            $table->json('accelerated_depreciation')->nullable(); // Depreciación Acelerada (DA) - Año 1 a 25
+            $table->json('opex')->nullable(); // OPEX (Costos operativos) - Año 1 a 25
+            $table->json('maintenance_cost')->nullable(); // Costos de mantenimiento (CMA) - Año 1 a 25
+            $table->json('cash_flow')->nullable(); // Caja libre - Año 1 a 25
+            $table->json('accumulated_cash_flow')->nullable(); // Flujo acumulado - Año 1 a 25
 
             $table->timestamps();
         });

@@ -102,28 +102,21 @@ class QuotationCreate extends Component
         // 1. Cálculo de la Energía Anual Generada (EAG)
         $eag = $this->project->power_output * $this->solar_radiation_level * 365; // EAG = P * I * 365
 
-//        dd($eag);
-
         // 2. Cálculo de la Energía Mensual Generada (EMG)
         $emg = $eag / 12; // EMG = EAG / 12
 
-        // 3. Proyección del precio de la energía durante 25 años
+        // 3. Proyección del precio de la energía durante los próximos 25 años
         $pea = [];
         $pea[1] = $quotation->kilowatt_cost; // Precio Energía Año 1
         for ($i = 2; $i <= 25; $i++) {
-            $pea[$i] = $pea[$i - 1] * (1 + $macroVars['Incremento Anual Costo Energía (IACE)']); // Incremento anual del costo de energía (IACE)
+            $pea[$i] = $pea[$i - 1] * (1 + $macroVars['Incremento Anual Costo Energía (IACE)'] / 100); // Incremento anual del costo de energía (IACE)
         }
-
-        // Depurar el array $pea
-//        dd($pea); // Mostrar el array $pea y detener la ejecución para depurar
 
         // 4. Cálculo de la Mitigación de GEI (MGEI)
         $mgei = ($eag * 0.126) / 1000; // MGEI = (EAG * 0.126) / 1000
-//        dd($mgei);
 
         // 5. Cálculo de la Compensación Arbórea (CA)
         $ca = ($mgei * 1000) / 12; // CA = (MGEI * 1000) / 12
-//        dd($ca);
 
         // 6. Proyección de la cantidad de energía generada (CEGA) durante los próximos 25 años
         $cega = [];
@@ -133,53 +126,73 @@ class QuotationCreate extends Component
             $cega[$i] = $cega[$i - 1] - ($eag * ($macroVars['Pérdida Eficiencia Sistema Fotovoltaico (PESF)'] / 100)); // Pérdida de eficiencia anual (PESF)
         }
 
-        // Depurar el array $cega
-        dd($cega); // Mostrar el array $cega y detener la ejecución para depurar
-
         // 7. Cálculo del ahorro por autoconsumo (AA)
         $aa = [];
         for ($i = 1; $i <= 25; $i++) {
             $aa[$i] = $cega[$i] * $pea[$i]; // Ahorro por autoconsumo = CEGA * PEA
         }
 
-        // Depurar el array $aa
-//        dd($aa); // Mostrar el array $aa y detener la ejecución para depurar
+        // 8. Cálculo del Descuento de Renta (DR) dividido entre los años 2, 3 y 4
+        $tax_discount = $quotation->total / 6; // 50% del CAPEX dividido en 3
+        $dr = [];
 
-        // 8. Cálculo del Descuento de Renta (DR) y Depreciación Acelerada (DA)
-        $dr = $quotation->total / 6; // DR = CAPEX / 6 (a partir del año 2)
-        $da = ($quotation->total / 3) * $macroVars['Impuesto sobre la Renta (IR)']; // DA = CAPEX / 3 * IR (Impuesto sobre la Renta)
-
-        // 9. Cálculo de los costos de mantenimiento anuales (CMA) a partir del año 2
-        $cma = [];
-        $cma[2] = $quotation->total * $macroVars['Costo Mantenimiento Anual (CMA)']; // Costo mantenimiento anual año 2
-        for ($i = 3; $i <= 25; $i++) {
-            $cma[$i] = $cma[$i - 1] * (1 + $macroVars['Índice de Precios al Consumidor (IPC)']); // Incremento del mantenimiento basado en IPC
+        // Distribuir el descuento en los años 2, 3 y 4
+        for ($i = 1; $i <= 25; $i++) {
+            if ($i == 2 || $i == 3 || $i == 4) {
+                $dr[$i] = $tax_discount; // Descuento de Renta distribuido proporcionalmente
+            } else {
+                $dr[$i] = 0; // No hay descuento en los otros años
+            }
         }
 
-        // Depurar el array $cma
-//        dd($cma); // Mostrar el array $cma y detener la ejecución para depurar
+        // 9. Cálculo de la depreciación acelerada (DA)
+        $depreciation = ($quotation->total / 3) * ($macroVars['Impuesto sobre la Renta (IR)'] / 100); // DA = CAPEX / 3 * IR (Impuesto sobre la Renta)
+        $da = [];
 
-        // 10. Cálculo del OPEX (Costos Operativos)
-        $opex = $cma; // En este caso, el OPEX se asocia a los costos de mantenimiento (CMA)
+        for ($i = 1; $i <= 25; $i++) {
+            if ($i == 2 || $i == 3 || $i == 4) {
+                $da[$i] = $depreciation; // Distribuir la depreciación en partes iguales en los años 2, 3 y 4
+            } else {
+                $da[$i] = 0; // No hay depreciación en los demás años
+            }
+        }
+
+        // 10. Cálculo de los costos de mantenimiento anuales (CMA) a partir del año 2
+        $cma = []; // Inicializar array para almacenar costos de mantenimiento
+        $cma[1] = 0; // En el año 1 no hay costo de mantenimiento
+
+        // A partir del año 2, se empieza a calcular el costo de mantenimiento
+        $cma[2] = $quotation->total * ($macroVars['Costo Mantenimiento Anual (CMA)'] / 100); // Costo mantenimiento anual en el año 2
+
+        // Para los años 3 en adelante, el costo de mantenimiento se incrementa según el IPC
+        for ($i = 3; $i <= 25; $i++) {
+            $cma[$i] = $cma[$i - 1] * (1 + ($macroVars['Índice de Precios al Consumidor (IPC)'] / 100)); // Incremento basado en IPC
+        }
 
         // 11. Cálculo de la caja libre (ingresos - egresos) para cada año
-        $cash_flow = [];
+        $free_cash_flow = []; // Caja Libre
+
         for ($i = 1; $i <= 25; $i++) {
-            $cash_flow[$i] = $aa[$i] - ($cma[$i] ?? 0); // Caja Libre = Ahorro por autoconsumo - Costos de mantenimiento
+            // Ingresos: Ahorro por autoconsumo + Descuento de renta + Depreciación acelerada
+            $income = $aa[$i] + ($dr[$i] ?? 0) + ($da[$i] ?? 0);
+
+            // Egresos: Costos de mantenimiento anual (solo a partir del año 2)
+            $expenses = $cma[$i] ?? 0;
+
+            // Caja Libre: Ingresos - Egresos
+            $free_cash_flow[$i] = $income - $expenses;
         }
 
-        // Depurar el array $cash_flow
-//        dd($cash_flow); // Mostrar el array $cash_flow y detener la ejecución para depurar
+        // 12. Cálculo del flujo acumulado para cada uno de los 25 años
+        $accumulated_cash_flow = []; // Flujo acumulado
 
-        // 12. Flujo acumulado para cada uno de los 25 años
-        $accumulated_cash_flow = [];
-        $accumulated_cash_flow[1] = -$quotation->total + $cash_flow[1]; // Año 1: CAPEX negativo + caja libre
+        // Año 1: Flujo acumulado = -CAPEX + Caja Libre Año 1
+        $accumulated_cash_flow[1] = -$quotation->total + $free_cash_flow[1];
+
+        // Años 2 a 25: Flujo acumulado = Flujo acumulado del año anterior + Caja Libre del año correspondiente
         for ($i = 2; $i <= 25; $i++) {
-            $accumulated_cash_flow[$i] = $accumulated_cash_flow[$i - 1] + $cash_flow[$i];
+            $accumulated_cash_flow[$i] = $accumulated_cash_flow[$i - 1] + $free_cash_flow[$i];
         }
-
-        // Depurar el array $accumulated_cash_flow
-//        dd($accumulated_cash_flow); // Mostrar el array $accumulated_cash_flow y detener la ejecución para depurar
 
         // Guardar datos del flujo de caja en la base de datos
         $cashFlow->fill([
@@ -189,13 +202,15 @@ class QuotationCreate extends Component
             'energy_cost' => $quotation->kilowatt_cost,
             'energy_generated_annual' => $eag,
             'energy_generated_monthly' => $emg,
-            'income_autoconsumption' => $aa[1], // Ahorro por autoconsumo año 1
-            'tax_discount' => $dr, // Descuento de Renta (DR)
-            'accelerated_depreciation' => $da, // Depreciación Acelerada (DA)
-            'opex' => $opex[2], // Costos de mantenimiento (OPEX) a partir del año 2
-            'maintenance_cost' => $cma[2], // Costo de mantenimiento año 2
-            'cash_flow' => $cash_flow[1], // Caja libre año 1
-            'accumulated_cash_flow' => $accumulated_cash_flow[25], // Flujo acumulado hasta el año 25
+            'mgei' => $mgei,
+            'ca' => $ca,
+            'income_autoconsumption' => json_encode($aa), // Convertir a JSON
+            'tax_discount' => json_encode($dr), // Convertir a JSON
+            'accelerated_depreciation' => json_encode($da), // Convertir a JSON
+            'opex' => json_encode($cma), // Convertir a JSON
+            'maintenance_cost' => json_encode($cma), // Convertir a JSON
+            'cash_flow' => json_encode($free_cash_flow), // Convertir a JSON
+            'accumulated_cash_flow' => json_encode($accumulated_cash_flow), // Convertir a JSON
         ])->save();
 
         $this->reset(['selectedClientId', 'energy_to_provide', 'project', 'transformer', 'transformerPower', 'required_area', 'panels_needed', 'kilowatt_cost', 'quotation_date', 'validity_period', 'subtotal', 'total']);

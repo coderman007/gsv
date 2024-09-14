@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotización - {{ $quotation->consecutive }}</title>
+
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -164,6 +165,7 @@
             color: #1f5d94;
         }
 
+        /* Estilos para la sección de flujos de caja */
         .cash-flow-section {
             margin-bottom: 20px;
             padding: 20px;
@@ -180,14 +182,33 @@
             border-bottom: 2px solid #1f5d94;
         }
 
-        .cash-flow-section p {
-            margin: 8px 0;
-            font-size: 16px;
+        .cash-flow-title {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px 0;
+            font-size: 18px;
         }
 
-        .cash-flow-table td {
-            font-size: 16px;
-            padding: 10px;
+        .cash-flow-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .cash-flow-grid th, .cash-flow-grid td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .cash-flow-grid th {
+            background-color: #1f5d94;
+            color: #fff;
+        }
+
+        .cash-flow-grid td {
+            font-size: 14px;
         }
     </style>
 </head>
@@ -216,6 +237,19 @@
         <p><strong>Costo por Kilowatt:</strong> ${{ $quotation->kilowatt_cost }}</p>
     </div>
 
+    <!-- Sección de Variables Macroeconómicas -->
+    <div class="section">
+        <h2>Variables Macroeconómicas</h2>
+        <p><strong>Índice de Precios al Consumidor:</strong> {{ $macroVars['Índice de Precios al Consumidor (IPC)'] }}%
+        </p>
+        <p><strong>Porcentaje de Impuesto sobre la Renta:</strong> {{ $macroVars['Impuesto sobre la Renta (IR)'] }}%</p>
+        <p><strong>Incremento Anual del Costo de
+                Energía:</strong> {{ $macroVars['Incremento Anual Costo Energía (IACE)'] }}%</p>
+        <p><strong>Pérdida de Eficiencia del Sistema
+                Solar:</strong> {{ $macroVars['Pérdida Eficiencia Sistema Fotovoltaico (PESF)'] }}%</p>
+        <p><strong>Costo de Mantenimiento Anual:</strong> {{ $macroVars['Costo Mantenimiento Anual (CMA)'] }}%</p>
+    </div>
+
     <div class="section">
         <h2>Costos</h2>
         <table class="table">
@@ -229,106 +263,235 @@
             </tr>
         </table>
     </div>
+
     <!-- Sección de Flujos de Caja -->
     <div class="cash-flow-section">
         <h2>Flujos de Caja</h2>
-        <table class="table cash-flow-table">
 
+        <!-- Ahorro por Autoconsumo -->
+        <div class="cash-flow-title">Ahorro por Autoconsumo</div>
+        <table class="cash-flow-grid">
             <tr>
-                <td><strong>CAPACIDAD DEL PROYECTO</strong></td>
-                <td>{{ $quotation->project->power_output }} kWh/mes</td>
+                <th>Año</th>
+                @for ($i = 1; $i <= 13; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
             </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 1; $i < 13; $i++)
+                    <td>{{ number_format((float)$cashFlow->income_autoconsumption[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+            <tr>
+                <th>Año</th>
+                @for ($i = 14; $i <= 25; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
+            </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 13; $i < 25; $i++)
+                    <td>{{ number_format((float)$cashFlow->income_autoconsumption[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+        </table>
 
+        <!-- Descuento de Renta -->
+        <div class="cash-flow-title">Descuento de Renta</div>
+        <table class="cash-flow-grid">
             <tr>
-                <td><strong>INVERSION (CAPEX)</strong></td>
-                <td>${{ number_format($cashFlow->capex, 2, ',', '.') }}</td>
+                <th>Año</th>
+                @for ($i = 1; $i <= 13; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
             </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 1; $i < 13; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->tax_discount, true)[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+            <tr>
+                <th>Año</th>
+                @for ($i = 14; $i <= 25; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
+            </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 13; $i < 25; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->tax_discount, true)[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+        </table>
 
+        <!-- Depreciación Acelerada -->
+        <div class="cash-flow-title">Depreciación Acelerada</div>
+        <table class="cash-flow-grid">
             <tr>
-                <td><strong>COSTO ENERGÍA</strong></td>
-                <td>${{ number_format($cashFlow->energy_cost, 2, ',', '.') }} / kWh</td>
+                <th>Año</th>
+                @for ($i = 1; $i <= 13; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
             </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 1; $i < 13; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->accelerated_depreciation, true)[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+            <tr>
+                <th>Año</th>
+                @for ($i = 14; $i <= 25; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
+            </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 13; $i < 25; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->accelerated_depreciation, true)[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+        </table>
 
+        <!-- OPEX -->
+        <div class="cash-flow-title">OPEX</div>
+        <table class="cash-flow-grid">
             <tr>
-                <td><strong>ENERGÍA ANUAL GENERADA</strong></td>
-                <td>{{ $cashFlow->energy_generated_annual }} kWh</td>
+                <th>Año</th>
+                @for ($i = 1; $i <= 13; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
             </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 1; $i < 13; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->opex, true)[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+            <tr>
+                <th>Año</th>
+                @for ($i = 14; $i <= 25; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
+            </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 13; $i < 25; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->opex, true)[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+        </table>
 
+        <!-- Costo de Mantenimiento -->
+        <div class="cash-flow-title">Costo de Mantenimiento</div>
+        <table class="cash-flow-grid">
             <tr>
-                <td><strong>COSTO ENERGÍA ANUAL GENERADA</strong></td>
-                <td>${{ number_format(
-                            $cashFlow->energy_generated_annual * ($cashFlow->energy_cost ?? 0) * 1, 0, '.', ',' ) }}
-                </td>
+                <th>Año</th>
+                @for ($i = 1; $i <= 13; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
             </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 1; $i < 13; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->maintenance_cost, true)[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+            <tr>
+                <th>Año</th>
+                @for ($i = 14; $i <= 25; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
+            </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 13; $i < 25; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->maintenance_cost, true)[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+        </table>
 
+        <!-- Flujo de Caja -->
+        <div class="cash-flow-title">Flujo de Caja</div>
+        <table class="cash-flow-grid">
             <tr>
-                <td><strong>ENERGÍA MENSUAL GENERADA</strong></td>
-                <td>{{ $cashFlow->energy_generated_monthly }} kWh</td>
+                <th>Año</th>
+                @for ($i = 1; $i <= 13; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
             </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 1; $i < 13; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->cash_flow, true)[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+            <tr>
+                <th>Año</th>
+                @for ($i = 14; $i <= 25; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
+            </tr>
+            <tr>
+                <td>Valor</td>
+                @for ($i = 13; $i < 25; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->cash_flow, true)[$i], 2, ',', '.') }}</td>
+                @endfor
+            </tr>
+        </table>
 
+        <!-- Flujo de Caja Acumulado -->
+        <div class="cash-flow-title">Flujo de Caja Acumulado</div>
+        <table class="cash-flow-grid">
             <tr>
-                <td><strong>COSTO ENERGÍA MENSUAL GENERADA</strong></td>
-                <td>${{ number_format(
-                            ($cashFlow->energy_generated_annual * ($cashFlow->energy_cost ?? 0) * 1) / 12, 0, '.', ',' ) }}
-                </td>
-            </tr>
-
-            <tr>
-                <td><strong>CANTIDAD ENERGÍA A CONSUMIR</strong></td>
-                <td>100 % Mensual</td>
+                <th>Año</th>
+                @for ($i = 1; $i <= 13; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
             </tr>
             <tr>
-                <td><strong>IPC</strong></td>
-                <td>{{ number_format($cashFlow->loadMacroEconomicVariables()['Índice de Precios al Consumidor (IPC)'], 1, ',', '.') }}%</td>
+                <td>Valor</td>
+                @for ($i = 1; $i < 13; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->accumulated_cash_flow, true)[$i], 2, ',', '.') }}</td>
+                @endfor
             </tr>
             <tr>
-                <td><strong>PORCENTAJE IMPUESTO SOBRE LA RENTA</strong></td>
-                <td>{{ number_format($cashFlow->loadMacroEconomicVariables()['Impuesto sobre la Renta (IR)'], 1, ',', '.') }}%</td>
+                <th>Año</th>
+                @for ($i = 14; $i <= 25; $i++)
+                    <th>{{ $i }}</th>
+                @endfor
             </tr>
             <tr>
-                <td><strong>INCREMENTO ANUAL COSTO ENERGÍA</strong></td>
-                <td>{{ number_format($cashFlow->loadMacroEconomicVariables()['Incremento Anual Costo Energía (IACE)'], 1, ',', '.') }}%</td>
-            </tr>
-            <tr>
-                <td><strong>PERDIDA EFICIENCIA SISTEMA SOLAR</strong></td>
-                <td>{{ number_format($cashFlow->loadMacroEconomicVariables()['Pérdida Eficiencia Sistema Fotovoltaico (PESF)'], 1, ',', '.') }}%</td>
-            </tr>
-            <tr>
-                <td><strong>COSTO MANTENIMIENTO ANUAL</strong></td>
-                <td>${{ number_format($cashFlow->maintenance_cost, 2, ',', '.') }}</td>
-            </tr>
-
-            <tr>
-                <td><strong>MITIGACIÓN DE GEI</strong></td>
-                <td>{{ number_format($cashFlow->mgei, 4, ',', '.') }} toneladas CO2</td>
-            </tr>
-
-            <tr>
-                <td><strong>COMPENSACIÓN ARBÓREA</strong></td>
-                <td>{{ number_format($cashFlow->ca, 4, ',', '.') }} árboles</td>
+                <td>Valor</td>
+                @for ($i = 13; $i < 25; $i++)
+                    <td>{{ number_format((float)json_decode($cashFlow->accumulated_cash_flow, true)[$i], 2, ',', '.') }}</td>
+                @endfor
             </tr>
         </table>
     </div>
-</div>
 
-<div class="footer">
-    <p>Gracias por su preferencia. Si tiene alguna pregunta, no dude en contactarnos.</p>
-    <div class="footer-content">
-        <div class="contact-info">
-            <h3>Información de Contacto</h3>
-            <p><strong>Teléfono:</strong> 3007187730</p>
-            <p><strong>Dirección:</strong> Cra. 53A #5575 55-a, Fatima, Itagüí, Antioquia</p>
-            <p><strong>Correo:</strong> <a href="mailto:gsv@mail.com">gsv@mail.com</a></p>
-            <p><strong>Web:</strong> <a href="https://www.gsvingenieria.com/" target="_blank">gsvingenieria.com</a></p>
-        </div>
-        <div class="social-media">
-            <h3>Síguenos en Redes Sociales</h3>
-            <a href="https://www.facebook.com/gsvingenieria/" target="_blank">Facebook</a> |
-            <a href="https://www.instagram.com/gsvingenieria/" target="_blank">Instagram</a> |
-            <a href="https://co.linkedin.com/in/gsv-ingenieria-89278a169" target="_blank">LinkedIn</a>
+
+    <div class="footer">
+        <p>Gracias por su preferencia. Si tiene alguna pregunta, no dude en contactarnos.</p>
+        <div class="footer-content">
+            <div class="contact-info">
+                <h3>Información de Contacto</h3>
+                <p><strong>Teléfono:</strong> 3007187730</p>
+                <p><strong>Dirección:</strong> Cra. 53A #5575 55-a, Fatima, Itagüí, Antioquia</p>
+                <p><strong>Correo:</strong> <a href="mailto:gsv@mail.com">gsv@mail.com</a></p>
+                <p><strong>Web:</strong> <a href="https://www.gsvingenieria.com/" target="_blank">gsvingenieria.com</a>
+                </p>
+            </div>
+            <div class="social-media">
+                <h3>Síguenos en Redes Sociales</h3>
+                <a href="https://www.facebook.com/gsvingenieria/" target="_blank">Facebook</a> |
+                <a href="https://www.instagram.com/gsvingenieria/" target="_blank">Instagram</a> |
+                <a href="https://co.linkedin.com/in/gsv-ingenieria-89278a169" target="_blank">LinkedIn</a>
+            </div>
         </div>
     </div>
 </div>
-
 </body>
 </html>

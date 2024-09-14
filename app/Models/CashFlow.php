@@ -14,6 +14,8 @@ class CashFlow extends Model
         'energy_cost',
         'energy_generated_annual',
         'energy_generated_monthly',
+        'mgei',
+        'ca',
         'income_autoconsumption',
         'tax_discount',
         'accelerated_depreciation',
@@ -21,6 +23,16 @@ class CashFlow extends Model
         'maintenance_cost',
         'cash_flow',
         'accumulated_cash_flow',
+    ];
+
+    protected $casts = [
+        'income_autoconsumption' => 'array',
+        'tax_discount' => 'array',
+        'accelerated_depreciation' => 'array',
+        'opex' => 'array',
+        'maintenance_cost' => 'array',
+        'cash_flow' => 'array',
+        'accumulated_cash_flow' => 'array',
     ];
 
     public function quotation(): BelongsTo
@@ -43,13 +55,6 @@ class CashFlow extends Model
             'Costo Mantenimiento Anual (CMA)'  => $variables['Costo Mantenimiento Anual (CMA)'],  // Costo Mantenimiento Anual (2% sobre CAPEX)
         ];
 
-//        return [
-//            'Índice de Precios al Consumidor (IPC)'  => $variables['Índice de Precios al Consumidor (IPC)'] ?? 0.05,  // Índice de Precios al Consumidor (5% anual por defecto)
-//            'Impuesto sobre la Renta (IR)'   => $variables['Impuesto sobre la Renta (IR)'] ?? 0.35,   // Impuesto sobre la Renta (35% anual)
-//            'Incremento Anual Costo Energía (IACE)' => $variables['Incremento Anual Costo Energía (IACE)'] ?? 0.08, // Incremento Anual Costo Energía (8% anual)
-//            'Pérdida Eficiencia Sistema Fotovoltaico (PESF)' => $variables['Pérdida Eficiencia Sistema Fotovoltaico (PESF)'] ?? 0.005, // Pérdida de Eficiencia Sistema Fotovoltaico (0.5% anual)
-//            'Costo Mantenimiento Anual (CMA)'  => $variables['Costo Mantenimiento Anual (CMA)'] ?? 0.02,  // Costo Mantenimiento Anual (2% sobre CAPEX)
-//        ];
     }
 
 }
