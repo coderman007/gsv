@@ -45,6 +45,14 @@
                 </div>
             @endif
 
+            @if ($project)
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <strong class="font-bold">¡Éxito!</strong>
+                    <span class="block sm:inline">Se ha seleccionado un proyecto adecuado para la energía ingresada: {{ $projectName }}</span>
+                </div>
+            @endif
+
+
             <!-- Datos Requeridos -->
             <div class="bg-gray-100 p-4 rounded-md mb-4">
                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Datos Requeridos</h3>

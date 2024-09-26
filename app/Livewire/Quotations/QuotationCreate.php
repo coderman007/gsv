@@ -62,12 +62,25 @@ class QuotationCreate extends Component
     {
         $this->validate();
 
+        // Cálculo de la potencia requerida
         $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
 
-        $project = Project::where('power_output', '>=', $requiredPowerOutput)
-            ->where('power_output', '<=', $requiredPowerOutput + 0.2) // Limitar el margen superior a 2 kW
+        // Definir un margen de tolerancia (10% en este caso)
+        $tolerance = 1;
+        $minPowerOutput = $requiredPowerOutput - $tolerance;
+        $maxPowerOutput = $requiredPowerOutput + $tolerance;
+
+        // Buscar proyectos que se encuentren dentro del rango de potencia con tolerancia
+        $project = Project::whereBetween('power_output', [$minPowerOutput, $maxPowerOutput])
             ->first();
 
+        // Fallback: Si no hay proyectos en el rango, buscar el más cercano
+//        if (!$project) {
+//            $project = Project::orderByRaw('ABS(power_output - ?)', [$requiredPowerOutput])
+//                ->first();
+//        }
+
+        // Asignar el proyecto encontrado o mostrar un mensaje de error
         $this->project = $project;
 
         if (!$this->project) {
@@ -252,52 +265,64 @@ class QuotationCreate extends Component
             return;
         }
 
-        // Realiza los cálculos solo si energy_to_provide es un valor numérico válido
+        // Cálculo de la potencia requerida
         $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
 
-        $project = Project::where('power_output', '>=', $requiredPowerOutput)
-            ->where('power_output', '<=', $requiredPowerOutput + 0.2) // Limitar el margen superior a 2 kW
+        // Definir un margen de tolerancia (10% en este caso)
+        $tolerance = 1;
+        $minPowerOutput = $requiredPowerOutput - $tolerance;
+        $maxPowerOutput = $requiredPowerOutput + $tolerance;
+
+        // Buscar proyectos que se encuentren dentro del rango de potencia con tolerancia
+        $project = Project::whereBetween('power_output', [$minPowerOutput, $maxPowerOutput])
             ->orderBy('power_output')
             ->first();
+
+        // Fallback: Si no hay proyectos en el rango, buscar el más cercano
+//        if (!$project) {
+//            $project = Project::orderByRaw('ABS(power_output - ?)', [$requiredPowerOutput])
+//                ->first();
+//        }
 
         $this->project = $project;
 
         if (!$project) {
             $this->errorMessage = 'No se encontró un proyecto adecuado para la cantidad de kilovatios ingresados.';
-        } else {
-            $this->errorMessage = null; // Resetear el mensaje de error
-        }
-
-        if ($project) {
-            $this->projectName = $project->projectCategory->name . " de " . $project->power_output . " kW.";
-            $this->required_area = $project->required_area;
-            $this->subtotal = $project->raw_value;
-            $this->total = $project->sale_value;
-
-            // Buscar el material con referencia 'Módulo Solar'
-            $material = Material::where('reference', 'Módulo Solar')->first();
-            if ($material) {
-                $description = $material->description;
-
-                if (is_null($description) || $description === '') {
-                    $this->addError('energy_to_provide', 'La descripción del material no puede estar vacía.');
-                    return;
-                }
-
-                if (!is_numeric($description)) {
-                    $this->addError('energy_to_provide', 'La descripción del material debe ser un valor numérico.');
-                    return;
-                }
-
-                $panelPower = (float)$description; // Convertir 'description' a un valor numérico
-                $this->panels_needed = ceil($requiredPowerOutput * 1000 / $panelPower); // Número de paneles requeridos
-            } else {
-                $this->addError('energy_to_provide', 'No se encontró el material con referencia Módulo Solar.');
-            }
-
-        } else {
             $this->subtotal = 0;
             $this->total = 0;
+            $this->projectName = '';
+            $this->required_area = 0;
+            $this->panels_needed = 0;
+            return;
+        }
+
+        $this->errorMessage = null; // Resetear el mensaje de error si se encuentra un proyecto
+
+        // Asignar valores del proyecto encontrado
+        $this->projectName = $project->projectCategory->name . " de " . $project->power_output . " kW.";
+        $this->required_area = $project->required_area;
+        $this->subtotal = $project->raw_value;
+        $this->total = $project->sale_value;
+
+        // Buscar el material con referencia 'Módulo Solar'
+        $material = Material::where('reference', 'Módulo Solar')->first();
+        if ($material) {
+            $description = $material->description;
+
+            if (is_null($description) || $description === '') {
+                $this->addError('energy_to_provide', 'La descripción del material no puede estar vacía.');
+                return;
+            }
+
+            if (!is_numeric($description)) {
+                $this->addError('energy_to_provide', 'La descripción del material debe ser un valor numérico.');
+                return;
+            }
+
+            $panelPower = (float)$description; // Convertir 'description' a un valor numérico
+            $this->panels_needed = ceil($requiredPowerOutput * 1000 / $panelPower); // Número de paneles requeridos
+        } else {
+            $this->addError('energy_to_provide', 'No se encontró el material con referencia Módulo Solar.');
         }
 
         $this->transformer = null;
