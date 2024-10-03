@@ -21,7 +21,7 @@ class Quotation extends Model
         'validity_period',
         'transformer',
         'transformer_power',
-        'energy_to_provide',
+        'energy_client',
         'required_area',
         'panels_needed',
         'kilowatt_cost',

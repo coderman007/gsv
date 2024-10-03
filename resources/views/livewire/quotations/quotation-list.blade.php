@@ -143,11 +143,12 @@
                         </td>
 
                         <td class="px-6 py-4 text-center dark:text-lg">
-                            <a href="{{ route('quotations.pdf', $quotation->id) }}"
-                               class="flex items-center justify-center text-red-500 hover:text-red-700">
-                                <div class="border border-red-500 rounded p-2">
-                                    <i class="fas fa-file-pdf fa-2x"></i>
-                                </div>
+                            <a href="{{ route('quotations.download-word', $quotation->id) }}" class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-white hover:bg-blue-700">  
+
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <use href="#file-word"></use>
+                                </svg>
+                                Descargar Word
                             </a>
                         </td>
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">

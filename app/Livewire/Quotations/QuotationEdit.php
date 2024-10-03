@@ -21,7 +21,7 @@ class QuotationEdit extends Component
     public $projectName;
     public $consecutive;
 
-    public $energy_to_provide;
+    public $energy_client;
     public $solar_radiation_level;
     public $transformer;
     public $transformerPower;
@@ -32,10 +32,11 @@ class QuotationEdit extends Component
     public $subtotal;
     public $total;
     public $panels_needed;
+    public $errorMessage;
 
     protected $rules = [
         'selectedClientId' => 'required|exists:clients,id',
-        'energy_to_provide' => 'required|numeric|min:0',
+        'energy_client' => 'required|numeric|min:0',
         'transformer' => 'required|in:Trifásico,Monofásico',
         'transformerPower' => 'required|numeric|min:0',
         'required_area' => 'required|numeric|min:0',
@@ -54,7 +55,7 @@ class QuotationEdit extends Component
         $this->quotationId = $quotation->id;
         $this->selectedClientId = $quotation->client_id;
         $this->consecutive = $quotation->consecutive;
-        $this->energy_to_provide = $quotation->energy_to_provide;
+        $this->energy_client = $quotation->energy_client;
         $this->transformer = $quotation->transformer;
         $this->transformerPower = $quotation->transformer_power;
         $this->required_area = $quotation->required_area;
@@ -77,7 +78,7 @@ class QuotationEdit extends Component
 
         $quotation->update([
             'client_id' => $this->selectedClientId,
-            'energy_to_provide' => $this->energy_to_provide,
+            'energy_client' => $this->energy_client,
             'transformer' => $this->transformer,
             'transformer_power' => $this->transformerPower,
             'required_area' => $this->required_area,
@@ -94,7 +95,7 @@ class QuotationEdit extends Component
         $this->dispatch('updatedQuotationNotification');
     }
 
-    public function updatedEnergyToProvide(): void
+    public function updatedEnergyClient(): void
     {
         $this->calculateQuotationData();
     }
@@ -111,9 +112,17 @@ class QuotationEdit extends Component
             return;
         }
 
-        $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
+        // Cálculo de la potencia requerida
+        $requiredPowerOutput = ($this->energy_client / 30) / $this->solar_radiation_level;
 
-        $this->project = Project::where('power_output', '>=', $requiredPowerOutput)->first();
+        // Definir un margen de tolerancia (30% en este caso)
+        $tolerance = 1;
+        $minPowerOutput = $requiredPowerOutput - $tolerance;
+        $maxPowerOutput = $requiredPowerOutput + $tolerance;
+
+        // Buscar proyectos que se encuentren dentro del rango de potencia con tolerancia
+        $this->project = Project::whereBetween('power_output', [$minPowerOutput, $maxPowerOutput])
+            ->first();
 
         if ($this->project) {
             $this->projectName = $this->project->projectCategory->name . " de " . $this->project->power_output . " kW.";
@@ -126,7 +135,7 @@ class QuotationEdit extends Component
                 $panelPower = (float) $material->description;
                 $this->panels_needed = ceil($requiredPowerOutput * 1000 / $panelPower);
             } else {
-                $this->addError('energy_to_provide', 'No se encontró el material con referencia Módulo Solar.');
+                $this->addError('energy_client', 'No se encontró el material con referencia Módulo Solar.');
             }
         } else {
             $this->subtotal = 0;
@@ -144,6 +153,11 @@ class QuotationEdit extends Component
         } else {
             $this->solar_radiation_level = 0;
         }
+    }
+
+    public function getTotalFormattedProperty(): string
+    {
+        return "$ " . number_format($this->total, 0, '.', ',');
     }
 
     public function render(): View

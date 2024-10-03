@@ -23,6 +23,8 @@ class CashFlow extends Model
         'maintenance_cost',
         'cash_flow',
         'accumulated_cash_flow',
+        'internal_rate_of_return',
+        'payback_time',
     ];
 
     protected $casts = [

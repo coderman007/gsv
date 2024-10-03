@@ -34,6 +34,8 @@ return new class extends Migration
             $table->json('maintenance_cost')->nullable(); // Costos de mantenimiento (CMA) - Año 1 a 25
             $table->json('cash_flow')->nullable(); // Caja libre - Año 1 a 25
             $table->json('accumulated_cash_flow')->nullable(); // Flujo acumulado - Año 1 a 25
+            $table->decimal('internal_rate_of_return', 8, 1)->nullable();
+            $table->decimal('payback_time')->nullable();
 
             $table->timestamps();
         });

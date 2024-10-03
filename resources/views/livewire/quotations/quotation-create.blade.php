@@ -85,9 +85,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold" for="energy_to_provide">Energía a Generar
+                        <label class="block text-gray-700 text-sm font-bold" for="energy_client">Energía a Generar
                             (kWh-mes)</label>
-                        <input type="number" id="energy_to_provide" wire:model.live="energy_to_provide"
+                        <input type="number" id="energy_client" wire:model.live="energy_client"
                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                     </div>
 
@@ -122,7 +122,7 @@
 
             <!-- Datos Calculados -->
             <div class="bg-gray-200 p-4 rounded-md">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Datos Calculados</h3>
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">Resumen de la Cotización</h3>
                 <div class="grid grid-cols-2 gap-8">
                     <div>
                         <label class="block text-gray-700 text-sm font-bold" for="panels_needed">Número de paneles

@@ -11,7 +11,6 @@ use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-// Importar el modelo Material
 
 class QuotationCreate extends Component
 {
@@ -24,7 +23,7 @@ class QuotationCreate extends Component
     public $projectName;
     public $consecutive;
 
-    public $energy_to_provide;
+    public $energy_client;
     public $solar_radiation_level;
     public $transformer;
     public $transformerPower;
@@ -39,7 +38,7 @@ class QuotationCreate extends Component
 
     protected $rules = [
         'selectedClientId' => 'required|exists:clients,id',
-        'energy_to_provide' => 'required|numeric|min:0',
+        'energy_client' => 'required|numeric|min:0',
         'transformer' => 'required|in:Trifásico,Monofásico',
         'transformerPower' => 'required|numeric|min:0',
         'required_area' => 'required|numeric|min:0',
@@ -63,9 +62,9 @@ class QuotationCreate extends Component
         $this->validate();
 
         // Cálculo de la potencia requerida
-        $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
+        $requiredPowerOutput = ($this->energy_client / 30) / $this->solar_radiation_level;
 
-        // Definir un margen de tolerancia (10% en este caso)
+        // Definir un margen de tolerancia
         $tolerance = 1;
         $minPowerOutput = $requiredPowerOutput - $tolerance;
         $maxPowerOutput = $requiredPowerOutput + $tolerance;
@@ -73,12 +72,6 @@ class QuotationCreate extends Component
         // Buscar proyectos que se encuentren dentro del rango de potencia con tolerancia
         $project = Project::whereBetween('power_output', [$minPowerOutput, $maxPowerOutput])
             ->first();
-
-        // Fallback: Si no hay proyectos en el rango, buscar el más cercano
-//        if (!$project) {
-//            $project = Project::orderByRaw('ABS(power_output - ?)', [$requiredPowerOutput])
-//                ->first();
-//        }
 
         // Asignar el proyecto encontrado o mostrar un mensaje de error
         $this->project = $project;
@@ -96,7 +89,7 @@ class QuotationCreate extends Component
             'project_id' => $this->project->id,
             'client_id' => $this->selectedClientId,
             'consecutive' => $this->consecutive,
-            'energy_to_provide' => $this->project->power_output,
+            'energy_client' => $this->energy_client,
             'transformer' => $this->transformer,
             'transformer_power' => $this->transformerPower,
             'required_area' => $this->required_area,
@@ -207,10 +200,22 @@ class QuotationCreate extends Component
             $accumulated_cash_flow[$i] = $accumulated_cash_flow[$i - 1] + $free_cash_flow[$i];
         }
 
+        // Ejemplo de flujos de caja (CAPEX negativo y flujos positivos anuales)
+        $cashFlows = [-$quotation->total]; // Inversión inicial (CAPEX)
+        for ($i = 1; $i <= 25; $i++) {
+            $cashFlows[] = $free_cash_flow[$i]; // Añadir cada flujo de caja anual calculado previamente
+        }
+
+        // Calcular la TIR
+        $tir = $this->calcularTIR($cashFlows);
+
+        // Calcular el Payback Time
+        $paybackTime = $this->calcularPaybackTime($accumulated_cash_flow);
+
         // Guardar datos del flujo de caja en la base de datos
         $cashFlow->fill([
             'quotation_id' => $quotation->id,
-            'power_output' => $this->energy_to_provide,
+            'power_output' => $this->project->power_output,
             'capex' => $quotation->total,
             'energy_cost' => $quotation->kilowatt_cost,
             'energy_generated_annual' => $eag,
@@ -224,9 +229,11 @@ class QuotationCreate extends Component
             'maintenance_cost' => json_encode($cma), // Convertir a JSON
             'cash_flow' => json_encode($free_cash_flow), // Convertir a JSON
             'accumulated_cash_flow' => json_encode($accumulated_cash_flow), // Convertir a JSON
+            'internal_rate_of_return' => $tir, // TIR calculada
+            'payback_time' => $paybackTime, // Tiempo de pago calculado
         ])->save();
 
-        $this->reset(['selectedClientId', 'energy_to_provide', 'project', 'transformer', 'transformerPower', 'required_area', 'panels_needed', 'kilowatt_cost', 'quotation_date', 'validity_period', 'subtotal', 'total']);
+        $this->reset(['selectedClientId', 'energy_client', 'project', 'transformer', 'transformerPower', 'required_area', 'panels_needed', 'kilowatt_cost', 'quotation_date', 'validity_period', 'subtotal', 'total']);
 
         $this->generateConsecutive();
         $this->openCreate = false;
@@ -234,16 +241,104 @@ class QuotationCreate extends Component
         $this->dispatch('createdQuotationNotification');
     }
 
+    /**
+     * Calcula la Tasa Interna de Retorno (TIR) dada una serie de flujos de caja.
+     *
+     * @param array $cashFlows Arreglo de flujos de caja (el primer valor debe ser la inversión inicial con signo negativo).
+     * @param float $initialGuess Valor inicial de la tasa de retorno para la iteración (opcional).
+     * @return float|null Retorna la TIR como porcentaje o null si no se puede calcular.
+     */
+    public function calcularTIR(array $cashFlows, float $initialGuess = 0.1): float|int|null
+    {
+        $precision = 1.0e-6; // Precisión deseada
+        $maxIter = 1000; // Número máximo de iteraciones
 
-    public function updatedEnergyToProvide(): void
+        // Inicialización de variables
+        $tir = $initialGuess;
+        $iteration = 0;
+
+        // Implementación del método de Newton-Raphson
+        while ($iteration < $maxIter) {
+            $npv = 0.0; // Valor presente neto
+            $npvDerivative = 0.0; // Derivada del valor presente neto
+
+            foreach ($cashFlows as $t => $cf) {
+                $npv += $cf / pow(1 + $tir, $t);
+                $npvDerivative -= $t * $cf / pow(1 + $tir, $t + 1);
+            }
+
+            // Si la derivada es cero, no se puede dividir, entonces se rompe el ciclo
+            if ($npvDerivative == 0) {
+                return null;
+            }
+
+            // Calcular el nuevo valor de la TIR
+            $newTir = $tir - $npv / $npvDerivative;
+
+            // Verificar si el nuevo valor está dentro de la precisión deseada
+            if (abs($newTir - $tir) < $precision) {
+                return $newTir * 100; // Convertir la TIR a porcentaje
+            }
+
+            // Actualizar la TIR y continuar iterando
+            $tir = $newTir;
+            $iteration++;
+        }
+
+        // Si no converge, retornar null
+        return null;
+    }
+
+    /**
+     * Calcula el Payback Time (Tiempo de Recuperación) dado un flujo de caja acumulado.
+     *
+     * @param array $accumulatedCashFlow Arreglo del flujo de caja acumulado por año.
+     * @return float|null Retorna el Payback Time como un valor decimal (años) o null si no se puede calcular.
+     */
+    public function calcularPaybackTime(array $accumulatedCashFlow): float|null
+    {
+        // Si no hay valores en el flujo acumulado, no se puede calcular el payback time
+        if (empty($accumulatedCashFlow)) {
+            return null;
+        }
+
+        // Iterar sobre el flujo de caja acumulado para encontrar el primer año con un flujo positivo
+        foreach ($accumulatedCashFlow as $year => $accumulated) {
+            // Si el flujo acumulado es mayor o igual a cero, significa que se ha recuperado la inversión
+            if ($accumulated >= 0) {
+                // Verificar si es el primer año con flujo positivo
+                if ($year == 1) {
+                    return 1.0; // Retornar año 1 si se recupera en el primer año exacto
+                }
+
+                // Interpolación lineal para calcular el payback dentro del año si no es un número entero
+                $previousYear = $year - 1;
+                $previousAccumulated = $accumulatedCashFlow[$previousYear];
+
+                if ($previousAccumulated < 0) {
+                    // Calcular la fracción del año en la que se recupera la inversión
+                    $yearFraction = abs($previousAccumulated) / ($accumulated - $previousAccumulated);
+
+                    return $previousYear + $yearFraction; // Año anterior + fracción de recuperación
+                }
+            }
+        }
+
+        // Si no se alcanza un flujo positivo en los años evaluados, retornar null
+        return null;
+    }
+
+
+
+    public function updatedEnergyClient(): void
     {
         if (is_null($this->selectedClientId)) {
             $this->addError('selectedClientId', 'Debe seleccionar un cliente antes de ingresar la energía a proveer.');
             return;
         }
 
-        // Verifica si energy_to_provide es nulo o no es un número
-        if (empty($this->energy_to_provide) || !is_numeric($this->energy_to_provide)) {
+        // Verifica si energy_client es nulo o no es un número
+        if (empty($this->energy_client) || !is_numeric($this->energy_client)) {
             // Resetear los valores relacionados con la cotización
             $this->subtotal = 0;
             $this->total = 0;
@@ -266,9 +361,9 @@ class QuotationCreate extends Component
         }
 
         // Cálculo de la potencia requerida
-        $requiredPowerOutput = ($this->energy_to_provide / 30) / $this->solar_radiation_level;
+        $requiredPowerOutput = ($this->energy_client / 30) / $this->solar_radiation_level;
 
-        // Definir un margen de tolerancia (10% en este caso)
+        // Definir un margen de tolerancia
         $tolerance = 1;
         $minPowerOutput = $requiredPowerOutput - $tolerance;
         $maxPowerOutput = $requiredPowerOutput + $tolerance;
@@ -277,12 +372,6 @@ class QuotationCreate extends Component
         $project = Project::whereBetween('power_output', [$minPowerOutput, $maxPowerOutput])
             ->orderBy('power_output')
             ->first();
-
-        // Fallback: Si no hay proyectos en el rango, buscar el más cercano
-//        if (!$project) {
-//            $project = Project::orderByRaw('ABS(power_output - ?)', [$requiredPowerOutput])
-//                ->first();
-//        }
 
         $this->project = $project;
 
@@ -310,19 +399,19 @@ class QuotationCreate extends Component
             $description = $material->description;
 
             if (is_null($description) || $description === '') {
-                $this->addError('energy_to_provide', 'La descripción del material no puede estar vacía.');
+                $this->addError('energy_client', 'La descripción del material no puede estar vacía.');
                 return;
             }
 
             if (!is_numeric($description)) {
-                $this->addError('energy_to_provide', 'La descripción del material debe ser un valor numérico.');
+                $this->addError('energy_client', 'La descripción del material debe ser un valor numérico.');
                 return;
             }
 
             $panelPower = (float)$description; // Convertir 'description' a un valor numérico
             $this->panels_needed = ceil($requiredPowerOutput * 1000 / $panelPower); // Número de paneles requeridos
         } else {
-            $this->addError('energy_to_provide', 'No se encontró el material con referencia Módulo Solar.');
+            $this->addError('energy_client', 'No se encontró el material con referencia Módulo Solar.');
         }
 
         $this->transformer = null;

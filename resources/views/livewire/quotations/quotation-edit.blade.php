@@ -12,6 +12,7 @@
             </svg>
         </div>
     </a>
+
     <x-dialog-modal maxWidth="7xl" wire:model.live="openEdit">
         <x-slot name="title">
             <h2 class="text-2xl font-semibold text-center text-blue-700 dark:text-white">Editar Cotización</h2>
@@ -58,32 +59,33 @@
                         </div>
                     </div>
 
-                    <!-- Energía a Proporcionar -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold" for="energy_to_provide">Energía a
-                            Proporcionar (kWh/mes)</label>
-                        <div class="flex space-x-2 mb-4">
-                            <input id="energy_to_provide" type="number" min="0"
-                                   wire:model="energy_to_provide"
-                                   wire:input="updatedEnergyToProvide"
-                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        </div>
-                    </div>
-
-                    <!-- Ciudad -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold">Ciudad</label>
-                        <div class="flex space-x-2 mb-4">
-                            <input type="text" value="{{ $city }}" readonly
-                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        </div>
-                    </div>
-
                     <!-- Nivel de Radiación Solar -->
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold">Nivel de Radiación Solar</label>
+                        <label class="block text-gray-700 text-sm font-bold">Nivel de irradiancia</label>
                         <div class="flex space-x-2 mb-4">
                             <input type="text" value="{{ $solar_radiation_level }}" readonly
+                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        </div>
+                    </div>
+
+                    <!-- Energía a Proporcionar -->
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold" for="energy_client">Energía a
+                            Generar (kWh/mes)</label>
+                        <div class="flex space-x-2 mb-4">
+                            <input id="energy_client" type="number" min="0"
+                                   wire:model.live="energy_client"
+                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        </div>
+                    </div>
+
+                    <!-- Costo por Kilovatio -->
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold" for="kilowatt_cost">Costo por
+                            Kilovatio ($/kW)</label>
+                        <div class="flex space-x-2 mb-4">
+                            <input id="kilowatt_cost" type="number" min="0"
+                                   wire:model="kilowatt_cost"
                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         </div>
                     </div>
@@ -110,6 +112,30 @@
                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Resumen Cotización -->
+            <div class="bg-gray-200 p-4 rounded-md">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">Resumen de la Cotización</h3>
+                <div class="grid grid-cols-2 gap-8">
+
+                    <!-- Proyecto Seleccionado -->
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold">Proyecto Seleccionado</label>
+                        <div class="flex space-x-2 mb-4">
+                            <input type="text" id="projectName" wire:model="projectName" readonly
+                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold" for="panels_needed">Paneles
+                            Requeridos</label>
+                        <input type="number" id="panels_needed" wire:model="panels_needed"
+                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                               readonly>
+                    </div>
 
                     <!-- Área Requerida -->
                     <div>
@@ -123,62 +149,15 @@
                         </div>
                     </div>
 
-                    <!-- Costo por Kilovatio -->
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold" for="kilowatt_cost">Costo por
-                            Kilovatio ($/kW)</label>
-                        <div class="flex space-x-2 mb-4">
-                            <input id="kilowatt_cost" type="number" min="0"
-                                   wire:model="kilowatt_cost"
-                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Resumen de la Cotización -->
-            <div class="bg-white p-4 rounded-md mb-4">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Resumen de la Cotización</h3>
-                <div class="grid grid-cols-2 gap-8">
-                    <!-- Proyecto Seleccionado -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold">Proyecto Seleccionado</label>
-                        <div class="flex space-x-2 mb-4">
-                            <input type="text" value="{{ $projectName }}" readonly
-                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        </div>
-                    </div>
-
-                    <!-- Paneles Requeridos -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold">Paneles Requeridos</label>
-                        <div class="flex space-x-2 mb-4">
-                            <input type="number" value="{{ $panels_needed }}" readonly
-                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        </div>
-                    </div>
-
-                    <!-- Subtotal -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold">Subtotal ($)</label>
-                        <div class="flex space-x-2 mb-4">
-                            <input type="number" value="{{ $subtotal }}" readonly
-                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        </div>
-                    </div>
-
-                    <!-- Total -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold">Total ($)</label>
-                        <div class="flex space-x-2 mb-4">
-                            <input type="number" value="{{ $total }}" readonly
-                                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        </div>
+                        <label class="block text-green-700 text-sm font-bold" for="total">Total</label>
+                        <input type="text" id="total" value="{{ $this->getTotalFormattedProperty() }}"
+                               class="shadow appearance-none rounded w-full py-2 px-3 bg-green-100 text-green-700 leading-tight border border-green-500 focus:outline-none focus:shadow-outline focus:ring-green-500"
+                               readonly>
                     </div>
                 </div>
             </div>
         </x-slot>
-
         <x-slot name="footer">
             <div class="mt-4 text-center flex justify-center space-x-2">
                 <!-- Botón para cancelar/ cerrar el modal -->
@@ -187,7 +166,8 @@
                 </x-button-exit>
 
                 <!-- Botón para guardar cambios en el proyecto -->
-                <x-button-edit wire:click="updateQuotation" wire:loading.attr="disabled" wire:target="updateQuotation">
+                <x-button-edit wire:click="updateQuotation" wire:loading.attr="disabled"
+                               wire:target="updateQuotation">
                     Actualizar
                 </x-button-edit>
             </div>

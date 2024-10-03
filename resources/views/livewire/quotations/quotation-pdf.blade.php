@@ -262,12 +262,14 @@
     <div class="section">
         <h2>Detalles del Cliente</h2>
         <p><strong>Nombre:</strong> {{ $quotation->client->name }}</p>
+        <p><strong>Dirección:</strong> {{ $quotation->client->address }}</p>
         <p><strong>Ciudad:</strong> {{ $quotation->client->city->name }}</p>
     </div>
 
     <div class="section">
         <h2>Detalles del Proyecto</h2>
-        <p><strong>Energía a Proveer:</strong> {{ $quotation->energy_to_provide }} kWh/mes</p>
+        <p><strong>Potencia:</strong> {{ $quotation->project->power_output }} kW</p>
+        <p><strong>Energía a Proveer:</strong> {{ $quotation->energy_client }} kWh/mes</p>
         <p><strong>Número de Paneles:</strong> {{ $quotation->panels_needed }}</p>
         <p><strong>Transformador:</strong> {{ $quotation->transformer }} - {{ $quotation->transformerPower }} kW</p>
         <p><strong>Área Requerida:</strong> {{ $quotation->required_area }} m²</p>
@@ -294,37 +296,6 @@
             ${{ number_format($cashFlow->energy_generated_monthly * $cashFlow->energy_cost, 2) }}</p>
     </div>
 
-{{--    <!-- Proyección de Precio y Energía Generada -->--}}
-{{--    <div class="section">--}}
-{{--        <h2>Proyección de Precio de Energía y Energía Generada</h2>--}}
-{{--        <table class="table">--}}
-{{--            <thead>--}}
-{{--            <tr>--}}
-{{--                <th>Año</th>--}}
-{{--                @for ($i = 1; $i <= 25; $i++)--}}
-{{--                    <th>{{ $i }}</th>--}}
-{{--                @endfor--}}
-{{--            </tr>--}}
-{{--            </thead>--}}
-{{--            <tbody>--}}
-{{--            <tr>--}}
-{{--                <th>Proyección Precio Energía ($/kWh)</th>--}}
-{{--                @foreach ($cashFlow->income_autoconsumption as $index => $value)--}}
-{{--                    <td>${{ number_format($value, 2) }}</td>--}}
-{{--                @endforeach--}}
-{{--            </tr>--}}
-{{--            <tr>--}}
-{{--                <th>Energía Generada (kWh)</th>--}}
-{{--                @foreach ($cashFlow->accumulated_cash_flow as $index => $value)--}}
-{{--                    <td>{{ number_format($cashFlow->energy_generated_annual - $index * ($cashFlow->energy_generated_annual * $cashFlow->opex[$index] / 100), 2) }}--}}
-{{--                        kWh--}}
-{{--                    </td>--}}
-{{--                @endforeach--}}
-{{--            </tr>--}}
-{{--            </tbody>--}}
-{{--        </table>--}}
-{{--    </div>--}}
-
     <!-- Sección de Variables Macroeconómicas -->
     <div class="section">
         <h2>Variables Macroeconómicas</h2>
@@ -338,20 +309,6 @@
                 Solar:</strong> {{ $macroVars['Pérdida Eficiencia Sistema Fotovoltaico (PESF)'] }}%</p>
         <p><strong>Costo de Mantenimiento Anual:</strong> {{ $macroVars['Costo Mantenimiento Anual (CMA)'] }}%</p>
     </div>
-
-    {{--    <div class="section">--}}
-    {{--        <h2>Costos</h2>--}}
-    {{--        <table class="table">--}}
-    {{--            <tr>--}}
-    {{--                <th>Descripción</th>--}}
-    {{--                <th>Valor</th>--}}
-    {{--            </tr>--}}
-    {{--            <tr class="total-row">--}}
-    {{--                <td>Total</td>--}}
-    {{--                <td>${{ $quotation->total }}</td>--}}
-    {{--            </tr>--}}
-    {{--        </table>--}}
-    {{--    </div>--}}
 
     <!-- Sección de Flujos de Caja -->
     <div class="section">

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\QuotationController;
+use App\Http\Controllers\QuotationDocumentController;
 use App\Livewire\Clients\ClientCreate;
 use App\Livewire\Clients\ClientList;
 use App\Livewire\Layouts\LayoutList;
@@ -59,5 +60,7 @@ Route::middleware([
     Route::get('layouts', LayoutList::class)->name('layouts');
     Route::get('irradiances', IrradianceEdit::class)->name('irradiances');
     Route::get('macro-economic-variables', MacroEconomicVariables::class)->name('macro-economic-variables.index');
+    Route::get('/quotations/{id}/download-word', [QuotationDocumentController::class, 'downloadQuotation'])->name('quotations.download-word');
+
 });
 
