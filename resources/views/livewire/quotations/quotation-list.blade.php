@@ -96,7 +96,7 @@
                     </th>
 
                     <th scope="col" class="px-6 py-3">
-                        Descargar
+                        Descarga
                     </th>
 
                     <th scope="col" class="px-6 py-3">
@@ -144,13 +144,11 @@
 
                         <td class="px-6 py-4 text-center dark:text-lg">
                             <a href="{{ route('quotations.download-word', $quotation->id) }}" class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-white hover:bg-blue-700">  
-
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <use href="#file-word"></use>
-                                </svg>
-                                Descargar Word
+                                <i class="fas fa-file-word text-lg mr-3"></i>
+                                Descargar
                             </a>
                         </td>
+
                         <td class="flex justify-around py-4 pl-2 pr-8 ml-6">
                             <div class="flex justify-center items-center gap-1">
                                 <livewire:quotations.quotation-show :quotation="$quotation"
