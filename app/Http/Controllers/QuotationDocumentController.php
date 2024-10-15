@@ -68,7 +68,7 @@ class QuotationDocumentController extends Controller
 
 // Nombre del cliente con negrita en el dato
         $textRun = $section->addTextRun();
-        $textRun->addText("Señor: ", 'textStyle');
+        $textRun->addText("Señor(es): ", 'textStyle');
         $textRun->addText($quotation->client->name, ['bold' => true], 'textStyle');
 
         $section->addText(PHP_EOL);
@@ -467,7 +467,7 @@ class QuotationDocumentController extends Controller
         $section->addText($sellerName, ['bold' => true, 'highlightColor' => 'yellow']);
 
         // Guardar el documento de Word en un archivo temporal
-        $fileName = 'documento_generado.docx';
+        $fileName = 'quotation_' . $quotation->consecutive . '.docx';
         $path = storage_path("app/public/{$fileName}");
 
         // Guardar el documento como .docx
