@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Material;
 use App\Models\Project;
 use App\Models\Quotation;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -233,6 +234,9 @@ class QuotationCreate extends Component
             'payback_time' => $paybackTime, // Tiempo de pago calculado
         ])->save();
 
+        // Call the function to save cash flow data to CSV
+        $this->saveCashFlowToCSV($accumulated_cash_flow);
+
         $this->reset(['selectedClientId', 'energy_client', 'project', 'transformer', 'transformerPower', 'required_area', 'panels_needed', 'kilowatt_cost', 'quotation_date', 'validity_period', 'subtotal', 'total']);
 
         $this->generateConsecutive();
@@ -240,6 +244,38 @@ class QuotationCreate extends Component
         $this->dispatch('createdQuotation', $quotation);
         $this->dispatch('createdQuotationNotification');
     }
+
+    private function saveCashFlowToCSV(array $accumulatedCashFlow): void
+    {
+        $filePath = storage_path('app/cash_flow.csv'); // Especificar la ruta donde se guardará el archivo
+
+        // Abrir el archivo para escritura
+        $file = fopen($filePath, 'w');
+
+        // Escribir el encabezado
+        fputcsv($file, ['Year', 'Accumulated Cash Flow']);
+
+        // Escribir los datos del flujo de caja acumulado
+        foreach ($accumulatedCashFlow as $year => $cashFlow) {
+            fputcsv($file, [$year, $cashFlow]);
+        }
+
+        // Cerrar el archivo
+        fclose($file);
+
+        // Ejecutar el script de Python
+        $this->runPythonScript();
+    }
+
+    private function runPythonScript(): void
+    {
+        Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('view:clear');
+        Artisan::call('app:run_python_script');
+    }
+
 
     /**
      * Calcula la Tasa Interna de Retorno (TIR) dada una serie de flujos de caja.
@@ -327,8 +363,6 @@ class QuotationCreate extends Component
         // Si no se alcanza un flujo positivo en los años evaluados, retornar null
         return null;
     }
-
-
 
     public function updatedEnergyClient(): void
     {

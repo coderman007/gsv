@@ -49,6 +49,7 @@ Route::middleware([
     Route::get('quotations', QuotationList::class)->name('quotations');
     Route::get('quotations/create', QuotationCreate::class)->name('quotation-create');
     Route::get('/quotations/{id}/pdf', [QuotationController::class, 'downloadQuotationPDF'])->name('quotations.pdf');
+    Route::get('/quotations/{id}/cash-flow', [QuotationDocumentController::class, 'showCashFlowGraph']);
 
     // Route::get('resources', ResourceList::class)->name('resources');
     Route::get('positions', PositionList::class)->name('positions');

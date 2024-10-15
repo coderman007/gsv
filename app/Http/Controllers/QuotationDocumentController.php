@@ -3,86 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quotation;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\SimpleType\Jc;
 
 class QuotationDocumentController extends Controller
 {
-    public function generateCashFlowChart($accumulated_cash_flow)
-    {
-        // Dimensiones de la imagen
-        $width = 2000;
-        $height = 1000;
 
-        // Crear la imagen
-        $image = imagecreatetruecolor($width, $height);
-
-        // Colores
-        $white = imagecolorallocate($image, 255, 255, 255);
-        $black = imagecolorallocate($image, 0, 0, 0);
-        $blue = imagecolorallocate($image, 0, 0, 255);
-        $gray = imagecolorallocate($image, 200, 200, 200);
-        $yellow = imagecolorallocate($image, 255, 192, 0);
-        $green = imagecolorallocate($image, 84, 130, 53);
-
-        // Rellenar el fondo con blanco
-        imagefill($image, 0, 0, $white);
-
-        // Dibujar el eje X y el eje Y
-        $xAxisYPosition = 350; // Posición del eje X en el medio de la imagen (para valores negativos y positivos)
-        imageline($image, 50, $xAxisYPosition, 1450, $xAxisYPosition, $black); // Eje X
-        imageline($image, 50, 50, 50, 650, $black); // Eje Y
-
-        // Obtener el valor máximo y mínimo del flujo de caja acumulado
-        $maxValue = max($accumulated_cash_flow);
-        $minValue = min($accumulated_cash_flow);
-
-        // Calcular la escala para el eje Y
-        $yScale = max(abs($maxValue), abs($minValue)) / 300; // Asegurarse de que tanto el valor positivo más alto como el negativo se ajusten a la escala
-
-        // Dibujar etiquetas en el eje Y solo para los años 1, 5, 10, 15, 20, 25
-        $yearsToLabel = [1, 5, 10, 15, 20, 25];
-
-        foreach ($yearsToLabel as $year) {
-            // Etiqueta del valor acumulado para ese año
-            $yLabelValue = $accumulated_cash_flow[$year];
-            $yPos = $xAxisYPosition - ($yLabelValue / $yScale); // Ajustar la posición vertical según el valor
-
-            imagestring($image, 2, 10, $yPos - 5, number_format($yLabelValue, 2), $black); // Etiqueta del valor
-            imageline($image, 50, $yPos, 1450, $yPos, $gray); // Línea guía en el gráfico
-        }
-
-        // Dibujar las barras para cada año
-        foreach ($accumulated_cash_flow as $year => $value) {
-            $xPos = 50 + ($year * 55); // Ajuste del espacio entre años en el eje X
-            $barWidth = 30; // Ancho de cada barra
-
-            // Determinar el color de la barra (amarillo si es negativo, verde si es positivo)
-            $barColor = $value < 0 ? $yellow : $green;
-
-            // Dibujar la barra hacia arriba o hacia abajo según corresponda
-            if ($value < 0) {
-                $barHeight = abs($value) / $yScale; // Altura de la barra (positiva)
-                imagefilledrectangle($image, $xPos, $xAxisYPosition, $xPos + $barWidth, $xAxisYPosition + $barHeight, $barColor); // Barra hacia abajo
-            } else {
-                $barHeight = $value / $yScale;
-                imagefilledrectangle($image, $xPos, $xAxisYPosition - $barHeight, $xPos + $barWidth, $xAxisYPosition, $barColor); // Barra hacia arriba
-            }
-
-            // Mostrar el número del año justo debajo de la barra
-            imagestring($image, 2, $xPos + 5, $xAxisYPosition + 5, $year, $black); // Ajuste de la posición de la etiqueta
-        }
-
-        // Guardar la imagen en un archivo
-        $imagePath = public_path('images/flujo_caja_acumulado_barras.png');
-        imagepng($image, $imagePath);
-
-        // Liberar la memoria
-        imagedestroy($image);
-
-        return $imagePath;
-    }
 
     public function downloadQuotation($quotationId)
     {
@@ -94,12 +22,24 @@ class QuotationDocumentController extends Controller
 
         // Crear una nueva instancia de PhpWord
         $phpWord = new PhpWord();
-        $section = $phpWord->addSection();
+
+        // Establecer el idioma del documento (en este caso, español)
+        $phpWord->setDefaultFontName('Arial');
+        $phpWord->setDefaultFontSize(12);
+        $phpWord->setDefaultParagraphStyle(['spaceAfter' => 0, 'spaceBefore' => 0]);
+
+        // Crear una nueva sección y establecer el idioma
+        $section = $phpWord->addSection(['language' => 'es-ES']);
+
+        // Obtener el nombre del usuario autenticado
+        $sellerName = Auth::user()->name;
 
         // Definir estilos
         $phpWord->addFontStyle('titleStyle', ['bold' => true, 'size' => 16]);
         $phpWord->addFontStyle('textStyle', ['size' => 12]);
+        $phpWord->addFontStyle('boldStyle', ['bold' => true, 'size' => 12]);
         $phpWord->addParagraphStyle('centerStyle', ['alignment' => 'center']);
+        $phpWord->addParagraphStyle('leftStyle', ['alignment' => 'left']);
         $phpWord->addParagraphStyle('rightStyle', ['alignment' => 'right']);
 
         // Añadir logo
@@ -109,28 +49,77 @@ class QuotationDocumentController extends Controller
             'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
         ]);
 
-        // Añadir encabezado y datos del cliente
-        $section->addText($quotation->consecutive, 'titleStyle', 'rightStyle');
-        $section->addText("Medellín " . $quotation->quotation_date->format('d/m/Y'), 'textStyle');
-        $section->addText("Señor: " . $quotation->client->name, 'textStyle');
-        if ($quotation->client->company) {
-            $section->addText("EMPRESA: " . $quotation->client->company, 'textStyle');
-        }
-        $section->addText("Ciudad: " . $quotation->client->city->name, 'textStyle');
+        // Agregar un salto de línea o párrafo vacío
+        $section->addText(PHP_EOL);
 
-        // Añadir un saludo
+// Añadir encabezado y datos del cliente utilizando addTextRun para negrita
+        $textRun = $section->addTextRun();
+
+// Consecutivo en negrita
+        $textRun->addText($quotation->consecutive, ['bold' => true], 'rightStyle');
+        $section->addText(PHP_EOL);
+
+// Fecha de cotización con negrita solo en el dato
+        $textRun = $section->addTextRun();
+        $textRun->addText("Medellín ", 'textStyle');
+        $textRun->addText($quotation->quotation_date->format('d/m/Y'), ['bold' => true], 'textStyle');
+
+        $section->addText(PHP_EOL);
+
+// Nombre del cliente con negrita en el dato
+        $textRun = $section->addTextRun();
+        $textRun->addText("Señor: ", 'textStyle');
+        $textRun->addText($quotation->client->name, ['bold' => true], 'textStyle');
+
+        $section->addText(PHP_EOL);
+
+// Empresa solo si existe, con negrita en el dato
+        if ($quotation->client->company) {
+            $textRun = $section->addTextRun();
+            $textRun->addText("EMPRESA: ", 'textStyle');
+            $textRun->addText($quotation->client->company, ['bold' => true], 'textStyle');
+            $section->addText(PHP_EOL);
+        }
+
+// Ciudad con negrita en el dato
+        $textRun = $section->addTextRun();
+        $textRun->addText("Ciudad: ", 'textStyle');
+        $textRun->addText($quotation->client->city->name, ['bold' => true], 'textStyle');
+
+        $section->addText(PHP_EOL);
+
+// Añadir un saludo
         $section->addText('Reciba un cordial saludo.', 'textStyle');
         $section->addText('De acuerdo con su requerimiento presentamos nuestra propuesta para suministrar e implementar un sistema de generación de energía solar fotovoltaica que promueva la eficiencia energética para su instalación.', 'textStyle');
 
+// Agregar un salto de línea
+        $section->addText(PHP_EOL);
+
         // Sección de antecedentes
         $section->addText("ANTECEDENTES", 'titleStyle');
-        $section->addText("El consumo actual de energía es cercano a " . $quotation->energy_client . " kWh y el costo actual por kWh es de " . $quotation->kilowatt_cost . ", es decir que el gasto por energía es de $" . number_format($quotation->cashFlow->energy_generated_monthly * $quotation->kilowatt_cost) . " al mes.", 'textStyle');
 
-        // Sección de tipo de sistema
+// Crear un TextRun para la sección de antecedentes
+        $textRun = $section->addTextRun();
+        $textRun->addText("El consumo actual de energía es cercano a ", 'textStyle');
+        $textRun->addText($quotation->energy_client . " kWh", ['bold' => true], 'textStyle');
+        $textRun->addText(" y el costo actual por kWh es de ", 'textStyle');
+        $textRun->addText($quotation->kilowatt_cost, ['bold' => true], 'textStyle');
+        $textRun->addText(", es decir que el gasto por energía es de $", 'textStyle');
+        $textRun->addText(number_format($quotation->cashFlow->energy_generated_monthly * $quotation->kilowatt_cost) . " al mes.", ['bold' => true], 'textStyle');
+
+        $section->addText(PHP_EOL); // Salto de línea
+
+// Sección de tipo de sistema
         $section->addText("TIPO DE SISTEMA", 'titleStyle');
-        $section->addText("Se contemplará el uso de un sistema On-Grid (paralelo con la red sin baterías) de " . $quotation->project->power_output . " kWp" . " para optimizar al máximo la producción energética; dicha configuración permite que el proyecto sea más funcional tanto técnica como económicamente.", 'textStyle');
 
-        $section->addText(PHP_EOL);
+// Crear un TextRun para la sección de tipo de sistema
+        $textRun = $section->addTextRun();
+        $textRun->addText("Se contemplará el uso de un sistema On-Grid (paralelo con la red sin baterías) de ", 'textStyle');
+        $textRun->addText($quotation->project->power_output . " kWp", ['bold' => true], 'textStyle');
+        $textRun->addText(" para optimizar al máximo la producción energética; dicha configuración permite que el proyecto sea más funcional tanto técnica como económicamente.", 'textStyle');
+
+        $section->addText(PHP_EOL); // Salto de línea
+
 
         // Añadir logo del sistema
         $section->addImage(public_path('images/on-grid.png'), [
@@ -139,14 +128,15 @@ class QuotationDocumentController extends Controller
             'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
         ]);
 
-        $section->addPageBreak(); // Salto de página
-
         // Añadir logo
         $section->addImage(public_path('images/logo_word.png'), [
             'width' => 300,
             'height' => 100,
             'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
         ]);
+
+        // Agregar un salto de línea o párrafo vacío
+        $section->addText(PHP_EOL);
 
         // Crear una nueva sección para "CÁLCULO DEL SISTEMA"
         $section->addText("CÁLCULO DEL SISTEMA", 'titleStyle');
@@ -155,7 +145,7 @@ class QuotationDocumentController extends Controller
 // Definir estilo de la tabla
         $phpWord->addTableStyle('calculationTable', [
             'borderSize' => 6,
-            'borderColor' => 'FFFFFF',
+            'borderColor' => '#FFFFFF',
             'cellMargin' => 100,  // Mayor espacio interno en las celdas
             'cellSpacing' => 50  // Espacio adicional entre las celdas
         ]);
@@ -272,7 +262,7 @@ class QuotationDocumentController extends Controller
 
 // Agregar las filas de detalles basados en la imagen proporcionada
         $items = [
-            ["Panel solar fotovoltaico bifacial 575 Wp", "CANT"],
+            ["Panel solar fotovoltaico bifacial 575 Wp", $quotation->panels_needed],
             ["Inversores monofásico 220V-60Hz", "CANT"],
             ["Estructuras paneles solares", "1"],
             ["Adecuaciones eléctricas internas y medidor", "1"],
@@ -298,6 +288,9 @@ class QuotationDocumentController extends Controller
             'height' => 100,
             'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
         ]);
+
+        // Agregar un salto de línea o párrafo vacío
+        $section->addText(PHP_EOL);
 
         // Añadir sección de Presupuesto EPC con descripción y valores
         $section->addText("PRESUPUESTO EPC", 'titleStyle', 'centerStyle');
@@ -334,87 +327,68 @@ class QuotationDocumentController extends Controller
         $budgetTable->addCell(8000, ['bgColor' => 'D9D9D9'])->addText("TOTAL", ['bold' => true, 'size' => 12], ['alignment' => 'right']);
         $budgetTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("$" . number_format($quotation->total, 2), ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
-        $section->addTextBreak(2);
+        $section->addTextBreak();
 
-        // --- Sección Análisis Financiero ---
-        $section->addText("ANÁLISIS FINANCIERO", 'titleStyle', 'centerStyle');
+        $section->addText(PHP_EOL);
 
-// Crear tabla con un borde externo único (sin bordes)
-        $phpWord->addTableStyle('financialAnalysisTable', [
-            'borderSize' => 0,  // Define el borde externo de la tabla a 0
+        // --- Sección de la gráfica y valores (reformulada) ---
+        $section->addText("CAJA ACUMULADA", 'titleStyle', 'centerStyle');
+
+        // Añadir la imagen de flujo de caja acumulado
+        $section->addImage(public_path('images/cashflow_chart.png'), [
+            'width' => 500,
+            'height' => 200,
+            'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER // Centra la imagen
+        ]);
+
+        $section->addTextBreak(2);  // Añadir espacio adicional
+
+        // Estilo de la tabla para TIR y Payback Time con borde blanco
+        $phpWord->addTableStyle('tirPaybackTable', [
+            'borderSize' => 1,        // Tamaño del borde (ajusta según lo necesites)
+            'borderColor' => 'FFFFFF', // Color del borde en formato hex (blanco)
             'cellMargin' => 50,
-            'cellSpacing' => 0,  // Sin separación interna entre celdas
         ]);
 
-// Crear la tabla con una sola fila y dos celdas (Contenedor principal)
-        $financialAnalysisTable = $section->addTable('financialAnalysisTable');
-        $financialAnalysisTable->addRow(3000); // Ajuste de altura de la fila
+        $tirPaybackTable = $section->addTable('tirPaybackTable');
 
-        // Añadir la gráfica del flujo de caja acumulado en barras
-        $accumulatedCashFlow = json_decode($quotation->cashFlow->accumulated_cash_flow, true);
-        $imagePath = $this->generateCashFlowChart($accumulatedCashFlow);
+// Fila para los indicadores financieros (TIR y Payback Time)
+        $tirPaybackTable->addRow(400);
 
-        // Ajuste del ancho de las celdas para distribuir el espacio de manera proporcional
-        $graphWidth = 12000; // 75% del ancho total
-        $indicatorWidth = 4000; // 25% del ancho total
-
-        // Primera celda: Contenedor de la gráfica (Izquierda)
-        $cellGraph = $financialAnalysisTable->addCell($graphWidth, [
+// Celda para la TIR
+        $cellTir = $tirPaybackTable->addCell(5000, [
+            'bgColor' => '92D050',
             'valign' => 'center',
-            'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER,
-            'borderSize' => 0,  // Sin borde para la celda de la gráfica
-            'bgColor' => 'FFFFFF'  // Fondo blanco
-        ]);
-        $cellGraph->addImage($imagePath, [
-            'width' => 600,  // Ajustar el tamaño de la gráfica según sea necesario
-            'height' => 300,
-            'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
+            'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER,
         ]);
 
-// Segunda celda: Contenedor de los indicadores financieros (Derecha)
-        $cellIndicators = $financialAnalysisTable->addCell($indicatorWidth, [
-            'valign' => 'center',
-            'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER,
-            'borderSize' => 0,  // Sin borde para la celda de indicadores
-        ]);
+        $cellTir->addText("TASA INTERNA DE RETORNO", ['bold' => true, 'size' => 14], ['alignment' => 'center']);
+        $cellTir->addText($quotation->cashFlow->internal_rate_of_return . "%", ['bold' => true, 'size' => 16, 'color' => 'black'], ['alignment' => 'center']);
 
-// Crear una tabla interna sin bordes para mostrar TIR y Payback Time (celda derecha)
-        $phpWord->addTableStyle('innerIndicatorTable', [
-            'borderSize' => 0,
-            'cellMargin' => 50,
-            'cellSpacing' => 0,
-        ]);
-
-        $indicatorTable = $cellIndicators->addTable('innerIndicatorTable');
-
-// Fila 1: TIR (Parte superior del contenedor derecho)
-        $indicatorTable->addRow(1500);  // Ajuste de altura de fila para mantener la proporción con la imagen
-        $cellTIR = $indicatorTable->addCell($indicatorWidth, [
-            'bgColor' => 'C5E0B3',  // Verde claro para la celda
-            'borderSize' => 0,  // Sin borde
+// Celda vacía (10 píxeles de ancho)
+        $cellEmpty = $tirPaybackTable->addCell(10 * 20, [ // 10 píxeles convertidos a puntos
             'valign' => 'center',
         ]);
-        $cellTIR->addText("Tasa Interna de Retorno (TIR)", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
-        $cellTIR->addText($quotation->cashFlow->internal_rate_of_return . "%", ['bold' => true, 'size' => 16], ['alignment' => 'center']);
 
-// Fila 2: Payback Time (Parte inferior del contenedor derecho)
-        $indicatorTable->addRow(1500);  // Ajuste de altura de fila para mantener la proporción con la imagen
-        $cellPayback = $indicatorTable->addCell($indicatorWidth, [
-            'bgColor' => 'C5E0B3',  // Verde claro para la celda
-            'borderSize' => 0,  // Sin borde
+// Celda para Payback Time
+        $cellPayback = $tirPaybackTable->addCell(5000, [
+            'bgColor' => '92D050',
             'valign' => 'center',
+            'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER,
         ]);
-        $cellPayback->addText("Tiempo de Recuperación (Payback Time)", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
-        $cellPayback->addText($quotation->cashFlow->payback_time . " años", ['bold' => true, 'size' => 16], ['alignment' => 'center']);
 
-// --- Nueva Sección: Formas de Pago ---
+        $cellPayback->addText("TIEMPO DE RECUPERACIÓN DE LA INVERSIÓN", ['bold' => true, 'size' => 14], ['alignment' => 'center']);
+        $cellPayback->addText($quotation->cashFlow->payback_time . " años", ['bold' => true, 'size' => 16, 'color' => 'black'], ['alignment' => 'center']);
+
+        // --- Nueva Sección: Formas de Pago ---
         $section->addTextBreak(1);  // Añadir un salto de línea
         $section->addText("FORMAS DE PAGO", 'titleStyle', 'leftStyle');
 
+        $section->addText(PHP_EOL);
+
 // Forma de pago contado
         $section->addText("CONTADO:", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
-        $section->addText(
-            "30% Anticipo\n" .
+        $section->addText("30% Anticipo\n" .
             "40% Contra entrega de diseño de ingeniería de detalle.\n" .
             "20% Contra entrega de obra (equipos instalados)\n" .
             "10% Contra cambio de medidor por parte del comercializador.",
@@ -422,62 +396,85 @@ class QuotationDocumentController extends Controller
             ['alignment' => 'left']
         );
 
+        $section->addText(PHP_EOL);
+
 // Forma de pago financiado
         $section->addText("FINANCIADO:", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
 
-// Crear una tabla para alinear la imagen y los planes de financiación
-        $phpWord->addTableStyle('paymentTable', [
-            'borderSize' => 0,
-            'cellMargin' => 50,
-            'cellSpacing' => 50,
+// Crear una tabla simple para alinear la imagen y los planes de financiación
+        $paymentTable = $section->addTable([
+            'borderSize' => 6,  // Tamaño del borde
+            'borderColor' => 'FFFFFF',  // Color blanco
         ]);
 
-        $paymentTable = $section->addTable('paymentTable');
         $paymentTable->addRow(2000);
 
 // Celda 1: Contenedor de la imagen
         $cellImage = $paymentTable->addCell(4000, [
             'valign' => 'center',
-            'alignment' => Jc::LEFT,  // Cambiar JcTable::LEFT a Jc::LEFT
-            'borderSize' => 0,
+            'alignment' => Jc::LEFT
         ]);
-        // Corregido el cierre de paréntesis en la llamada a addImage
         $cellImage->addImage(public_path('images/somos.PNG'), [
             'width' => 150,
-            'height' => 150,
-            'alignment' => Jc::CENTER  // Esto está bien ya que se usa Jc::CENTER para imágenes
+            'height' => 100,
+            'alignment' => Jc::CENTER
         ]);
 
 // Celda 2: Contenedor de los planes de financiación
         $cellPlans = $paymentTable->addCell(6000, [
             'valign' => 'center',
-            'alignment' => Jc::LEFT,  // Cambiar JcTable::LEFT a Jc::LEFT
-            'borderSize' => 0,
+            'alignment' => Jc::LEFT
         ]);
         $cellPlans->addText("48 cuotas de: $482.728", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
         $cellPlans->addText("60 cuotas de: $417.298", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
         $cellPlans->addText("20 cuotas de: $296.104", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
-        // Añadir tabla de caja acumulada
-        $section->addText("CAJA ACUMULADA:", 'titleStyle');
-        $table = $section->addTable('productTable');
-        $table->addRow();
-        $table->addCell(1000)->addText("Año", 'textStyle');
-        $table->addCell(3000)->addText("Caja acumulada", 'textStyle');
 
-        $accumulatedCashFlow = json_decode($quotation->cashFlow->accumulated_cash_flow, true);
-        foreach ($accumulatedCashFlow as $year => $value) {
-            $table->addRow();
-            $table->addCell(1000)->addText($year, 'textStyle');
-            $table->addCell(3000)->addText(number_format($value, 2), 'textStyle');
-        }
+        $section->addPageBreak(); // Salto de página
 
-        // Guardar y descargar el archivo
-        $fileName = 'Cotización_' . $quotation->consecutive . '.docx';
-        $tempFile = storage_path('app/' . $fileName);
+        // Añadir logo
+        $section->addImage(public_path('images/logo_word.png'), [
+            'width' => 300,
+            'height' => 100,
+            'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
+        ]);
 
+        // Agregar un salto de línea o párrafo vacío
+        $section->addText(PHP_EOL);
+
+        // Sección de garantías
+        $section->addText("GARANTÍAS:", 'titleStyle');
+        $section->addText("• Para los paneles solares 10 años al 91.2% de la potencia de salida mínima y 25 años al 80.7% de la potencia de salida mínima.", 'textStyle');
+        $section->addText("• Para los inversores 5 años de garantía por defectos de fábrica.", 'textStyle');
+        $section->addText("• Para la instalación 5 años de garantía.", 'textStyle');
+
+        $section->addText(PHP_EOL);
+
+        // Beneficios Tributarios
+        $section->addText("BENEFICIOS TRIBUTARIOS LEY 1715 DE 2014:", 'titleStyle');
+        $section->addText("• Descuento del 50% del valor de la inversión en renta líquida.", 'textStyle');
+        $section->addText("• Depreciación acelerada del activo en hasta en 3 años.", 'textStyle');
+        $section->addText("• Cero impuesto de IVA en bienes y servicios.", 'textStyle');
+
+        // Firma del vendedor
+        $section->addTextBreak(1);
+        $section->addText("Por favor, no dude en contactarse con nosotros en caso de cualquier duda o aclaración, que con gusto atenderemos sus comentarios.", 'textStyle');
+        $section->addTextBreak(4);
+        $section->addText("Atentamente,", 'textStyle');
+
+        $section->addText(PHP_EOL);
+
+        // Incluir el nombre del usuario autenticado en lugar de "NOMBRE VENDEDOR"
+        $section->addText($sellerName, ['bold' => true, 'highlightColor' => 'yellow']);
+
+        // Guardar el documento de Word en un archivo temporal
+        $fileName = 'documento_generado.docx';
+        $path = storage_path("app/public/{$fileName}");
+
+        // Guardar el documento como .docx
         $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
-        $objWriter->save($tempFile);
+        $objWriter->save($path);
 
-        return response()->download($tempFile)->deleteFileAfterSend(true);
+        // Devolver el documento para su descarga
+        return response()->download($path)->deleteFileAfterSend(true);
     }
 }

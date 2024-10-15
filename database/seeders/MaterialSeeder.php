@@ -11,9 +11,15 @@ class MaterialSeeder extends Seeder
     {
         $materialsData = [
             [
-                'material_category_id' => 1,
+                'material_category_id' => 2,
                 'reference' => 'Módulo Solar',
                 'description' => '575',
+                'unit_price' => 9838.00,
+            ],
+            [
+                'material_category_id' => 3,
+                'reference' => 'Inversor',
+                'description' => 'Monofásico 220V-60Hz',
                 'unit_price' => 9838.00,
             ],
 //            [
