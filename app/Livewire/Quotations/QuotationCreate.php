@@ -66,8 +66,8 @@ class QuotationCreate extends Component
         $requiredPowerOutput = ($this->energy_client / 30) / $this->solar_radiation_level;
 
         // Definir un margen de tolerancia
-        $tolerance = 1;
-        $minPowerOutput = $requiredPowerOutput - $tolerance;
+        $tolerance = 0.58;
+        $minPowerOutput = $requiredPowerOutput;
         $maxPowerOutput = $requiredPowerOutput + $tolerance;
 
         // Buscar proyectos que se encuentren dentro del rango de potencia con tolerancia
@@ -398,8 +398,8 @@ class QuotationCreate extends Component
         $requiredPowerOutput = ($this->energy_client / 30) / $this->solar_radiation_level;
 
         // Definir un margen de tolerancia
-        $tolerance = 1;
-        $minPowerOutput = $requiredPowerOutput - $tolerance;
+        $tolerance = 0.58;
+        $minPowerOutput = $requiredPowerOutput;
         $maxPowerOutput = $requiredPowerOutput + $tolerance;
 
         // Buscar proyectos que se encuentren dentro del rango de potencia con tolerancia
