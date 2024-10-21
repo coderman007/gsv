@@ -7,11 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\SimpleType\Jc;
+use PhpOffice\PhpWord\Style\Language;
 
 class QuotationDocumentController extends Controller
 {
-
-
     public function downloadQuotation($quotationId)
     {
         $quotation = Quotation::find($quotationId);
@@ -23,46 +22,54 @@ class QuotationDocumentController extends Controller
         // Crear una nueva instancia de PhpWord
         $phpWord = new PhpWord();
 
-        // Establecer el idioma del documento (en este caso, español)
-        $phpWord->setDefaultFontName('Arial');
-        $phpWord->setDefaultFontSize(12);
-        $phpWord->setDefaultParagraphStyle(['spaceAfter' => 0, 'spaceBefore' => 0]);
+        // Configurar el idioma predeterminado del documento a español (por ejemplo, español de Colombia)
+        $phpWord->getSettings()->setThemeFontLang(new Language(Language::ES_ES)); // Puedes usar ES_ES para español de España
 
-        // Crear una nueva sección y establecer el idioma
+        // Opcionalmente, puedes establecer el idioma en la sección
         $section = $phpWord->addSection(['language' => 'es-ES']);
+        // Agregar encabezado
+        $header = $section->addHeader();
+
+        // Añadir imagen del logo en el encabezado
+        $header->addImage(public_path('images/logo_word.png'), [
+            'width' => 220,
+            'height' => 75,
+            'alignment' => Jc::CENTER
+        ]);
+
+        // Añadir un espacio o salto de línea después de la imagen
+        $header->addTextBreak(1); // Esto agrega una separación (una línea vacía)
+
+// O también puedes agregar una separación ajustando los márgenes
+        $header->addText('', [], ['spaceAfter' => 240]); // Esto agrega espacio (en puntos) después del logo
 
         // Obtener el nombre del usuario autenticado
         $sellerName = Auth::user()->name;
 
         // Definir estilos
-        $phpWord->addFontStyle('titleStyle', ['bold' => true, 'size' => 16]);
+        $phpWord->addFontStyle('titleStyle', ['bold' => true, 'size' => 12]);
         $phpWord->addFontStyle('textStyle', ['size' => 12]);
         $phpWord->addFontStyle('boldStyle', ['bold' => true, 'size' => 12]);
         $phpWord->addParagraphStyle('centerStyle', ['alignment' => 'center']);
         $phpWord->addParagraphStyle('leftStyle', ['alignment' => 'left']);
         $phpWord->addParagraphStyle('rightStyle', ['alignment' => 'right']);
 
-        // Añadir logo
-        $section->addImage(public_path('images/logo_word.png'), [
-            'width' => 300,
-            'height' => 100,
-            'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
-        ]);
 
         // Agregar un salto de línea o párrafo vacío
         $section->addText(PHP_EOL);
 
 // Añadir encabezado y datos del cliente utilizando addTextRun para negrita
-        $textRun = $section->addTextRun();
+        $textRun = $section->addTextRun(['alignment' => Jc::END]); // Alinear el TextRun a la derecha
 
-// Consecutivo en negrita
-        $textRun->addText($quotation->consecutive, ['bold' => true], 'rightStyle');
+// Consecutivo en negrita, alineado a la derecha
+        $textRun->addText($quotation->consecutive, ['bold' => true]);
+
         $section->addText(PHP_EOL);
 
-// Fecha de cotización con negrita solo en el dato
-        $textRun = $section->addTextRun();
+// Fecha de cotización con negrita solo en el dato, alineada a la derecha
+        $textRun = $section->addTextRun(['alignment' => Jc::START]);
         $textRun->addText("Medellín ", 'textStyle');
-        $textRun->addText($quotation->quotation_date->format('d/m/Y'), ['bold' => true], 'textStyle');
+        $textRun->addText($quotation->quotation_date->format('d/m/Y'), ['bold' => true]);
 
         $section->addText(PHP_EOL);
 
@@ -128,12 +135,6 @@ class QuotationDocumentController extends Controller
             'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
         ]);
 
-        // Añadir logo
-        $section->addImage(public_path('images/logo_word.png'), [
-            'width' => 300,
-            'height' => 100,
-            'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
-        ]);
 
         // Agregar un salto de línea o párrafo vacío
         $section->addText(PHP_EOL);
@@ -282,12 +283,6 @@ class QuotationDocumentController extends Controller
 
         $section->addPageBreak(); // Salto de página
 
-        // Añadir logo
-        $section->addImage(public_path('images/logo_word.png'), [
-            'width' => 300,
-            'height' => 100,
-            'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
-        ]);
 
         // Agregar un salto de línea o párrafo vacío
         $section->addText(PHP_EOL);
@@ -431,12 +426,6 @@ class QuotationDocumentController extends Controller
 
         $section->addPageBreak(); // Salto de página
 
-        // Añadir logo
-        $section->addImage(public_path('images/logo_word.png'), [
-            'width' => 300,
-            'height' => 100,
-            'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
-        ]);
 
         // Agregar un salto de línea o párrafo vacío
         $section->addText(PHP_EOL);
