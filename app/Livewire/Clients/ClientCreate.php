@@ -54,7 +54,7 @@ class ClientCreate extends Component
             $image_url = $this->image->store('clients', 'public');
         }
 
-        // Crear el cliente asociado a esa ubicación
+        // Crear el cliente asociado a esa ubicación y al usuario autenticado
         $clientData = [
             'city_id' => $this->city_id,
             'type' => $this->type,
@@ -65,6 +65,7 @@ class ClientCreate extends Component
             'address' => $this->address,
             'phone' => $this->phone,
             'image' => $image_url,
+            'user_id' => auth()->id(), // Asignar el ID del usuario autenticado
         ];
 
         Client::create($clientData);
@@ -82,7 +83,7 @@ class ClientCreate extends Component
             'image',
         ]);
 
-        // Emitir eventos y notificaciones si es necesario
+        // Emitir eventos y notificaciones
         $this->openCreate = false;
         // Emite el evento Livewire
         $this->dispatch('createdClient', $clientData);

@@ -73,6 +73,23 @@ class QuotationDocumentController extends Controller
 
         $section->addText(PHP_EOL);
 
+        // ----- Pie de página -----
+        $footer = $section->addFooter();
+
+        // Añadir información de contacto
+        $footer->addText('Información de Contacto', ['bold' => true], ['alignment' => Jc::CENTER]);
+
+        // Dirección completa (en una línea)
+        $footer->addText('Cra. 53A #5575 55-a, Fátima, Itagüí, Antioquia', [], ['alignment' => Jc::CENTER]);
+
+        // Teléfono, Correo y Sitio web (en la siguiente línea separados por barras)
+        $footer->addText('Teléfono: 3007187730 | Correo: gsv@mail.com | Web: https://www.gsvingenieria.com/', [], ['alignment' => Jc::CENTER]);
+
+
+        // Añadir enlaces a redes sociales
+//        $footer->addText('Síguenos en Redes Sociales:', ['bold' => true], ['alignment' => Jc::CENTER]);
+//        $footer->addText('Facebook | Instagram | LinkedIn', [], ['alignment' => Jc::CENTER]);
+
 // Nombre del cliente con negrita en el dato
         $textRun = $section->addTextRun();
         $textRun->addText("Señor(es): ", 'textStyle');

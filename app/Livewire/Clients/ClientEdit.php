@@ -46,7 +46,7 @@ class ClientEdit extends Component
         $this->status = $client->status;
     }
 
-    public function updateClient():void
+    public function updateClient(): void
     {
         $this->validate([
             'city_id' => 'required|exists:cities,id',
@@ -57,7 +57,7 @@ class ClientEdit extends Component
             'email' => 'nullable|email|unique:clients,email,' . $this->client->id,
             'address' => 'nullable|string',
             'phone' => 'nullable|string',
-            'image'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'status' => 'nullable|string',
         ]);
 
@@ -74,28 +74,28 @@ class ClientEdit extends Component
                 'status' => $this->status,
             ];
 
+            // Actualiza los datos del cliente sin alterar el user_id
             $this->client->update($clientData);
 
+            // Procesa la imagen si se cargó una nueva
             if ($this->image) {
-                $image_url = $this->image->store('clients');
+                $image_url = $this->image->store('clients', 'public');
                 $this->client->update(['image' => $image_url]);
             }
 
             // Emitir eventos y notificaciones si es necesario
             $this->openEdit = false;
-            // Emite el evento Livewire
             $this->dispatch('updatedClient', $clientData);
-            // Emite la notificación
             $this->dispatch('updatedClientNotification', [
                 'title' => 'Éxito',
                 'text' => '¡Cliente Actualizado Exitosamente!',
                 'icon' => 'success'
             ]);
         } catch (\Exception $e) {
-            // Manejar el error de manera adecuada, por ejemplo, mostrar un mensaje de error
             session()->flash('error', 'Ocurrió un error al actualizar el cliente.');
         }
     }
+
 
     public function updatedCity($value): void
     {

@@ -13,6 +13,7 @@ class Client extends Model
 
     protected $fillable = [
         'city_id',
+        'user_id',
         'type',
         'name',
         'representative',
@@ -36,5 +37,10 @@ class Client extends Model
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

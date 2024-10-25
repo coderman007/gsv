@@ -39,15 +39,28 @@ class ClientList extends Component
     #[Computed()]
     public function clients()
     {
-        return
-            Client::where('id', 'like', '%' . $this->search . '%')
-            ->orWhere('type', 'like', '%' . $this->search . '%')
-            ->orWhere('name', 'like', '%' . $this->search . '%')
-            ->orWhere('document', 'like', '%' . $this->search . '%')
-            ->orWhere('email', 'like', '%' . $this->search . '%')
+        $query = Client::query();
+
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Validar el rol utilizando el método `hasRole` de Spatie
+        if ($user->hasRole('Vendedor')) {
+            $query->where('user_id', $user->id); // Filtrar por `user_id` si el usuario es vendedor
+        }
+
+        // Aplicar filtros de búsqueda y ordenamiento
+        return $query->where(function ($q) {
+            $q->where('id', 'like', '%' . $this->search . '%')
+                ->orWhere('type', 'like', '%' . $this->search . '%')
+                ->orWhere('name', 'like', '%' . $this->search . '%')
+                ->orWhere('document', 'like', '%' . $this->search . '%')
+                ->orWhere('email', 'like', '%' . $this->search . '%');
+        })
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perSearch);
     }
+
 
     #[On('createdClient')]
     public function createdClient($clientData = null)
