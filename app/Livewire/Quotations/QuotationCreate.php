@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Material;
 use App\Models\Project;
 use App\Models\Quotation;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
@@ -58,6 +59,31 @@ class QuotationCreate extends Component
         $this->generateConsecutive();
     }
 
+
+    public function generateConsecutive(): void
+    {
+        // Obtiene la fecha actual en el formato Ymd
+        $today = Carbon::now()->format('ymd'); // Cambié a 'ymd' para que sea 241018
+
+        // Obtiene el último consecutivo del día actual
+        $lastQuotation = Quotation::whereDate('quotation_date', Carbon::today())
+            ->orderBy('consecutive', 'desc')
+            ->first();
+
+        if ($lastQuotation) {
+            // Si existe una cotización hoy, incrementa el número consecutivo del día
+            $lastConsecutive = explode('-', $lastQuotation->consecutive);
+            $newNumber = (int) end($lastConsecutive) + 1;
+        } else {
+            // Si no existe una cotización hoy, comienza el consecutivo desde 1
+            $newNumber = 1;
+        }
+
+        // Formato personalizado con la fecha y el número consecutivo
+        $this->consecutive = "PROY{$today}-" . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+
     public function createQuotation(): void
     {
         $this->validate();
@@ -84,6 +110,9 @@ class QuotationCreate extends Component
 
         // Resetear el mensaje de error si se encuentra un proyecto
         $this->errorMessage = null;
+
+        // Regenerar el consecutivo antes de la creación de la cotización
+        $this->generateConsecutive();
 
         // Crear la cotización
         $quotation = Quotation::create([
@@ -480,17 +509,6 @@ class QuotationCreate extends Component
         }
     }
 
-    private function generateConsecutive(): void
-    {
-        // Obtener el último número de consecutivo de cotización
-        $lastQuotation = Quotation::latest()->first();
-        $consecutiveNumber = $lastQuotation ? $lastQuotation->id + 1 : 1;
-
-        // Formatear el consecutivo según el estándar deseado
-        $this->consecutive = 'PROY' . date('ymd') . '-' . str_pad($consecutiveNumber, 3, '0', STR_PAD_LEFT);
-    }
-
-    // app/Http/Livewire/Quotations/QuotationCreate.php
 
     public function getTotalFormattedProperty(): string
     {

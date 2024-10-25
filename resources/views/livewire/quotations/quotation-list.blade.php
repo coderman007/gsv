@@ -65,6 +65,10 @@
                         @endif
                     </th>
 
+                    <th scope="col" class="px-6 py-3">
+                        Cliente
+                    </th>
+
                     <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('quotation_date')">
                         Fecha de cotización
                         @if ($sortBy == 'quotation_date')
@@ -113,6 +117,10 @@
                             {{ $quotation->id }}
                         </th>
                         <td class="px-6 py-4 dark:text-lg">{{ $quotation->consecutive }}</td>
+                        <!-- Celda para el Nombre del Cliente -->
+                        <td class="px-6 py-4 dark:text-lg">
+                            {{ $quotation->client->name ?? 'Cliente no asignado' }}
+                        </td>
                         <td class="px-6 py-4 dark:text-lg">
                             {{ \Carbon\Carbon::parse($quotation->quotation_date)->format('Y-m-d') }}
                         </td>

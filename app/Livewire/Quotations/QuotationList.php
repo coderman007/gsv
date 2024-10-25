@@ -41,7 +41,8 @@ class QuotationList extends Component
     #[Computed]
     public function quotations(): array|LengthAwarePaginator|_IH_Quotation_C
     {
-        return Quotation::where('consecutive', 'like', '%' . $this->search . '%')
+        return Quotation::with('client') // Incluye la relación del cliente
+        ->where('consecutive', 'like', '%' . $this->search . '%')
             ->orWhere('total', 'like', '%' . $this->search . '%')
             ->orWhere('quotation_date', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDirection)
