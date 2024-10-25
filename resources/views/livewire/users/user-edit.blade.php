@@ -67,12 +67,22 @@
         </x-slot>
 
         <x-slot name="footer">
-            <div class="mt-5 flex justify-end">
+            <div class="mt-5 flex justify-end gap-4">
+                <button type="button" wire:click="closeModal"
+                        class="flex items-center px-5 py-2.5 font-medium tracking-wide text-white capitalize bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600 transition duration-300 transform active:scale-95 ease-in-out">
+            <span class="mx-1">
+                <svg class="w-5 h-5 mr-2 font-extrabold" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </span>
+                    Salir
+                </button>
                 <button type="submit" wire:click="updateUser"
                         class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
                     Actualizar Usuario
                 </button>
             </div>
         </x-slot>
+
     </x-dialog-modal>
 </div>

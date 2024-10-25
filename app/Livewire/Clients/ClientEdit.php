@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Clients;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 use App\Models\Client;
@@ -32,7 +33,15 @@ class ClientEdit extends Component
 
     public function mount(Client $client): void
     {
+        // Asignar cliente a la variable local
         $this->client = $client;
+
+        // Verificar si el usuario tiene permiso para editar
+        if ($client->user_id !== Auth::id() && !Auth::user()->hasRole('Administrador')) {
+            session()->flash('error', 'No tienes permiso para editar este cliente.');
+        }
+
+        // Cargar información del cliente
         $this->cities = City::all()->pluck('name');
         $this->city_id = $client->city_id;
         $this->city = $client->city->name;
@@ -48,6 +57,7 @@ class ClientEdit extends Component
 
     public function updateClient(): void
     {
+        // Validar los datos antes de actualizar
         $this->validate([
             'city_id' => 'required|exists:cities,id',
             'type' => 'required|string',
@@ -62,6 +72,7 @@ class ClientEdit extends Component
         ]);
 
         try {
+            // Crear un array con los datos del cliente
             $clientData = [
                 'city_id' => $this->city_id,
                 'type' => $this->type,
@@ -74,16 +85,16 @@ class ClientEdit extends Component
                 'status' => $this->status,
             ];
 
-            // Actualiza los datos del cliente sin alterar el user_id
+            // Actualizar los datos del cliente sin alterar el user_id
             $this->client->update($clientData);
 
-            // Procesa la imagen si se cargó una nueva
+            // Procesar la imagen si se cargó una nueva
             if ($this->image) {
                 $image_url = $this->image->store('clients', 'public');
                 $this->client->update(['image' => $image_url]);
             }
 
-            // Emitir eventos y notificaciones si es necesario
+            // Emitir eventos y notificaciones
             $this->openEdit = false;
             $this->dispatch('updatedClient', $clientData);
             $this->dispatch('updatedClientNotification', [

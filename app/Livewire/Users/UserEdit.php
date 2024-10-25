@@ -22,7 +22,7 @@ class UserEdit extends Component
         'status' => 'required'
     ];
 
-    public function mount($userId):void
+    public function mount($userId): void
     {
         try {
             $this->userId = $userId;
@@ -69,7 +69,12 @@ class UserEdit extends Component
         $this->dispatch('updatedUserNotification');
     }
 
-    public function render():View
+    public function closeModal(): void
+    {
+        $this->openEdit = false;
+    }
+
+    public function render(): View
     {
         return view('livewire.users.user-edit');
     }
