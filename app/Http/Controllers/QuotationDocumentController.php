@@ -414,8 +414,8 @@ class QuotationDocumentController extends Controller
             'alignment' => Jc::LEFT
         ]);
         $cellImage->addImage(public_path('images/somos.PNG'), [
-            'width' => 150,
-            'height' => 100,
+            'width' => 120,
+            'height' => 80,
             'alignment' => Jc::CENTER
         ]);
 

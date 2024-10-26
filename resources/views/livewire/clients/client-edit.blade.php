@@ -115,12 +115,20 @@
             </x-slot>
             <x-slot name="footer">
                 <div class="mt-5 flex justify-end">
+                    <!-- Botón para cerrar el modal -->
+                    <button type="button" wire:click="$set('openEdit', false)"
+                            class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-md mr-2">
+                        <i class="fa-solid fa-ban mr-2"></i>Cancelar
+                    </button>
+
+                    <!-- Botón para actualizar cliente -->
                     <button type="submit" wire:click="updateClient"
-                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-md">
                         Actualizar Cliente
                     </button>
                 </div>
             </x-slot>
+
         </div>
     </x-dialog-modal>
 </div>
