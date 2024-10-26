@@ -23,27 +23,28 @@ class QuotationDocumentController extends Controller
         $phpWord = new PhpWord();
 
         // Configurar el idioma predeterminado del documento a español (por ejemplo, español de Colombia)
-        $phpWord->getSettings()->setThemeFontLang(new Language(Language::ES_ES)); // Puedes usar ES_ES para español de España
+        $phpWord->getSettings()->setThemeFontLang(new Language(Language::ES_ES));
 
-        // Opcionalmente, puedes establecer el idioma en la sección
-        $section = $phpWord->addSection(['language' => 'es-ES']);
+        // Ajustar tipo de letra predeterminado a Century Gothic
+        $phpWord->setDefaultFontName('Century Gothic');
+        $phpWord->setDefaultFontSize(12);
+
+        // Establecer estilo de párrafo predeterminado para alineación y interlineado
+        $phpWord->setDefaultParagraphStyle([
+            'alignment' => Jc::BOTH,   // Alineación justificada
+            'spacing' => ['after' => 0, 'line' => 240], // Interlineado automático
+        ]);
+
+        $section = $phpWord->addSection();
+
         // Agregar encabezado
         $header = $section->addHeader();
-
-        // Añadir imagen del logo en el encabezado
         $header->addImage(public_path('images/logo_word.png'), [
             'width' => 220,
             'height' => 75,
             'alignment' => Jc::CENTER
         ]);
 
-        // Añadir un espacio o salto de línea después de la imagen
-        $header->addTextBreak(1); // Esto agrega una separación (una línea vacía)
-
-// O también puedes agregar una separación ajustando los márgenes
-        $header->addText('', [], ['spaceAfter' => 240]); // Esto agrega espacio (en puntos) después del logo
-
-        // Obtener el nombre del usuario autenticado
         $sellerName = Auth::user()->name;
 
         // Definir estilos
@@ -53,10 +54,12 @@ class QuotationDocumentController extends Controller
         $phpWord->addParagraphStyle('centerStyle', ['alignment' => 'center']);
         $phpWord->addParagraphStyle('leftStyle', ['alignment' => 'left']);
         $phpWord->addParagraphStyle('rightStyle', ['alignment' => 'right']);
+        $phpWord->addParagraphStyle('justifiedStyle', [
+            'alignment' => Jc::BOTH,      // Justificar el texto
+            'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0), // Espacio después del párrafo
+            'lineHeight' => 1.15          // Interlineado automático
+        ]);
 
-
-        // Agregar un salto de línea o párrafo vacío
-        $section->addText(PHP_EOL);
 
 // Añadir encabezado y datos del cliente utilizando addTextRun para negrita
         $textRun = $section->addTextRun(['alignment' => Jc::END]); // Alinear el TextRun a la derecha
@@ -71,38 +74,35 @@ class QuotationDocumentController extends Controller
         $textRun->addText("Medellín ", 'textStyle');
         $textRun->addText($quotation->quotation_date->format('d/m/Y'), ['bold' => true]);
 
-        $section->addText(PHP_EOL);
 
         // ----- Pie de página -----
         $footer = $section->addFooter();
 
-        // Añadir información de contacto
-        $footer->addText('Información de Contacto', ['bold' => true], ['alignment' => Jc::CENTER]);
+// Modificar tamaño de fuente y alineación para el pie de página
+        $footer->addText(
+            'Cra. 52 # 52-63 - CC. Itagüí Plaza - Local 409, Itagüí - Antioquia',
+            ['size' => 10], // Cambiar el tamaño de la fuente a 9
+            ['alignment' => Jc::CENTER]
+        );
+        $footer->addText(
+            '+57 3007187730 | comercial@gsvingenieria.com | www.gsvingenieria.com',
+            ['size' => 10], // Cambiar el tamaño de la fuente a 9
+            ['alignment' => Jc::CENTER]
+        );
 
-        // Dirección completa (en una línea)
-        $footer->addText('Cra. 53A #5575 55-a, Fátima, Itagüí, Antioquia', [], ['alignment' => Jc::CENTER]);
-
-        // Teléfono, Correo y Sitio web (en la siguiente línea separados por barras)
-        $footer->addText('Teléfono: 3007187730 | Correo: gsv@mail.com | Web: https://www.gsvingenieria.com/', [], ['alignment' => Jc::CENTER]);
-
-
-        // Añadir enlaces a redes sociales
-//        $footer->addText('Síguenos en Redes Sociales:', ['bold' => true], ['alignment' => Jc::CENTER]);
-//        $footer->addText('Facebook | Instagram | LinkedIn', [], ['alignment' => Jc::CENTER]);
 
 // Nombre del cliente con negrita en el dato
         $textRun = $section->addTextRun();
-        $textRun->addText("Señor(es): ", 'textStyle');
+        $textRun->addText("Señor(a): ", 'textStyle');
         $textRun->addText($quotation->client->name, ['bold' => true], 'textStyle');
 
-        $section->addText(PHP_EOL);
 
 // Empresa solo si existe, con negrita en el dato
         if ($quotation->client->company) {
             $textRun = $section->addTextRun();
             $textRun->addText("EMPRESA: ", 'textStyle');
             $textRun->addText($quotation->client->company, ['bold' => true], 'textStyle');
-            $section->addText(PHP_EOL);
+
         }
 
 // Ciudad con negrita en el dato
@@ -125,11 +125,12 @@ class QuotationDocumentController extends Controller
 // Crear un TextRun para la sección de antecedentes
         $textRun = $section->addTextRun();
         $textRun->addText("El consumo actual de energía es cercano a ", 'textStyle');
-        $textRun->addText($quotation->energy_client . " kWh", ['bold' => true], 'textStyle');
+        $textRun->addText(number_format($quotation->energy_client, 0) . " kWh", ['bold' => true], 'textStyle');
         $textRun->addText(" y el costo actual por kWh es de ", 'textStyle');
-        $textRun->addText($quotation->kilowatt_cost, ['bold' => true], 'textStyle');
-        $textRun->addText(", es decir que el gasto por energía es de $", 'textStyle');
-        $textRun->addText(number_format($quotation->cashFlow->energy_generated_monthly * $quotation->kilowatt_cost) . " al mes.", ['bold' => true], 'textStyle');
+        $textRun->addText("$ " . number_format($quotation->kilowatt_cost), ['bold' => true], 'textStyle');
+        $textRun->addText(", es decir que el gasto por energía es de ", 'textStyle');
+        $textRun->addText("$ " . number_format($quotation->energy_client * $quotation->kilowatt_cost, 2), ['bold' => true], 'textStyle');
+        $textRun->addText(" al mes.", 'textStyle');
 
         $section->addText(PHP_EOL); // Salto de línea
 
@@ -142,23 +143,21 @@ class QuotationDocumentController extends Controller
         $textRun->addText($quotation->project->power_output . " kWp", ['bold' => true], 'textStyle');
         $textRun->addText(" para optimizar al máximo la producción energética; dicha configuración permite que el proyecto sea más funcional tanto técnica como económicamente.", 'textStyle');
 
-        $section->addText(PHP_EOL); // Salto de línea
-
-
         // Añadir logo del sistema
         $section->addImage(public_path('images/on-grid.png'), [
             'width' => 400,
-            'height' => 220,
+            'height' => 180,
             'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
         ]);
 
+        $section->addPageBreak(); // Salto de página
 
-        // Agregar un salto de línea o párrafo vacío
-        $section->addText(PHP_EOL);
-
-        // Crear una nueva sección para "CÁLCULO DEL SISTEMA"
-        $section->addText("CÁLCULO DEL SISTEMA", 'titleStyle');
-        $section->addText("Teniendo en cuenta que la zona se tiene en promedio 4.2 horas de sol directa al día, tu sistema solar fotovoltaico sería:", 'textStyle');
+        // Crear un TextRun para el promedio de horas de sol directo
+        $textRun = $section->addTextRun();
+        $textRun->addText("Teniendo en cuenta que la zona tiene en promedio ", 'textStyle');
+        $textRun->addText(number_format($quotation->client->city->irradiance, 1), ['bold' => true], 'textStyle');
+        $textRun->addText(" horas de sol directo al día", 'textStyle');
+        $textRun->addText(", tu sistema solar fotovoltaico sería:", 'textStyle');
 
 // Definir estilo de la tabla
         $phpWord->addTableStyle('calculationTable', [
@@ -217,16 +216,16 @@ class QuotationDocumentController extends Controller
 
 // Añadir el texto con alineación centrada
         $cellPaneles->addText("NÚMERO DE PANELES", ['bold' => true, 'size' => 12, 'color' => '000000'], ['alignment' => 'center']);
-        $cellPaneles->addText($quotation->panels_needed, ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+        $cellPaneles->addText(number_format($quotation->panels_needed), ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
         $cellPotencia->addText("POTENCIA SISTEMA", ['bold' => true, 'size' => 12, 'color' => '000000'], ['alignment' => 'center']);
-        $cellPotencia->addText($quotation->project->power_output . " kWp", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+        $cellPotencia->addText(number_format($quotation->project->power_output, 1) . " kWp", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
         $cellEnergia->addText("ENERGÍA GENERADA", ['bold' => true, 'size' => 12, 'color' => '000000'], ['alignment' => 'center']);
-        $cellEnergia->addText(($quotation->project->power_output * 4.2 * 30) . " kWh-mes", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+        $cellEnergia->addText(number_format(($quotation->project->power_output) * 4.2 * 30) . " kWh-mes", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
         $cellArea->addText("ÁREA NECESARIA", ['bold' => true, 'size' => 12, 'color' => '000000'], ['alignment' => 'center']);
-        $cellArea->addText($quotation->required_area . " m2", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+        $cellArea->addText(number_format($quotation->required_area) . " m²", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
 // Añadir fila adicional con espacio específico
         $calculationTable->addRow(300);  // Fila vacía para espacio adicional
@@ -253,7 +252,7 @@ class QuotationDocumentController extends Controller
         ]);
 
         $cellConsumo->addText("CONSUMO ACTUAL", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
-        $cellConsumo->addText($quotation->energy_client . " kWh", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+        $cellConsumo->addText(number_format($quotation->energy_client) . " kWh", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
         $cellAhorro->addText("AHORRO MENSUAL", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
         $cellAhorro->addText("100%", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
@@ -280,8 +279,8 @@ class QuotationDocumentController extends Controller
 
 // Agregar las filas de detalles basados en la imagen proporcionada
         $items = [
-            ["Panel solar fotovoltaico bifacial 575 Wp", $quotation->panels_needed],
-            ["Inversores monofásico 220V-60Hz", "CANT"],
+            ["Panel solar fotovoltaico bifacial 575 Wp", number_format($quotation->panels_needed)],
+            ["Inversores monofásico 220V-60Hz", "X"],
             ["Estructuras paneles solares", "1"],
             ["Adecuaciones eléctricas internas y medidor", "1"],
             ["Certificación RETIE", "1"],
@@ -300,12 +299,8 @@ class QuotationDocumentController extends Controller
 
         $section->addPageBreak(); // Salto de página
 
-
-        // Agregar un salto de línea o párrafo vacío
-        $section->addText(PHP_EOL);
-
         // Añadir sección de Presupuesto EPC con descripción y valores
-        $section->addText("PRESUPUESTO EPC", 'titleStyle', 'centerStyle');
+        $section->addText("PRESUPUESTO EPC (LLAVE EN MANO)", 'titleStyle', 'centerStyle');
 
         // Añadir tabla de presupuesto
         $phpWord->addTableStyle('budgetTable', [
@@ -323,12 +318,12 @@ class QuotationDocumentController extends Controller
         // Fila de sistema solar
         $budgetTable->addRow();
         $budgetTable->addCell(8000)->addText("SISTEMA SOLAR FOTOVOLTAICO ON-GRID: " . $quotation->project->power_output . " KWP", ['size' => 12], ['alignment' => 'left']);
-        $budgetTable->addCell(3000)->addText("$" . number_format($quotation->total, 2), ['size' => 12], ['alignment' => 'center']);
+        $budgetTable->addCell(3000)->addText("$ " . number_format($quotation->total), ['size' => 12], ['alignment' => 'center']);
 
         // Subtotal e IVA
         $budgetTable->addRow();
         $budgetTable->addCell(8000)->addText("SUBTOTAL", ['size' => 12], ['alignment' => 'right']);
-        $budgetTable->addCell(3000)->addText("$" . number_format($quotation->total, 2), ['size' => 12], ['alignment' => 'center']);
+        $budgetTable->addCell(3000)->addText("$ " . number_format($quotation->total), ['size' => 12], ['alignment' => 'center']);
 
         $budgetTable->addRow();
         $budgetTable->addCell(8000)->addText("IVA", ['size' => 12], ['alignment' => 'right']);
@@ -337,9 +332,7 @@ class QuotationDocumentController extends Controller
         // Total
         $budgetTable->addRow();
         $budgetTable->addCell(8000, ['bgColor' => 'D9D9D9'])->addText("TOTAL", ['bold' => true, 'size' => 12], ['alignment' => 'right']);
-        $budgetTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("$" . number_format($quotation->total, 2), ['bold' => true, 'size' => 12], ['alignment' => 'center']);
-
-        $section->addTextBreak();
+        $budgetTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("$ " . number_format($quotation->total), ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
         $section->addText(PHP_EOL);
 
@@ -352,8 +345,6 @@ class QuotationDocumentController extends Controller
             'height' => 200,
             'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER // Centra la imagen
         ]);
-
-        $section->addTextBreak(2);  // Añadir espacio adicional
 
         // Estilo de la tabla para TIR y Payback Time con borde blanco
         $phpWord->addTableStyle('tirPaybackTable', [
@@ -390,25 +381,21 @@ class QuotationDocumentController extends Controller
         ]);
 
         $cellPayback->addText("TIEMPO DE RECUPERACIÓN DE LA INVERSIÓN", ['bold' => true, 'size' => 14], ['alignment' => 'center']);
-        $cellPayback->addText($quotation->cashFlow->payback_time . " años", ['bold' => true, 'size' => 16, 'color' => 'black'], ['alignment' => 'center']);
+        $cellPayback->addText(number_format($quotation->cashFlow->payback_time, 1) . " años", ['bold' => true, 'size' => 16, 'color' => 'black'], ['alignment' => 'center']);
+
+        $section->addPageBreak(); // Salto de página
 
         // --- Nueva Sección: Formas de Pago ---
-        $section->addTextBreak(1);  // Añadir un salto de línea
         $section->addText("FORMAS DE PAGO", 'titleStyle', 'leftStyle');
-
-        $section->addText(PHP_EOL);
 
 // Forma de pago contado
         $section->addText("CONTADO:", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
-        $section->addText("30% Anticipo\n" .
-            "40% Contra entrega de diseño de ingeniería de detalle.\n" .
-            "20% Contra entrega de obra (equipos instalados)\n" .
-            "10% Contra cambio de medidor por parte del comercializador.",
-            ['size' => 11],
-            ['alignment' => 'left']
-        );
 
-        $section->addText(PHP_EOL);
+// Detalles de pago en formato de viñetas
+        $section->addListItem("30% Anticipo.", 0, null, ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED]);
+        $section->addListItem("40% Contra entrega de diseño de ingeniería de detalle.", 0, null, ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED]);
+        $section->addListItem("20% Contra entrega de obra (equipos instalados).", 0, null, ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED]);
+        $section->addListItem("10% Contra cambio de medidor por parte del comercializador.", 0, null, ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED]);
 
 // Forma de pago financiado
         $section->addText("FINANCIADO:", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
@@ -437,39 +424,37 @@ class QuotationDocumentController extends Controller
             'valign' => 'center',
             'alignment' => Jc::LEFT
         ]);
-        $cellPlans->addText("48 cuotas de: $482.728", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
-        $cellPlans->addText("60 cuotas de: $417.298", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
-        $cellPlans->addText("20 cuotas de: $296.104", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
-
-        $section->addPageBreak(); // Salto de página
-
-
-        // Agregar un salto de línea o párrafo vacío
-        $section->addText(PHP_EOL);
+        $cellPlans->addText("  48 cuotas de: $ XXXXXX", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
+        $cellPlans->addText("  60 cuotas de: $ XXXXXX", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
+        $cellPlans->addText("120 cuotas de: $ XXXXXX", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
 
         // Sección de garantías
         $section->addText("GARANTÍAS:", 'titleStyle');
-        $section->addText("• Para los paneles solares 10 años al 91.2% de la potencia de salida mínima y 25 años al 80.7% de la potencia de salida mínima.", 'textStyle');
-        $section->addText("• Para los inversores 5 años de garantía por defectos de fábrica.", 'textStyle');
-        $section->addText("• Para la instalación 5 años de garantía.", 'textStyle');
+
+// Detalles de garantías en formato de viñetas
+        $section->addListItem("Para los paneles solares: 10 años al 91.2% de la potencia de salida mínima y 25 años al 80.7% de la potencia de salida mínima.", 0, 'textStyle', ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED]);
+        $section->addListItem("Para los inversores: 5 años de garantía por defectos de fábrica.", 0, 'textStyle', ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED]);
+        $section->addListItem("Para la instalación: 5 años de garantía.", 0, 'textStyle', ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED]);
+
+// Sección de beneficios tributarios
+        $section->addText("BENEFICIOS TRIBUTARIOS LEY 1715 DE 2014:", 'titleStyle');
+
+// Detalles de beneficios tributarios en formato de viñetas
+        $section->addListItem("Descuento del 50% del valor de la inversión en renta líquida.", 0, 'textStyle', ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED]);
+        $section->addListItem("Depreciación acelerada del activo en hasta 3 años.", 0, 'textStyle', ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED]);
+        $section->addListItem("Cero impuestos de IVA en bienes y servicios.", 0, 'textStyle', ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED]);
+
+        $section->addTextBreak();
+
+        $section->addText("Por favor, no dude en contactarse con nosotros en caso de cualquier duda o aclaración, que con gusto atenderemos sus comentarios.", 'textStyle');
 
         $section->addText(PHP_EOL);
 
-        // Beneficios Tributarios
-        $section->addText("BENEFICIOS TRIBUTARIOS LEY 1715 DE 2014:", 'titleStyle');
-        $section->addText("• Descuento del 50% del valor de la inversión en renta líquida.", 'textStyle');
-        $section->addText("• Depreciación acelerada del activo en hasta en 3 años.", 'textStyle');
-        $section->addText("• Cero impuesto de IVA en bienes y servicios.", 'textStyle');
-
-        // Firma del vendedor
-        $section->addTextBreak(1);
-        $section->addText("Por favor, no dude en contactarse con nosotros en caso de cualquier duda o aclaración, que con gusto atenderemos sus comentarios.", 'textStyle');
-        $section->addTextBreak(4);
         $section->addText("Atentamente,", 'textStyle');
 
         $section->addText(PHP_EOL);
 
-        // Incluir el nombre del usuario autenticado en lugar de "NOMBRE VENDEDOR"
+        // Incluir el nombre del usuario autenticado
         $section->addText($sellerName, ['bold' => true, 'highlightColor' => 'yellow']);
 
         // Guardar el documento de Word en un archivo temporal
