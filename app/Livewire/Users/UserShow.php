@@ -17,7 +17,13 @@ class UserShow extends Component
     {
         $this->user = $user;
         $this->role = $user->roles->first(); // Obtiene el primer rol del usuario
+
+        // Puedes agregar una verificación para manejar el caso en que no hay roles
+        if (!$this->role) {
+            $this->role = null; // Esto es opcional, pero puedes hacerlo explícito
+        }
     }
+
 
     public function render(): View
     {

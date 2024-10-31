@@ -29,7 +29,9 @@
 
                             <div class="pt-24">
                                 <h1 class="text-lg font-bold text-gray-950 dark:text-gray-400">Tipo de Usuario</h1>
-                                <p class="text-lg text-gray-800 dark:text-white">{{ $role->name }}</p>
+                                <p class="text-lg text-gray-800 dark:text-white">
+                                    {{ $role ? $role->name : 'Sin rol asignado' }}
+                                </p>
                             </div>
 
                             <div class="mb-4">

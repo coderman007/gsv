@@ -60,6 +60,15 @@ class PositionEdit extends Component
 
     public function updatePosition(): void
     {
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene permisos para actualizar la categoría
+        if (!$user || (!$user->hasRole('Administrador'))) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
+        }
+
         $this->validate();
 
         $position = Position::findOrFail($this->positionId);

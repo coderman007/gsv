@@ -43,6 +43,15 @@ class IrradianceEdit extends Component
 
     public function updateIrradiance(): void
     {
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene permisos para actualizar la categoría
+        if (!$user || (!$user->hasRole('Administrador'))) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
+        }
+
         // Validar el valor de irradiancia antes de guardar
         $this->validate([
             'irradiance' => 'required|numeric|min:0',

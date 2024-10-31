@@ -18,19 +18,28 @@ class RoleSeeder extends Seeder
         $roles = [
             'Administrador',
             'Vendedor',
+            'Usuario Nuevo',
         ];
 
         foreach ($roles as $roleName) {
             Role::firstOrCreate(['name' => $roleName]);
         }
 
-        // Definir permisos comunes
-        $commonPermissions = [];
+        // Definir permisos a todos los roles
+        $commonPermissions = [
+        ];
 
         // Asignar permisos a roles
         $rolePermissions = [
-            'Administrador' => [],
-            'Vendedor' => array_merge($commonPermissions, []),
+            'Administrador' => array_merge($commonPermissions, [
+                'manage_roles', // Permiso para gestionar roles
+                'manage_permissions', // Permiso para gestionar permisos
+                // Otros permisos específicos para Administradores
+            ]),
+            'Vendedor' => array_merge($commonPermissions, [
+                // permisos específicos para Vendedores
+            ]),
+            'Usuario Nuevo' => [], // Permisos vacíos para Usuario Nuevo
         ];
 
         foreach ($rolePermissions as $roleName => $permissions) {

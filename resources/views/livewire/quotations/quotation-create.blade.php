@@ -1,4 +1,5 @@
 <div>
+{{--    preguntar a Don Esteban si en el formulario de cotizaciones al estar registrado con un usuario que tenga el rol de vendedor se debe mostrar el listado de todos los clientes existentes en la base de datos o únicamente los clientes que estén Asociados a ese cliente en particular--}}
     <button wire:click="$set('openCreate', true)"
             class="rounded-md px-4 py-2 m-2 overflow-hidden relative group cursor-pointer border-2 font-medium border-gray-500 hover:border-blue-700 text-white">
         <span

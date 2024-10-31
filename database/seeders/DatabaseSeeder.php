@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
 
         $user = \App\Models\User::factory()->create([
-            'name' => 'Jaime',
+            'name' => 'Jaime Sierra',
             'email' => 'coderman1980@gmail.com',
             'password' => bcrypt('coderman'),
             'status' => 'Activo',

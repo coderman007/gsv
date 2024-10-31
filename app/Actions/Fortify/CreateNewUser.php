@@ -7,10 +7,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Jetstream;
+use Spatie\Permission\Traits\HasRoles;
 
 class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules;
+    use HasRoles;
 
     /**
      * Validate and create a newly registered user.
@@ -26,10 +28,19 @@ class CreateNewUser implements CreatesNewUsers
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
-        return User::create([
+        // Crear el usuario
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            'status' => 'Inactivo', // Establece el estado como inactivo
         ]);
+
+        // Asignar el rol "Vendedor" al usuario automáticamente
+        $user->assignRole('Usuario Nuevo');
+
+//        dd($user->roles);
+        return $user;
     }
+
 }

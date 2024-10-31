@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Quotation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -53,7 +54,20 @@ class QuotationCreate extends Component
 
     public function mount(): void
     {
-        $this->clients = Client::all();
+        // Verifica el rol del usuario
+        $user = Auth::user();
+
+        if ($user->hasRole('Administrador')) {
+            // Si el usuario es administrador, obtiene todos los clientes
+            $this->clients = Client::all();
+        } else if ($user->hasRole('Vendedor')) {
+            // Si el usuario es vendedor, obtiene solo los clientes asignados al vendedor
+            $this->clients = Client::where('user_id', $user->id)->get();
+        } else {
+            // Opcional: manejo para otros roles o permisos adicionales
+            $this->clients = collect(); // Vacío si no se asignan clientes
+        }
+
         $this->quotation_date = now();
         $this->validity_period = 30;
         $this->generateConsecutive();

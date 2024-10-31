@@ -40,8 +40,13 @@ class MacroEconomicVariables extends Component
 
     public function store(): void
     {
-        if (!auth()->check() || !auth()->user()->hasRole('Administrador')) {
-            abort(403, 'Solo los administradores pueden crear variables macroeconómicas.');
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene permisos para actualizar la categoría
+        if (!$user || (!$user->hasRole('Administrador'))) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
         }
 
         $this->validate();
@@ -63,8 +68,13 @@ class MacroEconomicVariables extends Component
 
     public function edit($id): void
     {
-        if (!auth()->check() || !auth()->user()->hasRole('Administrador')) {
-            abort(403, 'Solo los administradores pueden editar variables macroeconómicas.');
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene permisos para actualizar la categoría
+        if (!$user || (!$user->hasRole('Administrador'))) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
         }
 
         $variable = MacroEconomicVariable::findOrFail($id);
@@ -80,8 +90,13 @@ class MacroEconomicVariables extends Component
 
     public function update(): void
     {
-        if (!auth()->check() || !auth()->user()->hasRole('Administrador')) {
-            abort(403, 'Solo los administradores pueden actualizar variables macroeconómicas.');
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene permisos para actualizar la categoría
+        if (!$user || (!$user->hasRole('Administrador'))) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
         }
 
         $this->validate();
@@ -110,12 +125,13 @@ class MacroEconomicVariables extends Component
 
     public function deleteVariable(): void
     {
-        if (!auth()->check()) {
-            abort(403, 'No está autorizado para llevar a cabo esta acción.');
-        }
+        // Obtener el usuario autenticado
+        $user = auth()->user();
 
-        if (!auth()->user()->hasRole('Administrador')) {
-            abort(403, 'Solo los administradores pueden eliminar variables macroeconómicas.');
+        // Verificar si el usuario tiene permisos para actualizar la categoría
+        if (!$user || (!$user->hasRole('Administrador'))) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
         }
 
         if ($this->variableIdToDelete) {

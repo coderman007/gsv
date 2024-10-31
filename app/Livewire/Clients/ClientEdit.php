@@ -33,13 +33,14 @@ class ClientEdit extends Component
 
     public function mount(Client $client): void
     {
+        $user = auth()->user();
+        if($user->status !== 'Activo'){
+            abort(403, 'No está autorizado para acceder a esta vista.');
+            return;
+        }
+
         // Asignar cliente a la variable local
         $this->client = $client;
-
-        // Verificar si el usuario tiene permiso para editar
-        if ($client->user_id !== Auth::id() && !Auth::user()->hasRole('Administrador')) {
-            session()->flash('error', 'No tienes permiso para editar este cliente.');
-        }
 
         // Cargar información del cliente
         $this->cities = City::all()->pluck('name');
@@ -57,6 +58,15 @@ class ClientEdit extends Component
 
     public function updateClient(): void
     {
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene permisos para actualizar el cliente
+        if (!$user || (!$user->hasRole('Administrador')) && (!$user->hasRole('Vendedor') && $this->client->user_id !== $user->id)) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
+        }
+
         // Validar los datos antes de actualizar
         $this->validate([
             'city_id' => 'required|exists:cities,id',

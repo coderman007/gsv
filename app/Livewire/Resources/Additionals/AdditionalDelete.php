@@ -18,14 +18,13 @@ class AdditionalDelete extends Component
 
     public function deleteAdditional(): void
     {
-        // Verificar si el usuario autenticado existe
-        if (!auth()->check()) {
-            abort(403, 'No está autorizado para llevar a cabo esta acción.');
-        }
+        // Obtener el usuario autenticado
+        $user = auth()->user();
 
-        // Verificar si el usuario autenticado tiene el rol 'Administrador' y está activo
-        if (!auth()->user()->hasRole('Administrador') || auth()->user()->status !== 'Activo') {
+        // Verificar si el usuario tiene permisos para actualizar la categoría
+        if (!$user || (!$user->hasRole('Administrador'))) {
             abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
         }
 
         // Si el costo adicional a eliminar existe, proceder con la eliminación

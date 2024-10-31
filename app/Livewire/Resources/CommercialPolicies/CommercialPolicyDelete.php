@@ -19,13 +19,13 @@ class CommercialPolicyDelete extends Component
 
     public function deleteCommercialPolicy(): void
     {
-        // Verificar permisos para la eliminación
-        if (!auth()->check()) {
-            abort(403, 'No está autorizado para llevar a cabo esta acción.');
-        }
+        // Obtener el usuario autenticado
+        $user = auth()->user();
 
-        if (!auth()->user()->hasRole('Administrador')) {
-            abort(403, 'Solo los administradores pueden eliminar políticas comerciales.');
+        // Verificar si el usuario tiene permisos para actualizar la categoría
+        if (!$user || (!$user->hasRole('Administrador'))) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
         }
 
         // Eliminar la política comercial

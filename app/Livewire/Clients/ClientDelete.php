@@ -15,15 +15,19 @@ class ClientDelete extends Component
     public function mount(Client $client): void
     {
         $this->client = $client;
-
-        // Verificar si el usuario tiene permiso para eliminar
-        if ($client->user_id !== Auth::id() && !Auth::user()->hasRole('Administrator')) {
-            session()->flash('error', 'No tienes permiso para eliminar este cliente.');
-        }
     }
 
     public function deleteClient(): void
     {
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene permisos para actualizar el cliente
+        if (!$user || (!$user->hasRole('Administrador')) && (!$user->hasRole('Vendedor') && $this->client->user_id !== $user->id)) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
+        }
+
         if ($this->client) {
             $this->client->delete(); // Eliminar el cliente
 

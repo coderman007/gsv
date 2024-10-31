@@ -35,6 +35,14 @@ class ClientCreate extends Component
 
     public function createClient(): void
     {
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene permisos para crear un cliente
+        if (!$user || !$user->hasRole(['Administrador', 'Vendedor']) || $user->status !== 'Activo') {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+        }
+
         // Validar datos del cliente y de ubicación
         $this->validate([
             'city_id' => 'required|exists:cities,id',

@@ -67,18 +67,18 @@ class QuotationDocumentController extends Controller
 // Consecutivo en negrita, alineado a la derecha
         $textRun->addText($quotation->consecutive, ['bold' => true]);
 
-        $section->addText(PHP_EOL);
 
-// Fecha de cotización con negrita solo en el dato, alineada a la derecha
+        // Fecha de cotización con negrita solo en el dato, alineada a la derecha
         $textRun = $section->addTextRun(['alignment' => Jc::START]);
         $textRun->addText("Medellín ", 'textStyle');
         $textRun->addText($quotation->quotation_date->format('d/m/Y'), ['bold' => true]);
 
+        $section->addText(PHP_EOL);
 
         // ----- Pie de página -----
         $footer = $section->addFooter();
 
-// Modificar tamaño de fuente y alineación para el pie de página
+        // Modificar tamaño de fuente y alineación para el pie de página
         $footer->addText(
             'Cra. 52 # 52-63 - CC. Itagüí Plaza - Local 409, Itagüí - Antioquia',
             ['size' => 10], // Cambiar el tamaño de la fuente a 9
@@ -97,39 +97,39 @@ class QuotationDocumentController extends Controller
         $textRun->addText($quotation->client->name, ['bold' => true], 'textStyle');
 
 
-// Empresa solo si existe, con negrita en el dato
-        if ($quotation->client->company) {
-            $textRun = $section->addTextRun();
-            $textRun->addText("EMPRESA: ", 'textStyle');
-            $textRun->addText($quotation->client->company, ['bold' => true], 'textStyle');
+//        // Empresa solo si existe, con negrita en el dato
+//        if ($quotation->client->company) {
+//            $textRun = $section->addTextRun();
+//            $textRun->addText("EMPRESA: ", 'textStyle');
+//            $textRun->addText($quotation->client->company, ['bold' => true], 'textStyle');
+//
+//        }
 
-        }
-
-// Ciudad con negrita en el dato
+        // Ciudad con negrita en el dato
         $textRun = $section->addTextRun();
-        $textRun->addText("Ciudad: ", 'textStyle');
+        $textRun->addText("Ubicación: ", 'textStyle');
         $textRun->addText($quotation->client->city->name, ['bold' => true], 'textStyle');
 
         $section->addText(PHP_EOL);
 
-// Añadir un saludo
+        // Añadir un saludo
         $section->addText('Reciba un cordial saludo.', 'textStyle');
         $section->addText('De acuerdo con su requerimiento presentamos nuestra propuesta para suministrar e implementar un sistema de generación de energía solar fotovoltaica que promueva la eficiencia energética para su instalación.', 'textStyle');
 
-// Agregar un salto de línea
+        // Agregar un salto de línea
         $section->addText(PHP_EOL);
 
         // Sección de antecedentes
         $section->addText("ANTECEDENTES", 'titleStyle');
 
-// Crear un TextRun para la sección de antecedentes
+        // Crear un TextRun para la sección de antecedentes
         $textRun = $section->addTextRun();
         $textRun->addText("El consumo actual de energía es cercano a ", 'textStyle');
         $textRun->addText(number_format($quotation->energy_client, 0) . " kWh", ['bold' => true], 'textStyle');
         $textRun->addText(" y el costo actual por kWh es de ", 'textStyle');
         $textRun->addText("$ " . number_format($quotation->kilowatt_cost), ['bold' => true], 'textStyle');
         $textRun->addText(", es decir que el gasto por energía es de ", 'textStyle');
-        $textRun->addText("$ " . number_format($quotation->energy_client * $quotation->kilowatt_cost, 2), ['bold' => true], 'textStyle');
+        $textRun->addText("$ " . number_format($quotation->energy_client * $quotation->kilowatt_cost), ['bold' => true], 'textStyle');
         $textRun->addText(" al mes.", 'textStyle');
 
         $section->addText(PHP_EOL); // Salto de línea
@@ -302,42 +302,51 @@ class QuotationDocumentController extends Controller
         // Añadir sección de Presupuesto EPC con descripción y valores
         $section->addText("PRESUPUESTO EPC (LLAVE EN MANO)", 'titleStyle', 'centerStyle');
 
-        // Añadir tabla de presupuesto
-        $phpWord->addTableStyle('budgetTable', [
+// Añadir tabla principal (Descripción del sistema solar)
+        $phpWord->addTableStyle('mainTable', [
             'borderSize' => 6,
             'borderColor' => '000000',
             'cellMargin' => 50,
         ]);
-        $budgetTable = $section->addTable('budgetTable');
+        $mainTable = $section->addTable('mainTable');
 
-        // Encabezado
-        $budgetTable->addRow();
-        $budgetTable->addCell(8000, ['bgColor' => 'D9D9D9'])->addText("DESCRIPCIÓN", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
-        $budgetTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("VALOR", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+// Encabezado
+        $mainTable->addRow();
+        $mainTable->addCell(8000, ['bgColor' => 'D9D9D9'])->addText("DESCRIPCIÓN", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+        $mainTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("VALOR", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
-        // Fila de sistema solar
-        $budgetTable->addRow();
-        $budgetTable->addCell(8000)->addText("SISTEMA SOLAR FOTOVOLTAICO ON-GRID: " . $quotation->project->power_output . " KWP", ['size' => 12], ['alignment' => 'left']);
-        $budgetTable->addCell(3000)->addText("$ " . number_format($quotation->total), ['size' => 12], ['alignment' => 'center']);
+// Fila de sistema solar
+        $mainTable->addRow();
+        $mainTable->addCell(8000)->addText("SISTEMA SOLAR FOTOVOLTAICO ON-GRID: " . $quotation->project->power_output . " KWP", ['size' => 12], ['alignment' => 'left']);
+        $mainTable->addCell(3000)->addText("$ " . number_format($quotation->total), ['size' => 12], ['alignment' => 'center']);
 
-        // Subtotal e IVA
-        $budgetTable->addRow();
-        $budgetTable->addCell(8000)->addText("SUBTOTAL", ['size' => 12], ['alignment' => 'right']);
-        $budgetTable->addCell(3000)->addText("$ " . number_format($quotation->total), ['size' => 12], ['alignment' => 'center']);
+// Crear segunda tabla (para Subtotal, IVA y Total)
+        $phpWord->addTableStyle('totalsTable', [
+            'borderSize' => 6,
+            'borderColor' => '000000',
+            'cellMargin' => 50,
+        ]);
+        $totalsTable = $section->addTable('totalsTable', ['alignment' => 'right']); // Alineación a la derecha
 
-        $budgetTable->addRow();
-        $budgetTable->addCell(8000)->addText("IVA", ['size' => 12], ['alignment' => 'right']);
-        $budgetTable->addCell(3000)->addText("$ 0", ['size' => 12], ['alignment' => 'center']);
+// Fila de Subtotal
+        $totalsTable->addRow();
+        $totalsTable->addCell(4000)->addText("SUBTOTAL", ['size' => 12, 'bold' => true], ['alignment' => 'right']);
+        $totalsTable->addCell(3000)->addText("$ " . number_format($quotation->total), ['size' => 12], ['alignment' => 'center']);
 
-        // Total
-        $budgetTable->addRow();
-        $budgetTable->addCell(8000, ['bgColor' => 'D9D9D9'])->addText("TOTAL", ['bold' => true, 'size' => 12], ['alignment' => 'right']);
-        $budgetTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("$ " . number_format($quotation->total), ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+// Fila de IVA
+        $totalsTable->addRow();
+        $totalsTable->addCell(4000)->addText("IVA", ['size' => 12, 'bold' => true], ['alignment' => 'right']);
+        $totalsTable->addCell(3000)->addText("$ 0", ['size' => 12], ['alignment' => 'center']);
+
+// Fila de Total
+        $totalsTable->addRow();
+        $totalsTable->addCell(4000, ['bgColor' => 'D9D9D9'])->addText("TOTAL", ['bold' => true, 'size' => 12], ['alignment' => 'right']);
+        $totalsTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("$ " . number_format($quotation->total), ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
         $section->addText(PHP_EOL);
 
         // --- Sección de la gráfica y valores (reformulada) ---
-        $section->addText("CAJA ACUMULADA", 'titleStyle', 'centerStyle');
+        $section->addText("FLUJO DE CAJA ACUMULADA", 'titleStyle', 'centerStyle');
 
         // Añadir la imagen de flujo de caja acumulado
         $section->addImage(public_path('images/cashflow_chart.png'), [
@@ -365,7 +374,7 @@ class QuotationDocumentController extends Controller
             'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER,
         ]);
 
-        $cellTir->addText("TASA INTERNA DE RETORNO", ['bold' => true, 'size' => 14], ['alignment' => 'center']);
+        $cellTir->addText("RENTABILIDAD DE LA INVERSIÓN", ['bold' => true, 'size' => 14], ['alignment' => 'center']);
         $cellTir->addText($quotation->cashFlow->internal_rate_of_return . "%", ['bold' => true, 'size' => 16, 'color' => 'black'], ['alignment' => 'center']);
 
 // Celda vacía (10 píxeles de ancho)
@@ -422,11 +431,23 @@ class QuotationDocumentController extends Controller
 // Celda 2: Contenedor de los planes de financiación
         $cellPlans = $paymentTable->addCell(6000, [
             'valign' => 'center',
-            'alignment' => Jc::LEFT
+            'alignment' => Jc::START
         ]);
-        $cellPlans->addText("  48 cuotas de: $ XXXXXX", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
-        $cellPlans->addText("  60 cuotas de: $ XXXXXX", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
-        $cellPlans->addText("120 cuotas de: $ XXXXXX", ['bold' => true, 'size' => 12], ['alignment' => 'left']);
+
+        // Para 48 cuotas
+        $textRun = $cellPlans->addTextRun(['alignment' => 'left']);
+        $textRun->addText("  48 cuotas de: ", ['bold' => false, 'size' => 12]);
+        $textRun->addText("$ XXXXXX", ['bold' => true, 'size' => 12]);
+
+        // Para 48 cuotas
+        $textRun = $cellPlans->addTextRun(['alignment' => 'left']);
+        $textRun->addText("  60 cuotas de: ", ['bold' => false, 'size' => 12]);
+        $textRun->addText("$ XXXXXX", ['bold' => true, 'size' => 12]);
+
+        // Para 48 cuotas
+        $textRun = $cellPlans->addTextRun(['alignment' => 'left']);
+        $textRun->addText("120 cuotas de: ", ['bold' => false, 'size' => 12]);
+        $textRun->addText("$ XXXXXX", ['bold' => true, 'size' => 12]);
 
         // Sección de garantías
         $section->addText("GARANTÍAS:", 'titleStyle');
@@ -448,7 +469,7 @@ class QuotationDocumentController extends Controller
 
         $section->addText("Por favor, no dude en contactarse con nosotros en caso de cualquier duda o aclaración, que con gusto atenderemos sus comentarios.", 'textStyle');
 
-        $section->addText(PHP_EOL);
+//        $section->addText(PHP_EOL);
 
         $section->addText("Atentamente,", 'textStyle');
 

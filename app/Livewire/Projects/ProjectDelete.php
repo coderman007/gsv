@@ -17,6 +17,15 @@ class ProjectDelete extends Component
     }
     public function deleteProject(): void
     {
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene permisos para actualizar la categoría
+        if (!$user || (!$user->hasRole('Administrador'))) {
+            abort(403, 'No está autorizado para llevar a cabo esta acción.');
+            return;
+        }
+
         if ($this->project) {
             $project = $this->project->delete();
             $this->dispatch('deletedProject', $project);
