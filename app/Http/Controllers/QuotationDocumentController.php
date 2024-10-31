@@ -302,46 +302,37 @@ class QuotationDocumentController extends Controller
         // Añadir sección de Presupuesto EPC con descripción y valores
         $section->addText("PRESUPUESTO EPC (LLAVE EN MANO)", 'titleStyle', 'centerStyle');
 
-// Añadir tabla principal (Descripción del sistema solar)
-        $phpWord->addTableStyle('mainTable', [
+        // Añadir tabla de presupuesto
+        $phpWord->addTableStyle('budgetTable', [
             'borderSize' => 6,
             'borderColor' => '000000',
             'cellMargin' => 50,
         ]);
-        $mainTable = $section->addTable('mainTable');
+        $budgetTable = $section->addTable('budgetTable');
 
-// Encabezado
-        $mainTable->addRow();
-        $mainTable->addCell(8000, ['bgColor' => 'D9D9D9'])->addText("DESCRIPCIÓN", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
-        $mainTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("VALOR", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+        // Encabezado
+        $budgetTable->addRow();
+        $budgetTable->addCell(8000, ['bgColor' => 'D9D9D9'])->addText("DESCRIPCIÓN", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+        $budgetTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("VALOR", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
-// Fila de sistema solar
-        $mainTable->addRow();
-        $mainTable->addCell(8000)->addText("SISTEMA SOLAR FOTOVOLTAICO ON-GRID: " . $quotation->project->power_output . " KWP", ['size' => 12], ['alignment' => 'left']);
-        $mainTable->addCell(3000)->addText("$ " . number_format($quotation->total), ['size' => 12], ['alignment' => 'center']);
+        // Fila de sistema solar
+        $budgetTable->addRow();
+        $budgetTable->addCell(8000)->addText("SISTEMA SOLAR FOTOVOLTAICO ON-GRID: " . $quotation->project->power_output . " KWP", ['size' => 12], ['alignment' => 'left']);
+        $budgetTable->addCell(3000)->addText("$ " . number_format($quotation->total), ['size' => 12], ['alignment' => 'center']);
 
-// Crear segunda tabla (para Subtotal, IVA y Total)
-        $phpWord->addTableStyle('totalsTable', [
-            'borderSize' => 6,
-            'borderColor' => '000000',
-            'cellMargin' => 50,
-        ]);
-        $totalsTable = $section->addTable('totalsTable', ['alignment' => 'right']); // Alineación a la derecha
+        // Subtotal e IVA
+        $budgetTable->addRow();
+        $budgetTable->addCell(8000)->addText("SUBTOTAL", ['size' => 12], ['alignment' => 'right']);
+        $budgetTable->addCell(3000)->addText("$ " . number_format($quotation->total), ['size' => 12], ['alignment' => 'center']);
 
-// Fila de Subtotal
-        $totalsTable->addRow();
-        $totalsTable->addCell(4000)->addText("SUBTOTAL", ['size' => 12, 'bold' => true], ['alignment' => 'right']);
-        $totalsTable->addCell(3000)->addText("$ " . number_format($quotation->total), ['size' => 12], ['alignment' => 'center']);
+        $budgetTable->addRow();
+        $budgetTable->addCell(8000)->addText("IVA", ['size' => 12], ['alignment' => 'right']);
+        $budgetTable->addCell(3000)->addText("$ 0", ['size' => 12], ['alignment' => 'center']);
 
-// Fila de IVA
-        $totalsTable->addRow();
-        $totalsTable->addCell(4000)->addText("IVA", ['size' => 12, 'bold' => true], ['alignment' => 'right']);
-        $totalsTable->addCell(3000)->addText("$ 0", ['size' => 12], ['alignment' => 'center']);
-
-// Fila de Total
-        $totalsTable->addRow();
-        $totalsTable->addCell(4000, ['bgColor' => 'D9D9D9'])->addText("TOTAL", ['bold' => true, 'size' => 12], ['alignment' => 'right']);
-        $totalsTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("$ " . number_format($quotation->total), ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+        // Total
+        $budgetTable->addRow();
+        $budgetTable->addCell(8000, ['bgColor' => 'D9D9D9'])->addText("TOTAL", ['bold' => true, 'size' => 12], ['alignment' => 'right']);
+        $budgetTable->addCell(3000, ['bgColor' => 'D9D9D9'])->addText("$ " . number_format($quotation->total), ['bold' => true, 'size' => 12], ['alignment' => 'center']);
 
         $section->addText(PHP_EOL);
 
